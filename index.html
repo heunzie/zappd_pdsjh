@@ -326,7 +326,6 @@ tbody tr:hover td{background:var(--surface-2)}
       <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
       <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사 홈쇼핑 편성표</button>
       <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS 기준 비교</button>
-      <button class="tab" role="tab" id="tab-compare" aria-selected="false" data-view="compare">상품·가격 검색</button>
     </div>
     <span class="spacer"></span>
     <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><input type="date" id="dPick" aria-label="날짜 직접 고르기" title="지난 날짜 찾기"><select id="dateSel" hidden></select></div>
@@ -348,17 +347,6 @@ tbody tr:hover td{background:var(--surface-2)}
     <section id="view-timeline" data-view-panel="timeline" style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
       <div class="tl-legend"><span>가격은 방송 판매가(쿠폰·카드할인 제외). 방송을 누르면 상세가 열립니다.</span></div>
       <div class="tl-scroll" id="tlScroll"><div class="tl" id="tl"></div></div>
-    </section>
-
-    <section id="view-compare" data-view-panel="compare" hidden style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
-      <div class="filters" id="chFilters"></div>
-      <div class="filters">
-        <div class="seg" role="group" aria-label="보기 방식"><button id="modeCards" aria-pressed="true">카드</button><button id="modeTable" aria-pressed="false">표</button></div>
-        <input type="search" id="q" placeholder="상품명·브랜드 검색" aria-label="검색">
-        <label><input type="checkbox" id="hideNoPrice" checked> 가격 미표기(여행·렌탈·보험) 제외</label>
-      </div>
-      <div class="chsecs" id="cards"></div>
-      <div class="tbl-wrap" id="tblWrap" hidden><table id="cmp"><thead></thead><tbody></tbody></table></div>
     </section>
 
     <section id="view-epg" data-view-panel="epg" hidden style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
@@ -471,7 +459,7 @@ function setView(v) {
   if (v === 'lineup') scrollLineup();
 }
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
-const h0 = (location.hash || '').slice(1); setView(['lineup', 'timeline', 'compare', 'epg'].includes(h0) ? h0 : (matchMedia('(max-width:760px)').matches ? 'lineup' : 'epg'));
+const h0 = (location.hash || '').slice(1); setView(['lineup', 'timeline', 'epg'].includes(h0) ? h0 : (matchMedia('(max-width:760px)').matches ? 'lineup' : 'epg'));
 
 function tick() {
   const n = kstNow(); $('#clock').textContent = n.hm + ' KST';
@@ -494,7 +482,7 @@ function render() {
   if (!setDoc) note.textContent = `${SETS[state.set].label} 편성이 이 날짜에는 아직 수집되지 않았습니다. 다음 자동 수집 후 표시됩니다.`;
   const ca = setDoc && setDoc.collectedAt;
   $('#collected').textContent = ca ? '수집 ' + new Date(ca).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '';
-  renderLineup(items); renderTimeline(items); renderCompare(); renderEpg(state.tvItems); tick();
+  renderLineup(items); renderTimeline(items); renderEpg(state.tvItems); tick();
 }
 
 const overlaps = (a, b) => Math.min(a.em, b.em) - Math.max(a.sm, b.sm) > 0;
@@ -566,71 +554,6 @@ function renderTimeline(items) {
 }
 $('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) openDetail(+b.dataset.idx); });
 
-
-// ---------- channel cards / table ----------
-const COLS = [
-  {k: 's', l: '시간'}, {k: 'ch', l: '채널'}, {k: 'n', l: '상품 · 구성'},
-  {k: 'p', l: '정상가', num: 1}, {k: 'best', l: '판매가', num: 1},
-  {k: 'off', l: '할인', num: 1}, {k: 'unit', l: '단가', num: 1}, {k: 'ifm', l: '무이자', num: 1}, {k: 'cd', l: '카드할인'}
-];
-const sortVal = (it, k) => k === 's' ? it.sm : k === 'ch' ? CHORD[it.ch] : k === 'best' ? best(it) : k === 'off' ? offPct(it) : k === 'unit' ? unitPrice(it) : it[k];
-function filtered() {
-  const q = $('#q').value.trim().toLowerCase(), hide = $('#hideNoPrice').checked;
-  const rows = state.items.filter(i => state.chOn.has(i.ch) && (!hide || i.p > 0) && (!q || [i.n, i.b, i.pg, ...(i.op || []).map(o => o.n)].join(' ').toLowerCase().includes(q)));
-  const {k, dir} = state.sort;
-  rows.sort((a, b) => { const va = sortVal(a, k), vb = sortVal(b, k); if (typeof va === 'string') return dir * va.localeCompare(vb, 'ko'); return dir * ((va || 0) - (vb || 0)) || a.sm - b.sm; });
-  return rows;
-}
-function renderCompare() {
-  $('#chFilters').innerHTML = CH.map(c => `<button class="chip" data-ch="${c.id}" aria-pressed="${state.chOn.has(c.id)}">${chDot(c.id)}${esc(c.name)}</button>`).join('');
-  $('#modeCards').setAttribute('aria-pressed', String(state.mode === 'cards'));
-  $('#modeTable').setAttribute('aria-pressed', String(state.mode === 'table'));
-  $('#cards').hidden = state.mode !== 'cards'; $('#tblWrap').hidden = state.mode !== 'table';
-  $('#cmp thead').innerHTML = '<tr>' + COLS.map(c => `<th data-k="${c.k}" class="${c.num ? 'num' : ''} ${state.sort.k === c.k ? (state.sort.dir > 0 ? 'asc' : 'desc') : ''}">${c.l}</th>`).join('') + '</tr>';
-  renderRows();
-}
-function card(it) {
-  const off = offPct(it); const b = best(it); const ops = ownOps(it); const oc = opCount(it);
-  
-  const sub = '';
-  const price = it.p ? `<div class="pc-price"><div class="row">${off ? `<span class="was">${won(it.p)}</span><span class="off">-${off}%</span>` : ''}</div>
-      <div class="row"><span class="big">${won(b)}</span><span class="lbl">판매가</span></div>
-      ${sub ? `<span class="pc-sub">${esc(sub)}</span>` : ''}${unitTxt(it) ? `<span class="unit">${esc(unitTxt(it))}</span>` : ''}</div>`
-    : `<div class="pc-price"><span class="quiet">가격 미표기 (상담·렌탈·여행)</span></div>`;
-  const ben = benefits(it);
-  const opl = ops.length ? `<ul class="pc-ops">${ops.slice(0, 3).map(o => `<li><span title="${esc(o.n)}">${esc(o.n)}</span><span>${won(opPrice(o))}</span></li>`).join('')}${oc > 3 ? `<li class="tail"><span>함께 판매 ${oc}개 중 3개 표시</span><span></span></li>` : ''}</ul>` : '';
-  return `<button class="pcard ${it.ch === OWN ? 'own' : ''}" style="--c:var(--ch-${it.ch})" data-idx="${it.idx}">
-    <span class="pc-top"><span class="mono">${esc(it.s)}–${esc(it.e)}</span></span>
-    <span class="pc-name">${esc(it.n)}</span>${chipsHtml(it)}${price}
-    ${ben.length ? `<span class="pc-ben">${esc(ben.join(' · '))}</span>` : ''}${opl}</button>`;
-}
-function renderRows() {
-  const rows = filtered();
-  if (state.mode === 'cards') {
-    const secs = CH.filter(c => state.chOn.has(c.id)).map(c => {
-      const l = rows.filter(i => i.ch === c.id); if (!l.length) return '';
-      return `<section class="chsec"><div class="chsec-h"><h3>${chDot(c.id)}${esc(c.name)}</h3><span>${l.length}건</span></div><div class="cards">${l.map(card).join('')}</div></section>`;
-    }).join('');
-    $('#cards').innerHTML = secs || '<p class="quiet">조건에 맞는 방송이 없습니다. 필터를 줄여 보세요.</p>';
-  } else {
-    $('#cmp tbody').innerHTML = rows.map(i => { const off = offPct(i); return `<tr class="${i.ch === OWN ? 'own' : ''}" data-idx="${i.idx}">
-      <td class="mono">${esc(i.s)}–${esc(i.e)}</td><td style="white-space:nowrap">${chDot(i.ch)} ${esc(CHMAP[i.ch].name)}</td>
-      <td class="nm">${esc(i.n)}${chipsHtml(i)}${opCount(i) ? `<span class="more">함께 판매 ${opCount(i)}개</span>` : ''}</td>
-      <td class="num">${won(i.p)}</td><td class="num"><b>${i.p ? won(best(i)) : '—'}</b></td>
-      <td class="num">${off ? `<span class="off">-${off}%</span>` : '—'}</td><td class="num"><span class="unit">${esc(unitTxt(i) || '—')}</span></td>
-      <td class="num">${i.ifm ? i.ifm + '개월' : '—'}</td><td>${esc(i.cd || '—')}</td></tr>`; }).join('')
-      || `<tr><td colspan="${COLS.length}" class="quiet">조건에 맞는 방송이 없습니다. 필터를 줄여 보세요.</td></tr>`;
-  }
-}
-$('#cmp thead').addEventListener('click', e => { const th = e.target.closest('th[data-k]'); if (!th) return; const k = th.dataset.k; state.sort = {k, dir: state.sort.k === k ? -state.sort.dir : (['p', 'sp', 'best', 'off', 'unit', 'ifm'].includes(k) ? -1 : 1)}; renderCompare(); });
-$('#cmp tbody').addEventListener('click', e => { const tr = e.target.closest('tr[data-idx]'); if (tr) openDetail(+tr.dataset.idx); });
-$('#cards').addEventListener('click', e => { const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx); });
-$('#chFilters').addEventListener('click', e => { const b = e.target.closest('[data-ch]'); if (!b) return; const id = b.dataset.ch; state.chOn.has(id) ? state.chOn.delete(id) : state.chOn.add(id); renderCompare(); });
-$('#hideNoPrice').addEventListener('change', renderRows);
-$('#q').addEventListener('input', renderRows);
-const setMode = m => { state.mode = m; try { localStorage.setItem('zap.mode', m); } catch (e) {} renderCompare(); };
-$('#modeCards').addEventListener('click', () => setMode('cards'));
-$('#modeTable').addEventListener('click', () => setMode('table'));
 
 // ---------- broadcast schedule (EPG) ----------
 const isOff = t => /방송\s*시간이\s*아닙니다|정파/.test(t);
