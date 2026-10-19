@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>경쟁사 방송 이력</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Same palette and type as the NS 재핑 보드 (index.html), laid out as a search-and-table tool. */
+:root{
+  --bg:#eef1f3; --surface:#ffffff; --surface-2:#f6f8f9; --ink:#15202a; --muted:#5b6976; --line:#d6dde2;
+  --accent:#0a7564; --accent-ink:#ffffff; --accent-soft:#dcefea;
+  --warn:#b8430b; --warn-soft:#fbe7da; --caution:#8a6a00; --caution-soft:#f6eecb; --good:#2b6a2f; --good-soft:#e1efdc;
+  --shadow:0 1px 2px rgba(21,32,42,.06),0 4px 14px rgba(21,32,42,.06);
+  --lv-model:#0a7564; --lv-same:#2b5ea7; --lv-similar:#7b3fa8; --lv-brand:#8a6a00; --lv-group:#5b6976;
+  --ch-nsmall:#0a7564; --ch-gsshop:#4a7d1e; --ch-cjmall:#7b3fa8; --ch-lotteimall:#c0262f; --ch-hmall:#1f6a5c; --ch-hnsmall:#d1661a; --ch-immall:#2b5ea7;
+  --ch-nsmallplus:#0a7564; --ch-gsmyshop:#4a7d1e; --ch-cjmallplus:#7b3fa8; --ch-lotteonetv:#c0262f; --ch-hmallplus:#1f6a5c; --ch-kshop:#b3261e; --ch-kshopplus:#8a3b12; --ch-bshop:#d4442a; --ch-ssgshop:#a8326e; --ch-shopnt:#5b4bb5; --ch-wshop:#2f7f9e;
+  --f-body:"IBM Plex Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e1418; --surface:#161f25; --surface-2:#1b262d; --ink:#e4ebef; --muted:#93a2ad; --line:#2a3741;
+  --accent:#3bbfa8; --accent-ink:#06201b; --accent-soft:#123029;
+  --warn:#f5894a; --warn-soft:#3a2216; --caution:#e2c15a; --caution-soft:#332b10; --good:#8cc35a; --good-soft:#1d2e16;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --lv-model:#3bbfa8; --lv-same:#7fa8ec; --lv-similar:#b88ae0; --lv-brand:#e2c15a; --lv-group:#93a2ad;
+  --ch-nsmall:#3bbfa8; --ch-gsshop:#8cc35a; --ch-cjmall:#b88ae0; --ch-lotteimall:#f07178; --ch-hmall:#5cc2ad; --ch-hnsmall:#f3a15e; --ch-immall:#7fa8ec;
+  --ch-nsmallplus:#3bbfa8; --ch-gsmyshop:#8cc35a; --ch-cjmallplus:#b88ae0; --ch-lotteonetv:#f07178; --ch-hmallplus:#5cc2ad; --ch-kshop:#f28b82; --ch-kshopplus:#e2a36b; --ch-bshop:#ff8a65; --ch-ssgshop:#f48fb1; --ch-shopnt:#a99cf0; --ch-wshop:#6cc3e0;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1418; --surface:#161f25; --surface-2:#1b262d; --ink:#e4ebef; --muted:#93a2ad; --line:#2a3741;
+  --accent:#3bbfa8; --accent-ink:#06201b; --accent-soft:#123029;
+  --warn:#f5894a; --warn-soft:#3a2216; --caution:#e2c15a; --caution-soft:#332b10; --good:#8cc35a; --good-soft:#1d2e16;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  --lv-model:#3bbfa8; --lv-same:#7fa8ec; --lv-similar:#b88ae0; --lv-brand:#e2c15a; --lv-group:#93a2ad;
+  --ch-nsmall:#3bbfa8; --ch-gsshop:#8cc35a; --ch-cjmall:#b88ae0; --ch-lotteimall:#f07178; --ch-hmall:#5cc2ad; --ch-hnsmall:#f3a15e; --ch-immall:#7fa8ec;
+  --ch-nsmallplus:#3bbfa8; --ch-gsmyshop:#8cc35a; --ch-cjmallplus:#b88ae0; --ch-lotteonetv:#f07178; --ch-hmallplus:#5cc2ad; --ch-kshop:#f28b82; --ch-kshopplus:#e2a36b; --ch-bshop:#ff8a65; --ch-ssgshop:#f48fb1; --ch-shopnt:#a99cf0; --ch-wshop:#6cc3e0;
+  color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:14px;line-height:1.5;padding-inline:16px;padding-block:0 40px}
+.wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+button,select,input{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.quiet{color:var(--muted)}
+
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding-block:14px 12px;border-bottom:1px solid var(--line)}
+.bar h1{font-size:19px;margin:0;letter-spacing:-.01em}
+.bar .meta{font-size:12.5px;color:var(--muted)}
+.bar .links{margin-left:auto;display:flex;gap:12px;font-size:12.5px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab{border:1px solid var(--line);background:var(--surface);padding:6px 14px;border-radius:999px;font-weight:500;font-size:13px}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:12px}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.ctl .grp{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ctl .lbl{font-size:12px;color:var(--muted);font-weight:500;min-width:3.5em}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{border:0;background:var(--surface);padding:5px 11px;font-size:12.5px;font-weight:500}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+input[type="date"],input[type="search"],select{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font-size:13px;min-width:0}
+input[type="search"]{flex:1 1 220px;max-width:420px;font-size:14px;padding:7px 10px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 10px;font-size:12.5px;display:inline-flex;gap:5px;align-items:center}
+.chip[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--ink)}
+.chip .n{font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+.chip.lv{border-color:color-mix(in srgb,var(--c) 50%,var(--line))}
+.chip.lv[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 16%,var(--surface));border-color:var(--c)}
+.chip.lv[aria-pressed="false"]{opacity:.6}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:12.5px}
+.summary{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:13px}
+.summary b{font-family:var(--f-mono);font-size:15px}
+.note{font-size:12px;color:var(--muted)}
+.warnline{font-size:12.5px;background:var(--caution-soft);color:var(--caution);border-radius:6px;padding:6px 10px}
+
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.lvtag{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;color:var(--c);white-space:nowrap}
+.lvtag::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--c)}
+.cat{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.cat b{color:var(--ink);font-weight:500}
+.cat .est{font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 3px;margin-left:3px;color:var(--muted)}
+
+/* NS product list */
+.plist{display:flex;flex-direction:column;gap:8px}
+.prod{border:1px solid var(--line);border-radius:9px;background:var(--surface);overflow:hidden}
+.prod.has{border-left:3px solid var(--accent)}
+.phead{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;padding:10px 12px;cursor:pointer;width:100%;text-align:left;background:none;border:0}
+.phead:hover{background:var(--surface-2)}
+.pname{font-weight:600;font-size:14px;line-height:1.4}
+.pname .br{color:var(--muted);font-weight:500;margin-right:6px}
+.pmeta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:12px;color:var(--muted);margin-top:3px}
+.airs{display:flex;flex-wrap:wrap;gap:4px}
+.air{font-family:var(--f-mono);font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:0 5px;color:var(--ink)}
+.air.tc{border-style:dashed}
+.pside{display:flex;flex-direction:column;align-items:flex-end;gap:4px;text-align:right}
+.price{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums}
+.counts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.cnt{font-size:12px;font-weight:600;color:var(--c);font-family:var(--f-body)}
+.cnt .mono{font-size:13px}
+.none{font-size:12px;color:var(--muted)}
+.pbody{border-top:1px solid var(--line);background:var(--surface-2);padding:8px 12px 12px}
+
+table.mt{width:100%;border-collapse:collapse;font-size:12.5px}
+.mt th{text-align:left;font-weight:500;color:var(--muted);font-size:11.5px;padding:6px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+.mt td{padding:6px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);vertical-align:top}
+.mt tr:last-child td{border-bottom:0}
+.mt td.num,.mt th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mt td.when{font-family:var(--f-mono);white-space:nowrap}
+.mt .chn{display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.mt .nm a{color:var(--ink);text-decoration:none}
+.mt .nm a:hover{text-decoration:underline}
+.diff{font-family:var(--f-mono);font-size:11.5px;padding:0 5px;border-radius:4px;white-space:nowrap}
+.diff.before{background:var(--surface);color:var(--muted);border:1px solid var(--line)}
+.diff.after{background:var(--warn-soft);color:var(--warn)}
+.diff.same{background:var(--accent-soft);color:var(--accent)}
+.pd{font-size:11px;font-family:var(--f-mono)}
+.pd.lo{color:var(--warn)}
+.pd.hi{color:var(--good)}
+
+.more{display:flex;justify-content:center;padding:6px}
+.empty{padding:36px 12px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+
+/* search results */
+.chbars{display:flex;flex-wrap:wrap;gap:6px}
+.chbar{display:inline-flex;align-items:center;gap:6px;font-size:12px;border:1px solid var(--line);border-radius:6px;padding:2px 8px;background:var(--surface)}
+.chbar .mono{font-weight:600}
+
+/* classification check */
+.catgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.catbox{border:1px solid var(--line);border-radius:8px;padding:10px;background:var(--surface)}
+.catbox h3{margin:0 0 6px;font-size:13.5px;display:flex;justify-content:space-between}
+.catbox .gl{display:flex;flex-wrap:wrap;gap:4px}
+.catbox .g{font-size:11.5px;background:var(--surface-2);border-radius:4px;padding:0 6px}
+.catbox .g.est{border:1px dashed var(--line);background:none;color:var(--muted)}
+.howto{font-size:13px;line-height:1.7;background:var(--surface-2);border-radius:8px;padding:10px 14px}
+.howto code{font-family:var(--f-mono);font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+
+.filt{display:flex;flex-direction:column;gap:10px}
+.filt>summary{font-size:12.5px;color:var(--muted);cursor:pointer;font-weight:500;list-style:none;display:none}
+.filt>summary::-webkit-details-marker{display:none}
+.filt[open]{gap:10px}
+.loading{padding:60px 0;text-align:center;color:var(--muted)}
+
+@media (max-width:760px){
+  body{padding-inline:12px}
+  .bar .links{margin-left:0}
+  .filt>summary{display:block;border:1px solid var(--line);border-radius:7px;padding:6px 10px}
+  .filt>summary::before{content:"▸ 필터: "}
+  .filt[open]>summary::before{content:"▾ 필터: "}
+  .phead{grid-template-columns:1fr}
+  .pside{align-items:flex-start;text-align:left;flex-direction:row;flex-wrap:wrap;gap:4px 10px}
+  .counts{justify-content:flex-start}
+  table.mt thead{display:none}
+  table.mt,.mt tbody,.mt tr,.mt td{display:block;width:100%}
+  .mt tr{padding:8px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:2px 8px}
+  .mt td{border:0;padding:0}
+  .mt td.c-lv{grid-column:1/-1}
+  .mt td.nm{grid-column:1/-1;font-size:13px}
+  .mt td.num{text-align:left}
+  input[type="search"]{max-width:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <h1>경쟁사 방송 이력</h1>
+    <span class="meta" id="meta">불러오는 중…</span>
+    <span class="links"><a href="./">NS 재핑 보드</a><a href="https://github.com/heunzie/zappd_pdsjh/blob/main/scm/dict/groups.csv" target="_blank" rel="noopener">분류 사전</a></span>
+  </header>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button class="tab" role="tab" data-tab="ns" aria-selected="true">NS 방송 기준</button>
+    <button class="tab" role="tab" data-tab="search" aria-selected="false">상품 검색</button>
+    <button class="tab" role="tab" data-tab="check" aria-selected="false">분류 점검</button>
+  </nav>
+
+  <!-- NS 방송 기준 -->
+  <section id="v-ns" class="panel" role="tabpanel">
+    <div class="ctl">
+      <div class="grp"><span class="lbl">NS 방송일</span>
+        <div class="seg" id="nsQuick"><button data-q="prev">지난주</button><button data-q="this">이번 주</button><button data-q="next">다음 주</button></div>
+        <input type="date" id="nsFrom" aria-label="시작일"><span class="quiet">~</span><input type="date" id="nsTo" aria-label="종료일">
+      </div>
+      <div class="grp"><span class="lbl">NS 채널</span>
+        <div class="seg" id="nsCh"><button data-v="all" aria-pressed="true">둘 다</button><button data-v="nsmall">NS홈쇼핑</button><button data-v="nsmallplus">NS Shop+</button></div>
+      </div>
+      <div class="grp"><span class="lbl">비교 기간</span>
+        <select id="win" aria-label="NS 방송 앞뒤 며칠"><option value="3">앞뒤 3일</option><option value="7" selected>앞뒤 7일</option><option value="14">앞뒤 14일</option></select>
+      </div>
+    </div>
+    <div class="ctl">
+      <input type="search" id="nsQ" placeholder="상품명·브랜드·상품군으로 좁히기 (예: 마그네슘, 마데카)" aria-label="NS 상품 검색">
+      <label class="check"><input type="checkbox" id="onlyHit" checked> 경쟁사 방송이 있는 상품만</label>
+      <button class="btn" id="expandAll">모두 펼치기</button>
+      <button class="btn primary" id="dlNs">엑셀로 내려받기</button>
+    </div>
+    <details class="filt" id="nsFilt">
+      <summary>대분류 · 일치 정도 · 경쟁사 · 정렬</summary>
+      <div class="ctl"><span class="lbl">대분류</span><div class="chips" id="nsCats"></div></div>
+      <div class="ctl"><span class="lbl">일치 정도</span><div class="chips" id="nsLv"></div></div>
+      <div class="ctl"><span class="lbl">경쟁사</span><div class="seg" id="rivalGrp"><button data-v="all" aria-pressed="true">전체</button><button data-v="tv">TV홈쇼핑</button><button data-v="tc">데이터홈쇼핑</button></div>
+        <span class="lbl">정렬</span><div class="seg" id="nsSort"><button data-v="time" aria-pressed="true">NS 방송 시간순</button><button data-v="hits">경쟁 방송 많은 순</button></div></div>
+    </details>
+    <div id="nsWarn"></div>
+    <div class="summary" id="nsSum"></div>
+    <div class="plist" id="nsList"><div class="loading">불러오는 중…</div></div>
+  </section>
+
+  <!-- 상품 검색 -->
+  <section id="v-search" class="panel" role="tabpanel" hidden>
+    <div class="ctl">
+      <input type="search" id="sQ" placeholder="상품명·브랜드·상품군 (예: 콘드로이친, 로봇청소기, 쿠션)" aria-label="상품 검색">
+      <div class="grp"><span class="lbl">기간</span>
+        <div class="seg" id="sRange"><button data-v="30" aria-pressed="true">최근 1개월</button><button data-v="90">3개월</button><button data-v="365">1년</button><button data-v="all">전체</button></div>
+      </div>
+      <div class="grp"><span class="lbl">채널</span>
+        <div class="seg" id="sCh"><button data-v="all" aria-pressed="true">전체</button><button data-v="rival">경쟁사만</button><button data-v="ns">NS만</button></div>
+      </div>
+      <button class="btn primary" id="dlS">엑셀로 내려받기</button>
+    </div>
+    <div class="ctl"><span class="lbl">대분류</span><div class="chips" id="sCats"></div></div>
+    <div class="summary" id="sSum"></div>
+    <div class="chbars" id="sCh2"></div>
+    <div id="sList"></div>
+  </section>
+
+  <!-- 분류 점검 -->
+  <section id="v-check" class="panel" role="tabpanel" hidden>
+    <div class="howto">
+      상품군은 <b>분류 사전</b>(상품명 핵심어 → 상품군)으로 붙입니다. 사전에 없는 상품은 홈쇼핑모아 소분류를 그대로 쓰고 <span class="cat"><span class="est">추정</span></span> 표시가 붙습니다.<br>
+      틀린 분류를 고치려면 <a href="https://github.com/heunzie/zappd_pdsjh/edit/main/scm/dict/groups.csv" target="_blank" rel="noopener">분류 사전 편집</a>에서 <code>핵심어,상품군,대분류,</code> 한 줄을 추가하고 저장(Commit)하세요. 1~2분 뒤 이 화면에 반영됩니다.
+    </div>
+    <div class="ctl">
+      <div class="grp"><span class="lbl">대상</span><div class="seg" id="cMode"><button data-v="est" aria-pressed="true">추정·미분류만</button><button data-v="all">전체 상품군 보기</button></div></div>
+      <input type="search" id="cQ" placeholder="상품명으로 찾기" aria-label="분류 점검 검색">
+    </div>
+    <div class="summary" id="cSum"></div>
+    <div id="cList"></div>
+  </section>
+</div>
+
+<script type="module">
+import {CHANNELS, CH, isNS, CATS, LEVELS, LEVEL_RANK, loadDict, prep, fillBrands, matchLevel, dice, dayDiff, addDays, price, brandKey} from './scm/lib.js';
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[c]));
+const won = n => n ? Math.round(n).toLocaleString('ko-KR') + '원' : '—';
+const WD = ['일', '월', '화', '수', '목', '금', '토'];
+const wd = d => WD[new Date(d + 'T00:00:00Z').getUTCDay()];
+const md = d => `${+d.slice(5, 7)}/${+d.slice(8, 10)}`;
+const mdw = d => `${md(d)}(${wd(d)})`;
+const todayKst = () => new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+const monday = d => addDays(d, -((new Date(d + 'T00:00:00Z').getUTCDay() + 6) % 7));
+const chDot = id => `<i class="dot" style="--c:var(--ch-${id})"></i>`;
+const lvTag = k => { const l = LEVELS.find(x => x.k === k); return `<span class="lvtag" style="--c:var(--lv-${k})" title="${esc(l.hint)}">${esc(l.label)}</span>`; };
+const catHtml = it => `<span class="cat">${esc(it.cat)} › <b>${esc(it.grp || '—')}</b>${it.gsrc === 'dict' ? '' : '<span class="est">추정</span>'}</span>`;
+const debounce = (f, ms = 200) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), ms); }; };
+const pressed = (root, attr = 'v') => root.querySelector('[aria-pressed="true"]')?.dataset[attr];
+const segInit = (root, cb) => root.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || !root.contains(b)) return;
+  root.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); cb(b);
+});
+
+const S = {
+  index: null, dict: null, items: [], loadedMonths: new Set(), today: todayKst(),
+  ns: {from: '', to: '', ch: 'all', win: 7, sort: 'time', q: '', only: true, cats: new Set(), lv: new Set(LEVELS.filter(l => l.def).map(l => l.k)), rival: 'all', open: new Set(), all: false, shown: 60},
+  s: {q: '', range: '30', ch: 'all', cats: new Set(), shown: 200},
+  c: {mode: 'est', q: ''},
+};
+
+// ---------- data ----------
+async function getText(url) { const r = await fetch(url, {cache: 'no-cache'}); if (!r.ok) throw new Error(url + ' ' + r.status); return r.text(); }
+async function loadMonths(from, to) {
+  const want = S.index.months.map(m => m.month).filter(m => (!from || m >= from.slice(0, 7)) && (!to || m <= to.slice(0, 7)) && !S.loadedMonths.has(m));
+  if (!want.length) return false;
+  const docs = await Promise.all(want.map(m => fetch(`archive/${m}.json`, {cache: 'no-cache'}).then(r => r.ok ? r.json() : {items: []})));
+  const fresh = docs.flatMap(d => d.items || []);
+  fresh.forEach(it => prep(it, S.dict));
+  S.items = S.items.concat(fresh);
+  fillBrands(S.items);
+  want.forEach(m => S.loadedMonths.add(m));
+  return true;
+}
+function inRange(from, to) { return S.items.filter(it => it.d >= from && it.d <= to); }
+
+// ---------- NS 방송 기준 ----------
+// NS broadcasts of the same product (same brand, near-identical name) become one row.
+function clusterNS(airs) {
+  const cl = [];
+  for (const a of airs.sort((x, y) => x.d.localeCompare(y.d) || x.s.localeCompare(y.s))) {
+    let hit = null;
+    for (const c of cl) {
+      const r = c.rep;
+      if (a._b !== r._b) continue;
+      if (a.n === r.n || dice(a._core, r._core) >= (a._b ? 0.6 : 0.75)) { hit = c; break; }
+    }
+    if (hit) hit.airs.push(a); else cl.push({rep: a, airs: [a]});
+  }
+  return cl;
+}
+function computeNS() {
+  const st = S.ns;
+  const nsAirs = inRange(st.from, st.to).filter(it => isNS(it.ch) && (st.ch === 'all' || it.ch === st.ch) && it.c2 !== '보험' && it.c1 !== '서비스/금융');
+  const rivals = inRange(addDays(st.from, -st.win), addDays(st.to, st.win)).filter(it => !isNS(it.ch));
+  const clusters = clusterNS(nsAirs);
+  for (const c of clusters) {
+    const dates = [...new Set(c.airs.map(a => a.d))];
+    const best = new Map(); // rival item -> {lv, score, near}
+    for (const b of rivals) {
+      // nearest NS broadcast of this product
+      let near = null;
+      for (const d of dates) { const k = dayDiff(d, b.d); if (Math.abs(k) <= st.win && (near === null || Math.abs(k) < Math.abs(near))) near = k; }
+      if (near === null) continue;
+      let m = null;
+      for (const a of c.airs) { const x = matchLevel(a, b); if (x && (!m || LEVEL_RANK[x.lv] < LEVEL_RANK[m.lv] || (x.lv === m.lv && x.score > m.score))) m = x; if (m && m.lv === 'model') break; }
+      if (m) best.set(b, {...m, near});
+    }
+    c.matches = [...best].map(([b, m]) => ({b, ...m})).sort((x, y) => x.b.d.localeCompare(y.b.d) || x.b.s.localeCompare(y.b.s));
+    c.key = c.rep.ch + '|' + c.rep.d + '|' + c.rep.s + '|' + c.rep.n;
+  }
+  return clusters;
+}
+let NS_CACHE = null, NS_SIG = '';
+function nsData() {
+  const st = S.ns, sig = [st.from, st.to, st.ch, st.win, S.items.length, S.dict.groups.length].join('|');
+  if (sig !== NS_SIG) { NS_CACHE = computeNS(); NS_SIG = sig; }
+  return NS_CACHE;
+}
+const rivalOk = b => S.ns.rival === 'all' || CH[b.ch].grp === S.ns.rival;
+function visibleMatches(c) { return c.matches.filter(m => S.ns.lv.has(m.lv) && rivalOk(m.b)); }
+const textHit = (it, q) => !q || [it.n, it.b, it.grp, it.cat, it.kw].some(x => (x || '').toLowerCase().replace(/\s/g, '').includes(q));
+function nsFiltered() {
+  const st = S.ns, q = st.q.toLowerCase().replace(/\s/g, '');
+  return nsData().filter(c => (!st.cats.size || st.cats.has(c.rep.cat)) && c.airs.some(a => textHit(a, q)))
+    .map(c => ({...c, vis: visibleMatches(c)}))
+    .filter(c => !st.only || c.vis.length)
+    .sort((a, b) => st.sort === 'hits' ? (b.vis.length - a.vis.length) : 0);
+}
+function renderNS() {
+  const st = S.ns;
+  const all = nsData();
+  // category chips with counts over the period
+  const cc = {}; for (const c of all) cc[c.rep.cat] = (cc[c.rep.cat] || 0) + 1;
+  $('#nsCats').innerHTML = CATS.filter(k => cc[k]).map(k => `<button class="chip" data-cat="${esc(k)}" aria-pressed="${st.cats.has(k)}">${esc(k)} <span class="n">${cc[k]}</span></button>`).join('');
+  const lc = {}; for (const c of all) for (const k of new Set(c.matches.filter(m => rivalOk(m.b)).map(m => m.lv))) lc[k] = (lc[k] || 0) + 1;
+  $('#nsLv').innerHTML = LEVELS.map(l => `<button class="chip lv" style="--c:var(--lv-${l.k})" data-lv="${l.k}" aria-pressed="${st.lv.has(l.k)}" title="${esc(l.hint)}">${esc(l.label)} <span class="n">${lc[l.k] || 0}</span></button>`).join('');
+
+  const list = nsFiltered();
+  const total = all.length, withHit = all.filter(c => visibleMatches(c).length).length;
+  $('#nsSum').innerHTML = `<span>NS 상품 <b>${total}</b>개 중 <b>${withHit}</b>개가 앞뒤 ${st.win}일 안에 경쟁사에서 방송</span><span class="note">상품명이 거의 같은 NS 방송은 한 줄로 묶었습니다. 보험·서비스는 뺐습니다. 가격 차이는 구성(박스 수·사은품)을 맞추지 않은 단순 비교입니다.</span>`;
+  const dataTo = S.index.to;
+  $('#nsWarn').innerHTML = addDays(st.to, st.win) > dataTo ? `<div class="warnline">${mdw(dataTo)} 이후 경쟁사 편성은 아직 수집 전입니다 (홈쇼핑모아는 앞으로 7일까지만 공개, 먼 날짜일수록 일부만 공개).</div>` : '';
+
+  if (!list.length) { $('#nsList').innerHTML = `<div class="empty"><b>조건에 맞는 NS 상품이 없습니다</b>${st.only ? '"경쟁사 방송이 있는 상품만"을 끄거나 일치 정도를 넓혀 보세요.' : '기간이나 검색어를 바꿔 보세요.'}</div>`; return; }
+  const shown = list.slice(0, st.shown);
+  $('#nsList').innerHTML = shown.map(c => prodHtml(c)).join('') + (list.length > shown.length ? `<div class="more"><button class="btn" id="nsMore">${list.length - shown.length}개 더 보기</button></div>` : '');
+}
+function prodHtml(c) {
+  const r = c.rep, st = S.ns;
+  const open = st.all || st.open.has(c.key);
+  const byLv = {}; for (const m of c.vis) byLv[m.lv] = (byLv[m.lv] || 0) + 1;
+  const counts = LEVELS.filter(l => byLv[l.k]).map(l => `<span class="cnt" style="--c:var(--lv-${l.k})">${esc(l.label)} <span class="mono">${byLv[l.k]}</span></span>`).join('');
+  const airs = c.airs.map(a => `<span class="air ${CH[a.ch].grp}" title="${esc(CH[a.ch].name)}">${mdw(a.d)} ${esc(a.s)}${a.ch === 'nsmallplus' ? ' <span class="quiet">Shop+</span>' : ''}</span>`).join('');
+  const ps = [...new Set(c.airs.map(price).filter(Boolean))];
+  return `<div class="prod ${c.vis.length ? 'has' : ''}" data-key="${esc(c.key)}">
+    <button class="phead" aria-expanded="${open}">
+      <div><div class="pname">${brandKey(r) ? `<span class="br">${esc(r.b)}</span>` : ''}${esc(r.n)}</div>
+        <div class="pmeta">${catHtml(r)}<span class="airs">${airs}</span></div></div>
+      <div class="pside"><span class="price">${ps.length ? ps.map(won).join(' / ') : '가격 미표기'}</span>
+        <span class="counts">${counts || '<span class="none">경쟁사 방송 없음</span>'}</span></div>
+    </button>
+    ${open && c.vis.length ? `<div class="pbody">${matchTable(c)}</div>` : ''}
+  </div>`;
+}
+function matchTable(c) {
+  const nsP = price(c.rep);
+  return `<table class="mt"><thead><tr><th>일치 정도</th><th>채널</th><th>방송일</th><th>NS 기준</th><th>상품명</th><th class="num">판매가</th></tr></thead><tbody>${
+    c.vis.map(m => {
+      const b = m.b, p = price(b);
+      const diff = m.near === 0 ? `<span class="diff same">같은 날</span>` : m.near < 0 ? `<span class="diff before">${-m.near}일 전</span>` : `<span class="diff after">${m.near}일 뒤</span>`;
+      const pd = nsP && p && ['model', 'same', 'similar'].includes(m.lv) ? ((p - nsP) / nsP * 100) : null;
+      const pdh = pd === null || Math.abs(pd) < 0.5 ? '' : `<div class="pd ${pd < 0 ? 'lo' : 'hi'}">NS보다 ${pd < 0 ? '' : '+'}${pd.toFixed(0)}%</div>`;
+      return `<tr><td class="c-lv">${lvTag(m.lv)}</td><td><span class="chn">${chDot(b.ch)}${esc(CH[b.ch].name)}</span></td>
+        <td class="when">${mdw(b.d)} ${esc(b.s)}</td><td>${diff}</td>
+        <td class="nm">${b.u ? `<a href="${esc(b.u)}" target="_blank" rel="noopener">${esc(b.n)}</a>` : esc(b.n)}<div>${catHtml(b)}</div></td>
+        <td class="num">${won(p)}${pdh}</td></tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// ---------- 상품 검색 ----------
+function searchData() {
+  const st = S.s, q = st.q.toLowerCase().replace(/\s/g, '');
+  const from = st.range === 'all' ? '0000' : addDays(S.today, -(+st.range)), to = S.index.to;
+  return S.items.filter(it => it.d >= from && it.d <= to && (st.ch === 'all' || (st.ch === 'ns') === isNS(it.ch))
+    && (!st.cats.size || st.cats.has(it.cat)) && textHit(it, q))
+    .sort((a, b) => b.d.localeCompare(a.d) || b.s.localeCompare(a.s));
+}
+function renderSearch() {
+  const st = S.s;
+  if (!st.q.trim() && !st.cats.size) {
+    $('#sCats').innerHTML = CATS.map(k => `<button class="chip" data-cat="${esc(k)}" aria-pressed="false">${esc(k)}</button>`).join('');
+    $('#sSum').innerHTML = ''; $('#sCh2').innerHTML = '';
+    $('#sList').innerHTML = `<div class="empty"><b>상품명·브랜드·상품군을 입력하거나 대분류를 고르세요</b>예: 마그네슘 → 모든 홈쇼핑의 마그네슘 방송을 날짜순으로 보여줍니다.</div>`;
+    return;
+  }
+  const rows = searchData();
+  const cc = {}; for (const r of rows) cc[r.cat] = (cc[r.cat] || 0) + 1;
+  $('#sCats').innerHTML = CATS.map(k => `<button class="chip" data-cat="${esc(k)}" aria-pressed="${st.cats.has(k)}">${esc(k)}${cc[k] ? ` <span class="n">${cc[k]}</span>` : ''}</button>`).join('');
+  const prods = new Set(rows.map(r => r.ch + '|' + r.n)).size;
+  $('#sSum').innerHTML = `<span>방송 <b>${rows.length}</b>건 · 상품 <b>${prods}</b>개</span><span class="note">${st.range === 'all' ? '보관된 전체 기간' : `최근 ${st.range === '30' ? '1개월' : st.range === '90' ? '3개월' : '1년'}`} (앞으로 7일 편성 포함) · 보관은 ${mdw(S.index.from)}부터</span>`;
+  const byCh = {}; for (const r of rows) byCh[r.ch] = (byCh[r.ch] || 0) + 1;
+  $('#sCh2').innerHTML = CHANNELS.filter(c => byCh[c.id]).sort((a, b) => byCh[b.id] - byCh[a.id]).map(c => `<span class="chbar">${chDot(c.id)}${esc(c.name)} <span class="mono">${byCh[c.id]}</span></span>`).join('');
+  if (!rows.length) { $('#sList').innerHTML = `<div class="empty"><b>찾는 방송이 없습니다</b>다른 표기(예: 콘드로이친 → 관절)나 더 긴 기간으로 찾아보세요.</div>`; return; }
+  const shown = rows.slice(0, st.shown);
+  $('#sList').innerHTML = `<table class="mt"><thead><tr><th>방송일</th><th>채널</th><th>분류</th><th>상품명</th><th class="num">판매가</th></tr></thead><tbody>${shown.map(r => `<tr>
+      <td class="when">${mdw(r.d)} ${esc(r.s)}</td><td><span class="chn">${chDot(r.ch)}${esc(CH[r.ch].name)}</span></td><td>${catHtml(r)}</td>
+      <td class="nm">${r.u ? `<a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.n)}</a>` : esc(r.n)}</td><td class="num">${won(price(r))}</td></tr>`).join('')}</tbody></table>`
+    + (rows.length > shown.length ? `<div class="more"><button class="btn" id="sMore">${rows.length - shown.length}건 더 보기</button></div>` : '');
+}
+
+// ---------- 분류 점검 ----------
+function renderCheck() {
+  const st = S.c, q = st.q.toLowerCase().replace(/\s/g, '');
+  const uniq = new Map();
+  for (const it of S.items) { const k = it.n; const u = uniq.get(k); if (u) u.cnt++; else uniq.set(k, {it, cnt: 1}); }
+  const list = [...uniq.values()];
+  if (st.mode === 'all') {
+    const by = {};
+    for (const {it, cnt} of list) { const c = by[it.cat] ||= {n: 0, g: {}}; c.n += cnt; const g = c.g[it.grp || '—'] ||= {n: 0, est: it.gsrc !== 'dict'}; g.n += cnt; if (it.gsrc === 'dict') g.est = false; }
+    $('#cSum').innerHTML = `<span>보관된 방송 <b>${S.items.length}</b>건의 대분류·상품군</span><span class="note">점선 상자는 사전에 없어 홈쇼핑모아 분류를 그대로 쓴 상품군</span>`;
+    $('#cList').innerHTML = `<div class="catgrid">${CATS.filter(k => by[k]).map(k => `<div class="catbox"><h3>${esc(k)}<span class="mono quiet">${by[k].n}</span></h3><div class="gl">${
+      Object.entries(by[k].g).sort((a, b) => b[1].n - a[1].n).map(([g, v]) => `<span class="g ${v.est ? 'est' : ''}">${esc(g)} <span class="mono quiet">${v.n}</span></span>`).join('')}</div></div>`).join('')}</div>`;
+    return;
+  }
+  const est = list.filter(x => x.it.gsrc !== 'dict' && (!q || x.it.n.toLowerCase().replace(/\s/g, '').includes(q))).sort((a, b) => a.it.cat.localeCompare(b.it.cat) || b.cnt - a.cnt);
+  const dictN = S.items.filter(i => i.gsrc === 'dict').length;
+  $('#cSum').innerHTML = `<span>사전으로 분류된 방송 <b>${(dictN / S.items.length * 100).toFixed(0)}%</b> · 추정·미분류 상품 <b>${est.length}</b>개</span>`;
+  $('#cList').innerHTML = est.length ? `<table class="mt"><thead><tr><th>지금 분류</th><th>홈쇼핑모아 분류</th><th>상품명</th><th class="num">방송</th></tr></thead><tbody>${est.slice(0, 400).map(({it, cnt}) => `<tr>
+    <td>${catHtml(it)}</td><td class="quiet">${esc([it.c1, it.c2, it.c3].filter(Boolean).join(' › ') || '없음')}</td>
+    <td class="nm">${esc(it.n)}</td><td class="num">${cnt}</td></tr>`).join('')}</tbody></table>` : `<div class="empty"><b>추정·미분류 상품이 없습니다</b></div>`;
+}
+
+// ---------- CSV ----------
+function download(name, header, rows) {
+  const cell = v => { const s = String(v ?? ''); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = '﻿' + [header, ...rows].map(r => r.map(cell).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+$('#dlNs').addEventListener('click', () => {
+  const st = S.ns, rows = [];
+  for (const c of nsFiltered()) {
+    const r = c.rep, nsWhen = c.airs.map(a => `${a.d} ${a.s}${a.ch === 'nsmallplus' ? ' (Shop+)' : ''}`).join(' / ');
+    const base = [nsWhen, r.cat, r.grp, r.gsrc === 'dict' ? '' : '추정', brandKey(r) ? r.b : '', r.n, price(r)];
+    if (!c.vis.length) rows.push([...base, '', '', '', '', '', '', '', '']);
+    for (const m of c.vis) rows.push([...base, LEVELS.find(l => l.k === m.lv).label, CH[m.b.ch].name, m.b.d, m.b.s, m.near, m.b.n, price(m.b), m.b.u]);
+  }
+  download(`경쟁사방송_NS${st.from}_${st.to}.csv`, ['NS 방송', '대분류', '상품군', '분류', '브랜드', 'NS 상품명', 'NS 판매가', '일치 정도', '경쟁사', '경쟁사 방송일', '시간', 'NS 기준(일)', '경쟁사 상품명', '경쟁사 판매가', '링크'], rows);
+});
+$('#dlS').addEventListener('click', () => {
+  const rows = searchData().map(r => [r.d, r.s, r.e, CH[r.ch].name, r.cat, r.grp, r.gsrc === 'dict' ? '' : '추정', brandKey(r) ? r.b : '', r.n, price(r), r.u]);
+  download(`방송검색_${S.s.q || '전체'}_${S.today}.csv`, ['방송일', '시작', '끝', '채널', '대분류', '상품군', '분류', '브랜드', '상품명', '판매가', '링크'], rows);
+});
+
+// ---------- events ----------
+let TAB = 'ns';
+function showTab(t) {
+  TAB = t;
+  document.querySelectorAll('.tab').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === t));
+  for (const v of ['ns', 'search', 'check']) $('#v-' + v).hidden = v !== t;
+  history.replaceState(null, '', t === 'ns' ? location.pathname : '#' + t);
+  refresh();
+}
+async function refresh() {
+  if (TAB === 'ns') {
+    const st = S.ns;
+    if (await loadMonths(addDays(st.from, -st.win - 1), addDays(st.to, st.win + 1))) NS_SIG = '';
+    renderNS();
+  } else if (TAB === 'search') {
+    const st = S.s;
+    await loadMonths(st.range === 'all' ? '' : addDays(S.today, -(+st.range)), '');
+    renderSearch();
+  } else {
+    await loadMonths('', '');
+    renderCheck();
+  }
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b) showTab(b.dataset.tab); });
+
+function setWeek(which) {
+  const m = monday(S.today), start = which === 'prev' ? addDays(m, -7) : which === 'next' ? addDays(m, 7) : m;
+  S.ns.from = start; S.ns.to = addDays(start, 6);
+  $('#nsFrom').value = S.ns.from; $('#nsTo').value = S.ns.to;
+  document.querySelectorAll('#nsQuick button').forEach(b => b.setAttribute('aria-pressed', b.dataset.q === which));
+}
+$('#nsQuick').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setWeek(b.dataset.q); S.ns.shown = 60; refresh(); });
+for (const id of ['#nsFrom', '#nsTo']) $(id).addEventListener('change', () => {
+  let f = $('#nsFrom').value, t = $('#nsTo').value; if (!f || !t) return; if (f > t) [f, t] = [t, f];
+  S.ns.from = f; S.ns.to = t; document.querySelectorAll('#nsQuick button').forEach(b => b.setAttribute('aria-pressed', 'false')); refresh();
+});
+segInit($('#nsCh'), b => { S.ns.ch = b.dataset.v; renderNS(); });
+segInit($('#rivalGrp'), b => { S.ns.rival = b.dataset.v; renderNS(); });
+segInit($('#nsSort'), b => { S.ns.sort = b.dataset.v; renderNS(); });
+if (matchMedia('(min-width:761px)').matches) $('#nsFilt').open = true;
+$('#win').addEventListener('change', e => { S.ns.win = +e.target.value; refresh(); });
+$('#nsQ').addEventListener('input', debounce(e => { S.ns.q = e.target.value.trim(); S.ns.shown = 60; renderNS(); }));
+$('#onlyHit').addEventListener('change', e => { S.ns.only = e.target.checked; renderNS(); });
+$('#expandAll').addEventListener('click', e => { S.ns.all = !S.ns.all; S.ns.open.clear(); e.target.textContent = S.ns.all ? '모두 접기' : '모두 펼치기'; renderNS(); });
+$('#nsCats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; const s = S.ns.cats; s.has(b.dataset.cat) ? s.delete(b.dataset.cat) : s.add(b.dataset.cat); renderNS(); });
+$('#nsLv').addEventListener('click', e => { const b = e.target.closest('[data-lv]'); if (!b) return; const s = S.ns.lv; s.has(b.dataset.lv) ? s.delete(b.dataset.lv) : s.add(b.dataset.lv); renderNS(); });
+$('#nsList').addEventListener('click', e => {
+  if (e.target.closest('#nsMore')) { S.ns.shown += 60; renderNS(); return; }
+  if (e.target.closest('a')) return;
+  const h = e.target.closest('.phead'); if (!h) return;
+  const key = h.closest('.prod').dataset.key, st = S.ns;
+  if (st.all) { st.all = false; $('#expandAll').textContent = '모두 펼치기'; for (const c of nsFiltered()) st.open.add(c.key); }
+  st.open.has(key) ? st.open.delete(key) : st.open.add(key);
+  renderNS();
+});
+
+$('#sQ').addEventListener('input', debounce(e => { S.s.q = e.target.value.trim(); S.s.shown = 200; renderSearch(); }, 250));
+segInit($('#sRange'), async b => { S.s.range = b.dataset.v; S.s.shown = 200; await refresh(); });
+segInit($('#sCh'), b => { S.s.ch = b.dataset.v; renderSearch(); });
+$('#sCats').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; const s = S.s.cats; s.has(b.dataset.cat) ? s.delete(b.dataset.cat) : s.add(b.dataset.cat); renderSearch(); });
+$('#sList').addEventListener('click', e => { if (e.target.closest('#sMore')) { S.s.shown += 200; renderSearch(); } });
+
+segInit($('#cMode'), b => { S.c.mode = b.dataset.v; renderCheck(); });
+$('#cQ').addEventListener('input', debounce(e => { S.c.q = e.target.value.trim(); renderCheck(); }));
+
+// ---------- start ----------
+(async () => {
+  try {
+    const [idx, g, c] = await Promise.all([fetch('archive/index.json', {cache: 'no-cache'}).then(r => r.json()), getText('scm/dict/groups.csv'), getText('scm/dict/categories.csv')]);
+    S.index = idx; S.dict = loadDict(g, c);
+    const at = new Date(idx.sourceUpdatedAt || idx.updatedAt);
+    $('#meta').textContent = `편성 수집 ${at.toLocaleString('ko-KR', {timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'})} · 보관 ${mdw(idx.from)}~${mdw(idx.to)} · 홈쇼핑모아 기준`;
+    setWeek('this');
+    const t = location.hash.slice(1);
+    showTab(['search', 'check'].includes(t) ? t : 'ns');
+  } catch (err) {
+    console.error(err);
+    $('#nsList').innerHTML = `<div class="empty"><b>데이터를 불러오지 못했습니다</b>잠시 뒤 새로고침해 주세요. (${esc(err.message)})</div>`;
+    $('#meta').textContent = '';
+  }
+})();
+</script>
+</body>
+</html>
