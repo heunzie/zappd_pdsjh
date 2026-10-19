@@ -61,6 +61,9 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 .spacer{flex:1}
 .datepick{display:flex;align-items:center;gap:8px}
 .datepick{min-width:0;max-width:100%}
+.minibtn{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:4px 9px;font-size:12px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.minibtn:hover{color:var(--ink)}
+.minibtn.hot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 .dstrip{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;min-width:0}
 .dstrip::-webkit-scrollbar{display:none}
 .dchip{border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:3px 9px;font-size:12.5px;white-space:nowrap;display:flex;flex-direction:column;align-items:center;line-height:1.25;min-width:46px}
@@ -330,6 +333,8 @@ tbody tr:hover td{background:var(--surface-2)}
     <span class="spacer"></span>
     <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><input type="date" id="dPick" aria-label="날짜 직접 고르기" title="지난 날짜 찾기"><select id="dateSel" hidden></select></div>
     <span class="meta" id="collected"></span>
+    <button class="minibtn hot" id="newData" hidden title="새 수집 결과를 불러와요">새 데이터 반영</button>
+    <a class="minibtn" id="runNow" hidden href="https://github.com/heunzie/zappd_pdsjh/actions/workflows/collect.yml" target="_blank" rel="noopener" title="GitHub에 로그인한 관리자만 실행할 수 있어요. 열린 화면에서 Run workflow를 누르면 3~4분 뒤 반영돼요.">지금 수집 ↗</a>
   </header>
 
   <div id="emptyState" class="empty">
@@ -696,8 +701,9 @@ async function bootStatic() {
   const get = async p => { const r = await fetch(p + '?t=' + Date.now(), {cache: 'no-store'}); if (!r.ok) throw new Error(r.status); return r.json(); };
   let idx;
   try { idx = await get('data/index.json'); } catch (e) { return false; }
-  const tset = new Set(idx.tdates || []);
-  state.dates = [...new Set([...(idx.dates || []), ...tset])].sort().reverse();
+  let tset = new Set(idx.tdates || []);
+  const applyIndex = i => { idx = i; tset = new Set(i.tdates || []); state.dates = [...new Set([...(i.dates || []), ...tset])].sort().reverse(); };
+  applyIndex(idx);
   if (!state.dates.length) { showEmpty('아직 수집된 편성이 없습니다', '자동 수집이 끝나면 이곳에 표시됩니다.'); return true; }
   const load = async d => {
     state.date = d; fillDates();
@@ -709,6 +715,11 @@ async function bootStatic() {
   $('#dateSel').addEventListener('change', e => { state.luScrolled = false; load(e.target.value); });
   const today = kstNow().date;
   await load(state.dates.includes(today) ? today : state.dates[0]);
+  // manual run link (needs GitHub login) + a quiet check every 2 minutes for a newer collection
+  $('#runNow').hidden = false;
+  let fresh = null;
+  setInterval(async () => { try { const i = await get('data/index.json'); if (i.updatedAt !== idx.updatedAt) { fresh = i; $('#newData').hidden = false; } } catch (e) {} }, 120000);
+  $('#newData').addEventListener('click', async () => { if (!fresh) return; applyIndex(fresh); fresh = null; $('#newData').hidden = true; await load(state.dates.includes(state.date) ? state.date : state.dates[0]); });
   return true;
 }
 async function boot() {
