@@ -188,6 +188,16 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
   .blk.own .pline{font-size:11px}
   .blk.own .pline .big{font-size:12.5px}
   .ep{left:2px;right:2px;padding:3px 5px;font-size:11.5px}
+  /* product names only on phones: time and price come up when a broadcast is tapped */
+  .tl .blk .t, .tl .blk .pline, .tl .blk .chips, .tl .ep .t{display:none}
+  .tl .blk .nm, .tl .blk.own .nm{-webkit-line-clamp:5;font-size:12px;line-height:1.3}
+  .tl .blk.own .nm{font-weight:700}
+  .tl .blk.short .nm, .tl .blk.own.short .nm{-webkit-line-clamp:2}
+  .tl .blk.tiny .nm{-webkit-line-clamp:1}
+  .tl .ep .nm{-webkit-line-clamp:4}
+  .lu-it .tm{display:none}
+  .lu-it{padding:8px 12px}
+  .lu-it .nm{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all;overflow-wrap:anywhere}
 }
 .blk.clash{background:var(--warn-soft);border-color:var(--warn);border-left-color:var(--warn);border-width:2px 2px 2px 3px}
 .blk.near{background:var(--caution-soft);border-color:var(--caution);border-style:dashed;border-left-style:solid;border-left-color:var(--caution)}
