@@ -348,6 +348,19 @@ tbody tr:hover td{background:var(--surface-2)}
 .col.own.flow{position:relative;left:auto;z-index:auto}
 .sw.g{background:color-mix(in srgb,var(--g) 18%,var(--surface));border-left:3px solid var(--g)}
 .epgnow{display:flex;flex-direction:column;gap:4px}
+.col.zapcol .blk{padding-right:38px}
+.zapmark{position:absolute;right:0;width:34px;border-top:2px solid var(--warn);z-index:2;pointer-events:none}
+.zapmark span{position:absolute;right:3px;top:-8px;background:var(--warn);color:#fff;font-family:var(--f-mono);font-size:10px;font-weight:600;padding:0 4px;border-radius:3px;line-height:16px;white-space:nowrap}
+.zaplist{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.zg{display:grid;grid-template-columns:52px 38px minmax(0,1fr);gap:4px 8px;padding:8px 12px;border-bottom:1px solid var(--line);font-size:12.5px;align-items:baseline}
+.zg:last-child{border-bottom:0}
+.zg.big{background:color-mix(in srgb,var(--warn) 12%,var(--surface))}
+.zg .zt{font-weight:600}
+.zg .zn{font-size:11px;color:var(--muted)}
+.zg.big .zn{color:var(--warn);font-weight:700}
+.zg ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;min-width:0}
+.zg li{overflow-wrap:anywhere}
+@media (max-width:760px){.tl .col.zapcol .blk{padding-right:10px}.zapmark{width:8px;border-top-width:3px}.zapmark span{display:none}.zg{grid-template-columns:44px minmax(0,1fr)}.zg .zn{display:none}}
 .epgnow div{display:grid;grid-template-columns:88px 48px minmax(0,1fr);gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)}
 .epgnow div:last-child{border-bottom:0}
 .epgnow b{font-weight:600}
@@ -645,11 +658,14 @@ function renderEpg(items, keepScroll) {
   for (const c of cols) {
     if (c.hs) {
       const pool = c.pool === 'tc' ? (state.tcAll || []) : items;
-      let hc = `<div class="col ${c.ns ? 'own' + flow : ''}" style="height:calc(${H} * var(--ppm))">${grid()}`;
+      let hc = `<div class="col ${c.ns ? 'own zapcol' + flow : ''}" style="height:calc(${H} * var(--ppm))">${grid()}`;
       for (const it of pool.filter(i => i.ch === c.ch)) {
         const dur = Math.min(it.em, H) - it.sm; const px = dur * 2;
         hc += `<button class="blk ${c.ns ? 'own' : ''} ${px < 96 ? 'short' : ''} ${px < 50 ? 'tiny' : ''}" style="--c:var(--ch-${c.ch});top:calc(${it.sm} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" data-pool="${c.pool}" title="${esc(it.s + '–' + it.e + ' ' + it.n)}"><span class="t">${esc(it.s)}–${esc(it.e)}</span><span class="nm">${esc(it.n)}</span><span class="pline">${it.p ? `<span class="big">${won(best(it))}</span>` : '<span class="more">가격 미표기</span>'}</span></button>`;
       }
+      // zapping moments: minutes when three or more TV channels change programme at once
+      if (c.ns) for (const g of epgSwitches(0, H)) if (g.list.length >= 3)
+        hc += `<div class="zapmark" style="top:calc(${g.min} * var(--ppm))" title="${esc(g.s + ' 채널 전환 ' + g.list.length + '곳: ' + g.list.map(e => e.c.name + ' ' + e.to).join(' / '))}"><span>⇄${g.list.length}</span></div>`;
       html += hc + '</div>'; continue;
     }
     let col = `<div class="col" style="height:calc(${H} * var(--ppm))">${grid()}`;
@@ -671,6 +687,16 @@ function renderEpg(items, keepScroll) {
 }
 $('#epgOrder').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b || b.dataset.o === epgOrder) return; epgOrder = b.dataset.o; try { localStorage.setItem('zap.epgOrder', epgOrder); } catch (er) {} renderEpg(state.tvItems, true); });
 $('#epg').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) openDetail(+b.dataset.idx, b.dataset.pool === 'tc' ? state.tcAll : state.tvItems); });
+// programme changes on the TV channels between two minutes (the moments viewers zap)
+function epgSwitches(from, to) {
+  const ev = [];
+  for (const c of epgRows()) c.rows.forEach((r, k) => {
+    if (r.sm > from && r.sm < to && !isOff(r.t)) ev.push({min: r.sm, s: r.s, c, to: r.t, from: k ? c.rows[k - 1].t : ''});
+  });
+  const byMin = new Map();
+  for (const e of ev.sort((a, b) => a.min - b.min || a.c.no - b.c.no)) { if (!byMin.has(e.min)) byMin.set(e.min, []); byMin.get(e.min).push(e); }
+  return [...byMin.entries()].map(([min, list]) => ({min, s: list[0].s, list}));
+}
 function epgAt(min) {
   return epgRows().map(c => { const r = c.rows.find(x => x.sm <= min && min < x.em); return r && !isOff(r.t) ? {c, r} : null; }).filter(Boolean);
 }
@@ -706,7 +732,8 @@ function openDetail(idx, pool) {
     </dl>
     ${it.u ? `<a class="btn" href="${esc(it.u)}" target="_blank" rel="noopener">상품 페이지 열기 ↗</a>` : ''}
     ${opsHtml}
-    ${(() => { const at = epgAt(it.sm); return at.length ? `<div class="section-h"><h2>방송 시작 시각(${esc(it.s)}) 주요 채널</h2></div><div class="epgnow">${at.map(({c, r}) => `<div><b>${esc(c.name)} <span class="quiet mono">${c.no}</span></b><span class="mono quiet">${esc(r.s)}</span><span>${esc(r.t)}</span></div>`).join('')}</div>` : ''; })()}
+    ${(() => { const sw = epgSwitches(it.sm, it.em); return sw.length ? `<div class="section-h"><h2>방송 중 다른 채널 전환</h2><p>${esc(it.s)}~${esc(it.e)} 사이에 프로그램이 바뀌는 시점이에요. 시청자가 채널을 돌리는 순간입니다.</p></div><div class="zaplist">${sw.map(g => `<div class="zg ${g.list.length >= 3 ? 'big' : ''}"><span class="zt mono">${esc(g.s)}</span><span class="zn">${g.list.length}곳</span><ul>${g.list.map(e => `<li><b>${esc(e.c.name)}</b> <span class="quiet">${esc(e.from || '')}</span> → ${esc(e.to)}</li>`).join('')}</ul></div>`).join('')}</div>` : ''; })()}
+    ${(() => { const at = epgAt(it.sm); return at.length ? `<details class="calm"><summary>방송 시작할 때(${esc(it.s)}) 다른 채널</summary><div class="epgnow" style="margin-top:8px">${at.map(({c, r}) => `<div><b>${esc(c.name)} <span class="quiet mono">${c.no}</span></b><span class="mono quiet">${esc(r.s)}</span><span>${esc(r.t)}</span></div>`).join('')}</div></details>` : ''; })()}
     <div class="section-h"><h2>같은 시간대 다른 홈쇼핑</h2></div>
     <div class="same">${overlap.map(o => `<button class="rv" data-idx="${o.idx}"><span class="who"><b>${chDot(o.ch)}${esc(CHMAP[o.ch].name)}</b><span class="mono">${esc(o.s)}–${esc(o.e)}</span></span><span><span class="nm">${esc(o.n)}</span><br><span class="sub">${esc(comp(o.n).chips.join(' '))}</span></span><span class="px">${o.p ? won(best(o)) : '—'}</span></button>`).join('') || '<p class="quiet">겹치는 방송이 없습니다.</p>'}</div>`;
   $('#sheet').hidden = false; $('#closeSheet').focus();
