@@ -166,6 +166,9 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 .col.own{position:sticky;left:var(--railw,52px);z-index:3;background:color-mix(in srgb,var(--accent-soft) 75%,var(--surface));box-shadow:2px 0 0 var(--accent)}
 .gridline{position:absolute;left:0;right:0;border-top:1px solid var(--line);opacity:.6}
 .gridline.half{border-top-style:dotted;opacity:.35}
+.gridline.midnight{border-top:2px solid var(--muted);opacity:.7}
+.rail .h.nx{color:var(--warn);font-weight:600}
+.lu-ns .nx{font-size:10px;font-weight:700;color:var(--warn);margin-right:4px}
 .blk{position:absolute;left:4px;right:4px;border-radius:6px;background:var(--surface-2);border:1px solid var(--line);border-left:3px solid var(--c);padding:4px 6px;overflow:hidden;text-align:left;display:flex;flex-direction:column;gap:1px;font-size:12px;line-height:1.3;transition:box-shadow .15s}
 .blk:hover{box-shadow:var(--shadow);z-index:2}
 .blk.own{background:var(--surface);border:2px solid var(--accent);border-left:6px solid var(--accent);padding:6px 9px;gap:2px;font-size:13px}
@@ -439,6 +442,10 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const won = n => n ? Math.round(n).toLocaleString('ko-KR') + '원' : '—';
 const toMin = hm => { const [h, m] = (hm || '0:0').split(':').map(Number); return h * 60 + m; };
+// a board day runs past midnight to 02:00 so the late-night home shopping slots (to ~01:20) stay on the same page
+const DAY_END = 26 * 60;
+const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400e3).toISOString().slice(0, 10);
+const hh = hr => String(hr % 24).padStart(2, '0') + ':00';
 const kstNow = () => { const d = new Date(Date.now() + 9 * 3600e3); return {date: d.toISOString().slice(0, 10), min: d.getUTCHours() * 60 + d.getUTCMinutes(), hm: d.toISOString().slice(11, 16)}; };
 // price as sold on the TV broadcast: hsmoa-only coupons and card discounts are left out
 const best = it => it.sp || it.p || 0;
@@ -494,18 +501,21 @@ let unsubDay = null;
 
 // ---------- data prep ----------
 function prep(items, OWN) {
-  const raw = items.filter(i => CHMAP[i.ch]).slice().sort((a, b) => a.ch.localeCompare(b.ch) || a.s.localeCompare(b.s));
+  // items flagged nx come from the next day's file and sit after 24:00
+  const timed = items.filter(i => CHMAP[i.ch]).map(i => {
+    const off = i.nx ? 1440 : 0; const s = toMin(i.s); let e = toMin(i.e); if (!i.e || e <= s) e += 1440; if (e - s > 360) e = s + 60;
+    return {...i, sm: s + off, em: e + off};
+  });
+  const dayEnd = {}; for (const i of timed) if (!i.nx) dayEnd[i.ch] = Math.max(dayEnd[i.ch] || 0, i.em);
+  const raw = timed.filter(i => !i.nx || i.sm >= (dayEnd[i.ch] || 0) - 5).sort((a, b) => a.ch.localeCompare(b.ch) || a.sm - b.sm);
   // one broadcast split into consecutive slots of the same product counts once
   const merged = [];
   for (const i of raw) {
     const last = merged[merged.length - 1];
-    if (last && last.ch === i.ch && last.n === i.n && last.e === i.s) { last.e = i.e; continue; }
+    if (last && last.ch === i.ch && last.n === i.n && last.e === i.s) { last.e = i.e; last.em = i.em; continue; }
     merged.push({...i});
   }
-  return merged.map((i, idx) => {
-    const s = toMin(i.s); let e = toMin(i.e); if (!i.e || e <= s) e += 1440; if (e - s > 360) e = s + 60;
-    return {...i, idx, sm: s, em: e};
-  });
+  return merged.map((i, idx) => ({...i, idx}));
 }
 
 // ---------- shell ----------
@@ -522,19 +532,27 @@ function setView(v) {
 document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
 const h0 = (location.hash || '').slice(1); setView(['lineup', 'timeline', 'epg'].includes(h0) ? h0 : (matchMedia('(max-width:760px)').matches ? 'lineup' : 'epg'));
 
+// minute on the shown board day for "now" (after midnight it is still on yesterday's board until 02:00)
+function nowMin() {
+  const n = kstNow();
+  if (state.date === n.date) return n.min;
+  if (state.date === addDays(n.date, -1) && n.min + 1440 < DAY_END) return n.min + 1440;
+  return null;
+}
 function tick() {
   const n = kstNow(); $('#clock').textContent = n.hm + ' KST';
-  const live = state.date === n.date; const oa = $('#onair');
+  const nm = nowMin(); const live = nm !== null; const oa = $('#onair');
   oa.textContent = live ? 'ON AIR' : 'OFF AIR'; oa.classList.toggle('off', !live);
-  document.querySelectorAll('.nowline').forEach(line => { const hd = line.parentElement && line.parentElement.querySelector('.tl-head'); line.hidden = !live; line.style.top = `calc(${(hd && hd.offsetHeight) || 37}px + ${n.min} * var(--ppm))`; line.querySelector('span').textContent = n.hm; });
+  document.querySelectorAll('.nowline').forEach(line => { const hd = line.parentElement && line.parentElement.querySelector('.tl-head'); line.hidden = !live; line.style.top = `calc(${(hd && hd.offsetHeight) || 37}px + ${nm} * var(--ppm))`; line.querySelector('span').textContent = n.hm; });
 }
 setInterval(tick, 30000); tick();
 
 function render() {
   const tvDoc = state.docs.tv, setDoc = state.docs[state.set];
-  state.tvItems = prep((tvDoc && tvDoc.items) || [], SETS.tv.own);
-  state.tcAll = prep((state.docs.tc && state.docs.tc.items) || [], SETS.tc.own);
-  state.items = state.set === 'tv' ? state.tvItems : prep((setDoc && setDoc.items) || [], OWN);
+  const withNext = (doc, nd) => [...((doc && doc.items) || []), ...((nd && nd.items) || []).filter(i => toMin(i.s) < DAY_END - 1440).map(i => ({...i, nx: 1}))];
+  state.tvItems = prep(withNext(tvDoc, state.docs.tvNext), SETS.tv.own);
+  state.tcAll = prep(withNext(state.docs.tc, state.docs.tcNext), SETS.tc.own);
+  state.items = state.set === 'tv' ? state.tvItems : state.tcAll;
   state.day = setDoc || tvDoc;
   const items = state.items;
   $('#emptyState').hidden = true; $('#app').hidden = false;
@@ -550,11 +568,11 @@ const overlaps = (a, b) => Math.min(a.em, b.em) - Math.max(a.sm, b.sm) > 0;
 function renderLineup(items) {
   const own = items.filter(i => i.ch === OWN).sort((a, b) => a.sm - b.sm);
   const rivals = CH.filter(c => !c.own);
-  const n = kstNow(); const live = state.date === n.date;
+  const nm = nowMin(); const live = nm !== null;
   $('#lineupNote').textContent = `${CHMAP[OWN].name} 방송 ${own.length}건마다 같은 시간에 방송한 경쟁 ${rivals.length}개 채널을 나란히 보여줍니다.`;
   if (!own.length) { $('#lineup').innerHTML = `<p class="quiet">이 날짜에는 ${esc(CHMAP[OWN].name)} 편성이 수집되지 않았습니다.</p>`; return; }
   $('#lineup').innerHTML = own.map(it => {
-    const isNow = live && it.sm <= n.min && n.min < it.em; const past = live && it.em <= n.min;
+    const isNow = live && it.sm <= nm && nm < it.em; const past = live && it.em <= nm;
     const off = offPct(it);
     const nsPrice = it.p ? `<span class="px">${won(best(it))}${off ? ` <span class="off">-${off}%</span>` : ''}</span>` : `<span class="sub">가격 미표기 (상담·렌탈·보험 등)</span>`;
     const rows = rivals.map(c => {
@@ -567,7 +585,7 @@ function renderLineup(items) {
       return `<div class="lu-ch"><div class="who"><span class="wn">${chDot(c.id)}${esc(c.name)}</span>${more}</div><div class="progs">${progs}</div></div>`;
     }).join('');
     return `<article class="lu-row ${isNow ? 'now' : ''} ${past ? 'past' : ''}" ${isNow ? 'id="luNow"' : ''}>
-      <button class="lu-ns" data-idx="${it.idx}"><span class="t">${esc(it.s)}–${esc(it.e)}${isNow ? '<span class="live">지금</span>' : ''}</span><span class="nm">${esc(it.n)}</span>${nsPrice}</button>
+      <button class="lu-ns" data-idx="${it.idx}"><span class="t">${it.nx ? '<span class="nx">익일</span>' : ''}${esc(it.s)}–${esc(it.e)}${isNow ? '<span class="live">지금</span>' : ''}</span><span class="nm">${esc(it.n)}</span>${nsPrice}</button>
       <div class="lu-rv">${rows}</div></article>`;
   }).join('');
   if (state.view === 'lineup') scrollLineup();
@@ -585,16 +603,16 @@ $('#lineup').addEventListener('click', e => {
 
 // ---------- timeline ----------
 function renderTimeline(items) {
-  const H = 24 * 60;
+  const H = DAY_END;
   const w = colW(); const tlEl = $('#tl'); tlEl.style.setProperty('--railw', w.rail + 'px');
   tlEl.style.gridTemplateColumns = `${w.rail}px ` + CH.map(c => c.own ? `minmax(${w.ns}px,${w.narrow ? 0 : 1.6}fr)` : `minmax(${w.col}px,1fr)`).join(' '); tlEl.style.minWidth = `${w.rail + w.ns + (CH.length - 1) * w.col}px`;
   let html = `<div class="tl-head corner">KST</div>` + CH.map(c => `<div class="tl-head ${c.own ? 'own' : ''}">${chDot(c.id)}${esc(c.name)}</div>`).join('');
   let rail = `<div class="rail" style="height:calc(${H} * var(--ppm))">`;
-  for (let hr = 0; hr <= 24; hr++) rail += `<span class="h" style="top:calc(${hr * 60} * var(--ppm))">${String(hr).padStart(2, '0')}:00</span>`;
+  for (let hr = 0; hr <= H / 60; hr++) rail += `<span class="h ${hr >= 24 ? 'nx' : ''}" style="top:calc(${hr * 60} * var(--ppm))">${hh(hr)}</span>`;
   html += rail + '</div>';
   for (const c of CH) {
     let col = `<div class="col ${c.own ? 'own' : ''}" style="height:calc(${H} * var(--ppm))">`;
-    for (let hr = 1; hr < 24; hr++) col += `<div class="gridline" style="top:calc(${hr * 60} * var(--ppm))"></div><div class="gridline half" style="top:calc(${hr * 60 - 30} * var(--ppm))"></div>`;
+    for (let hr = 1; hr < H / 60; hr++) col += `<div class="gridline ${hr === 24 ? 'midnight' : ''}" style="top:calc(${hr * 60} * var(--ppm))"></div><div class="gridline half" style="top:calc(${hr * 60 - 30} * var(--ppm))"></div>`;
     const mine = items.filter(i => i.ch === c.id).sort((a, b) => a.sm - b.sm);
     // slots neither hsmoa nor the channel's own schedule covers
     mine.forEach((it, k) => { const nx = mine[k + 1]; if (nx && nx.sm - it.em >= 20) col += `<div class="gapblk" style="top:calc(${it.em} * var(--ppm) + 1px);height:calc(${nx.sm - it.em} * var(--ppm) - 2px)" title="수집된 편성 정보가 없는 시간">${esc(it.e)}–${esc(nx.s)}<br>편성 정보 없음</div>`; });
@@ -621,9 +639,12 @@ $('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if
 const isOff = t => /방송\s*시간이\s*아닙니다|정파/.test(t);
 function epgRows() {
   const epg = (state.docs.tv && state.docs.tv.epg) || [];
+  const nxt = (state.docs.tvNext && state.docs.tvNext.epg) || [];
   return epg.map(c => {
-    const rows = c.items.map(([s, t, g]) => ({s, t, g, sm: toMin(s)})).sort((a, b) => a.sm - b.sm);
-    rows.forEach((r, i) => { r.em = i + 1 < rows.length ? rows[i + 1].sm : 1440; if (r.em <= r.sm) r.em = r.sm + 30; });
+    const nr = ((nxt.find(x => x.name === c.name) || {}).items || []).map(([s, t, g]) => ({s, t, g, sm: toMin(s) + 1440, nx: 1})).filter(r => r.sm < DAY_END);
+    const rows = [...c.items.map(([s, t, g]) => ({s, t, g, sm: toMin(s)})).sort((a, b) => a.sm - b.sm), ...nr.sort((a, b) => a.sm - b.sm)];
+    const end = nr.length ? DAY_END : 1440;
+    rows.forEach((r, i) => { r.em = i + 1 < rows.length ? rows[i + 1].sm : end; if (r.em <= r.sm) r.em = r.sm + 30; });
     return {...c, rows};
   });
 }
@@ -636,7 +657,7 @@ function renderEpg(items, keepScroll) {
   if (!chans.length) { $('#epg').innerHTML = ''; $('#epgLegend').innerHTML = '<span>이 날짜의 방송 편성표는 아직 수집되지 않았습니다. 다음 자동 수집부터 함께 표시됩니다.</span>'; $('#tab-epg').hidden = false; return; }
   const byNum = epgOrder === 'num';
   $('#epgLegend').innerHTML = '';
-  const H = 24 * 60;
+  const H = DAY_END;
   // NS first (by group) or at channel 2 (by number)
   const cols = byNum
     ? KT_LINEUP.map(([no, kind, id]) => kind === 'epg' ? (chans.find(c => c.name === id) && {...chans.find(c => c.name === id), no}) : {hs: true, pool: kind, ch: id, no, ns: id === SETS.tv.own}).filter(Boolean)
@@ -652,9 +673,9 @@ function renderEpg(items, keepScroll) {
     : c.hs ? `<div class="tl-head"><span style="display:flex;flex-direction:column;min-width:0"><span class="grp">${c.pool === 'tc' ? '데이터홈쇼핑' : '홈쇼핑'}</span><span>${chDot(c.ch)}${esc(CHMAP[c.ch].name)} <span class="kt">${c.no}</span></span></span></div>`
     : `<div class="tl-head ${c.no === 1 || c.no === 3 ? 'adj' : ''}"><span style="display:flex;flex-direction:column;min-width:0"><span class="grp">${esc(c.grp)}</span><span>${esc(c.name)} <span class="kt">${c.no}</span></span></span></div>`).join('');
   let rail = `<div class="rail" style="height:calc(${H} * var(--ppm))">`;
-  for (let hr = 0; hr <= 24; hr++) rail += `<span class="h" style="top:calc(${hr * 60} * var(--ppm))">${String(hr).padStart(2, '0')}:00</span>`;
+  for (let hr = 0; hr <= H / 60; hr++) rail += `<span class="h ${hr >= 24 ? 'nx' : ''}" style="top:calc(${hr * 60} * var(--ppm))">${hh(hr)}</span>`;
   html += rail + '</div>';
-  const grid = () => { let g = ''; for (let hr = 1; hr < 24; hr++) g += `<div class="gridline" style="top:calc(${hr * 60} * var(--ppm))"></div>`; return g; };
+  const grid = () => { let g = ''; for (let hr = 1; hr < H / 60; hr++) g += `<div class="gridline ${hr === 24 ? 'midnight' : ''}" style="top:calc(${hr * 60} * var(--ppm))"></div>`; return g; };
   for (const c of cols) {
     if (c.hs) {
       const pool = c.pool === 'tc' ? (state.tcAll || []) : items;
@@ -718,7 +739,7 @@ function openDetail(idx, pool) {
     <ul class="oplist"><li><span><b>${esc(it.n)}</b></span><span><b>${it.p ? won(best(it)) : '—'}</b></span></li>${ops.map(o => `<li><span>${esc(o.n)}</span><span>${won(opPrice(o))}${o.p && opPrice(o) < o.p ? `<br><span class="was">${won(o.p)}</span>` : ''}</span></li>`).join('')}${oc > ops.length ? `<li><span class="quiet">외 ${oc - ops.length}개</span><span></span></li>` : ''}</ul>` : '') + othersHtml;
   const overlap = pool.filter(o => o.ch !== it.ch && Math.min(o.em, it.em) - Math.max(o.sm, it.sm) > 0).sort((a, b) => ORD[a.ch] - ORD[b.ch]);
   $('#panel').innerHTML = `<button class="x" id="closeSheet">닫기</button>
-    <div style="display:flex;flex-direction:column;gap:6px"><span class="chname">${chDot(it.ch)}${esc(ch.name)} · <span class="mono">${esc(it.s)}–${esc(it.e)}</span></span><h3 id="pTitle">${esc(it.n)}</h3>${chipsHtml(it)}</div>
+    <div style="display:flex;flex-direction:column;gap:6px"><span class="chname">${chDot(it.ch)}${esc(ch.name)} · ${it.nx ? '익일 ' : ''}<span class="mono">${esc(it.s)}–${esc(it.e)}</span></span><h3 id="pTitle">${esc(it.n)}</h3>${chipsHtml(it)}</div>
     ${ladder}
     <dl class="kv">
       ${offPct(it) ? `<dt>할인</dt><dd>정상가 대비 ${offPct(it)}%</dd>` : ''}
@@ -755,7 +776,6 @@ function showEmpty(title, body) {
   el.innerHTML = `<h2>${esc(title)}</h2><p>${esc(body)}</p>`;
 }
 // date strip: two days back through the furthest collected day; older dates via the arrows or the calendar
-const addDays = (d, n) => new Date(Date.parse(d + 'T12:00:00Z') + n * 86400e3).toISOString().slice(0, 10);
 function goDate(d) { if (!d || d === state.date || !state.dates.includes(d)) return; const sel = $('#dateSel'); sel.value = d; sel.dispatchEvent(new Event('change')); }
 function fillDates() {
   $('#dateSel').innerHTML = state.dates.map(d => `<option value="${d}" ${d === state.date ? 'selected' : ''}>${d}</option>`).join('');
@@ -781,8 +801,11 @@ async function bootStatic() {
   if (!state.dates.length) { showEmpty('아직 수집된 편성이 없습니다', '자동 수집이 끝나면 이곳에 표시됩니다.'); return true; }
   const load = async d => {
     state.date = d; fillDates();
-    const [tv, tc] = await Promise.all([get('data/' + d + '.json').catch(() => null), tset.has(d) ? get('data/t-' + d + '.json').catch(() => null) : null]);
-    state.docs = {tv, tc};
+    const nd = addDays(d, 1), has = new Set(idx.dates || []);
+    const [tv, tc, tvNext, tcNext] = await Promise.all([get('data/' + d + '.json').catch(() => null), tset.has(d) ? get('data/t-' + d + '.json').catch(() => null) : null,
+      has.has(nd) ? get('data/' + nd + '.json').catch(() => null) : null, tset.has(nd) ? get('data/t-' + nd + '.json').catch(() => null) : null]);
+    if (state.date !== d) return;
+    state.docs = {tv, tc, tvNext, tcNext};
     if (!tv && !tc) { showEmpty(d + ' 편성을 불러오지 못했습니다', '잠시 후 새로 고쳐 주세요.'); return; }
     render();
   };
