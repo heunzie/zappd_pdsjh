@@ -326,8 +326,8 @@ tbody tr:hover td{background:var(--surface-2)}
 .sheet{position:fixed;inset:0;z-index:50;display:flex;justify-content:flex-end;background:color-mix(in srgb,var(--ink) 30%,transparent)}
 .sheet .panel{width:min(440px,100%);height:100%;background:var(--surface);border-left:1px solid var(--line);box-shadow:var(--shadow);overflow:auto;padding:calc(16px + env(safe-area-inset-top,0px)) 18px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:14px}
 .sheet .panel > *{flex-shrink:0}
-.panel .x{align-self:flex-end;border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:3px 10px}
-.panel h3{margin:0;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
+.zpanel .x,.panel .x{align-self:flex-end;border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:3px 10px}
+.zdin h3,.panel h3{margin:0;font-size:17px;line-height:1.4;overflow-wrap:anywhere}
 .ladder{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:8px;overflow:hidden}
 .ladder div{display:flex;justify-content:space-between;gap:12px;padding:7px 12px;border-bottom:1px solid var(--line);font-size:13px}
 .ladder div:last-child{border-bottom:0;background:var(--accent-soft);font-weight:700}
@@ -372,6 +372,14 @@ tbody tr:hover td{background:var(--surface-2)}
 .zbtns{display:flex;gap:8px;align-items:center;flex-shrink:0}
 .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent);padding:7px 12px;font-size:13px}
 .zsub{margin:0;font-size:12px}
+.ztabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;flex-shrink:0}
+.ztabs button{border:0;background:transparent;padding:8px 14px;font-size:13.5px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.ztabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.zscroll.zdetail{border:0;border-radius:0}
+.zdin > div:first-child .chname,.zdin > div:first-child h3{display:none}
+.ztabs .short{display:none}
+.zdin{max-width:720px;display:flex;flex-direction:column;gap:14px;padding:4px 2px 16px}
+.zb.sel{box-shadow:0 0 0 2px var(--ink);z-index:3}
 .zscroll{overflow:auto;min-height:0;border:1px solid var(--line);border-radius:8px}
 .zgrid{min-width:760px}
 .zr{display:grid;grid-template-columns:var(--zl) minmax(0,1fr);border-bottom:1px solid var(--line);min-height:58px}
@@ -408,7 +416,7 @@ tbody tr:hover td{background:var(--surface-2)}
 .zb .zn{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
 .zpanel{height:100%}
 .zscroll{flex:1}
-@media (max-width:760px){.zoom{padding:0}.zhead{flex-direction:column-reverse;align-items:stretch;gap:8px}.zbadge{display:none}.zbtns{justify-content:flex-end}.zpanel{--zl:84px;border-radius:0;height:100%;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 12px}.zhead h3{font-size:15px}.zl{font-size:11px;padding:4px 6px}.zgrid{min-width:640px}}
+@media (max-width:760px){.zoom{padding:0}.zhead{flex-direction:column-reverse;align-items:stretch;gap:8px}.ztabs .full{display:none}.ztabs .short{display:inline}.ztabs button{padding:8px 10px}.zbadge{display:none}.zbtns{justify-content:flex-end}.zpanel{--zl:84px;border-radius:0;height:100%;padding:calc(12px + env(safe-area-inset-top,0px)) 12px 12px}.zhead h3{font-size:15px}.zl{font-size:11px;padding:4px 6px}.zgrid{min-width:640px}}
 #hovercard{position:fixed;z-index:60;max-width:300px;padding:9px 12px;border-radius:8px;background:#15202a;color:#fff;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 24px rgba(0,0,0,.22);pointer-events:none;font-size:12.5px;line-height:1.4}
 #hovercard .hc-ch{font-size:11px;opacity:.7}
 #hovercard .hc-t{font-weight:600;margin:1px 0 3px}
@@ -657,7 +665,7 @@ function scrollLineup() {
 $('#lineup').addEventListener('click', e => {
   const m = e.target.closest('.lu-more');
   if (m) { const ch = m.closest('.lu-ch'); const open = ch.classList.toggle('all'); m.textContent = open ? '접기' : `+${m.dataset.n}`; return; }
-  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx);
+  const b = e.target.closest('[data-idx]'); if (b) zoomItem(state.items.find(i => i.idx === +b.dataset.idx), state.items, 'detail');
 });
 
 // ---------- timeline ----------
@@ -691,7 +699,7 @@ function renderTimeline(items) {
   const target = Y(nm !== null ? nm - 60 : 6 * 60);
   requestAnimationFrame(() => { sc.scrollTop = target * 2; });
 }
-$('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) openDetail(+b.dataset.idx); });
+$('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) zoomItem(state.items.find(i => i.idx === +b.dataset.idx), state.items, state.set); });
 
 
 // ---------- broadcast schedule (EPG) ----------
@@ -772,7 +780,7 @@ function renderEpg(items, keepScroll) {
 $('#epgOrder').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b || b.dataset.o === epgOrder) return; epgOrder = b.dataset.o; try { localStorage.setItem('zap.epgOrder', epgOrder); } catch (er) {} renderEpg(state.tvItems, true); });
 $('#epg').addEventListener('click', e => {
   const b = e.target.closest('.blk');
-  if (b) { const pool = b.dataset.pool === 'tc' ? state.tcAll : state.tvItems; const it = pool.find(i => i.idx === +b.dataset.idx); if (it) openZoom(it.sm, it.em, {ch: chDot(it.ch) + esc(CHMAP[it.ch].name), n: it.n}, {idx: it.idx, pool}); return; }
+  if (b) { const pool = b.dataset.pool === 'tc' ? state.tcAll : state.tvItems; zoomItem(pool.find(i => i.idx === +b.dataset.idx), pool, 'zap'); return; }
   const ep = e.target.closest('.ep[data-tt]');
   if (ep && matchMedia('(hover: hover)').matches) openZoom(+ep.dataset.sm, +ep.dataset.em, {ch: esc(ep.dataset.tc), n: ep.dataset.tn});
 });
@@ -792,7 +800,7 @@ function epgAt(min) {
 
 // ---------- detail ----------
 let detailPool = null, detailIdx = null;
-function openDetail(idx, pool) {
+function openDetail(idx, pool, asHtml) {
   pool = pool || state.items; detailPool = pool; detailIdx = idx;
   const it = pool.find(i => i.idx === idx); if (!it) return;
   const ORD = Object.fromEntries([...SETS.tv.ch, ...SETS.tc.ch].map((c, i) => [c.id, i]));
@@ -806,9 +814,8 @@ function openDetail(idx, pool) {
   const opsHtml = (ops.length ? `<div class="section-h"><h2>이 방송 시간에 함께 판매</h2><p>홈쇼핑사가 이 방송에 같이 등록한 상품 ${oc}개 · 본상품의 다른 구성뿐 아니라 다른 상품도 섞여 있습니다</p></div>
     <ul class="oplist"><li><span><b>${esc(it.n)}</b></span><span><b>${it.p ? won(best(it)) : '—'}</b></span></li>${ops.map(o => `<li><span>${esc(o.n)}</span><span>${won(opPrice(o))}${o.p && opPrice(o) < o.p ? `<br><span class="was">${won(o.p)}</span>` : ''}</span></li>`).join('')}${oc > ops.length ? `<li><span class="quiet">외 ${oc - ops.length}개</span><span></span></li>` : ''}</ul>` : '') + othersHtml;
   const overlap = pool.filter(o => o.ch !== it.ch && Math.min(o.em, it.em) - Math.max(o.sm, it.sm) > 0).sort((a, b) => ORD[a.ch] - ORD[b.ch]);
-  $('#panel').innerHTML = `<button class="x" id="closeSheet">닫기</button>
+  const html = `
     <div style="display:flex;flex-direction:column;gap:6px"><span class="chname">${chDot(it.ch)}${esc(ch.name)} · ${it.nx ? '익일 ' : ''}<span class="mono">${esc(it.s)}–${esc(it.e)}</span></span><h3 id="pTitle">${esc(it.n)}</h3>${chipsHtml(it)}</div>
-    <button class="btn ghost" id="toZoom">이 시간 겹치는 방송 크게 보기</button>
     ${ladder}
     <dl class="kv">
       ${offPct(it) ? `<dt>할인</dt><dd>정상가 대비 ${offPct(it)}%</dd>` : ''}
@@ -816,7 +823,7 @@ function openDetail(idx, pool) {
       ${it.lp ? `<dt>런칭가</dt><dd class="mono">${won(it.lp)}</dd>` : ''}
       <dt>무이자</dt><dd>${it.ifm ? `최대 ${it.ifm}개월` : '—'}</dd>
       <dt>카드할인</dt><dd>${esc(it.cd || '—')} ${it.cd ? '<span class="quiet">(참고, 가격에는 미반영)</span>' : ''}</dd>
-      <dt>브랜드</dt><dd>${esc(it.b || '—')}</dd>
+      <dt>브랜드</dt><dd>${esc(it.b && !/^no brand/i.test(it.b) ? it.b : '—')}</dd>
       ${it.src === 'o' ? '<dt>출처</dt><dd>홈쇼핑사 공식 편성표 (홈쇼핑모아에 없는 방송이라 가격·구성 정보가 적습니다)</dd>' : ''}
       ${it.pg ? `<dt>프로그램</dt><dd>${esc(it.pg)}</dd>` : ''}
     </dl>
@@ -826,26 +833,34 @@ function openDetail(idx, pool) {
     ${(() => { const at = epgAt(it.sm); return at.length ? `<details class="calm"><summary>방송 시작할 때(${esc(it.s)}) 다른 채널</summary><div class="epgnow" style="margin-top:8px">${at.map(({c, r}) => `<div><b>${esc(c.name)} <span class="quiet mono">${c.no}</span></b><span class="mono quiet">${esc(r.s)}</span><span>${esc(r.t)}</span></div>`).join('')}</div></details>` : ''; })()}
     <div class="section-h"><h2>같은 시간대 다른 홈쇼핑</h2></div>
     <div class="same">${overlap.map(o => `<button class="rv" data-idx="${o.idx}"><span class="who"><b>${chDot(o.ch)}${esc(CHMAP[o.ch].name)}</b><span class="mono">${esc(o.s)}–${esc(o.e)}</span></span><span><span class="nm">${esc(o.n)}</span><br><span class="sub">${esc(comp(o.n).chips.join(' '))}</span></span><span class="px">${o.p ? won(best(o)) : '—'}</span></button>`).join('') || '<p class="quiet">겹치는 방송이 없습니다.</p>'}</div>`;
+  if (asHtml) return html;
+  $('#panel').innerHTML = '<button class="x" id="closeSheet">닫기</button>' + html;
   $('#sheet').hidden = false; $('#closeSheet').focus();
 }
 function closeDetail() { $('#sheet').hidden = true; }
 // one slot blown up: every channel across the slot's time, laid out left to right so names fit
-let zoomSrc = null, zoomArgs = null;
-function openZoom(sm, em, head, src) { zoomSrc = src || null; zoomArgs = [sm, em, head]; renderZoom(); $('#zoom').hidden = false; $('#closeZoom').focus(); }
+let zoomSrc = null, zoomArgs = null, zoomTab = 'zap';
+const ZTABS = [['zap', '재핑 타임라인', '재핑'], ['tv', '경쟁사 홈쇼핑(TV)', '경쟁 TV'], ['tc', '경쟁사 홈쇼핑(데이터)', '경쟁 데이터'], ['detail', '상품 상세', '상세']];
+function openZoom(sm, em, head, src, tab) { zoomSrc = src || null; zoomArgs = [sm, em, head]; zoomTab = tab || 'zap'; if (zoomTab === 'detail' && !src) zoomTab = 'zap'; renderZoom(); $('#zoom').hidden = false; $('#zpanel').scrollTop = 0; }
+// a home shopping broadcast: open the popup on the given tab
+function zoomItem(it, pool, tab) { if (it) openZoom(it.sm, it.em, {ch: chDot(it.ch) + esc(CHMAP[it.ch].name), n: it.n}, {idx: it.idx, pool}, tab); }
 function renderZoom() {
   const [sm, em, head] = zoomArgs; const src = zoomSrc;
   const w0 = Math.max(DAY_START, Math.floor((sm - 10) / 5) * 5), w1 = Math.min(DAY_END, Math.ceil((em + 10) / 5) * 5), W = w1 - w0;
   // every channel as a lane of programmes, home shopping first
-  const hsLanes = (set, pool, grp) => SETS[set].ch.map(c => ({grp, own: c.own, label: `${chDot(c.id)}${esc(c.name)}`,
-    items: (pool || []).filter(i => i.ch === c.id).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs', sub: i.p ? won(best(i)) : '', ch: i.ch}))}));
+  const selIdx = src ? src.idx : -1, selPool = src ? src.pool : null;
+  const hsMap = (pool, ch) => (pool || []).filter(i => i.ch === ch).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs' + (pool === selPool && i.idx === selIdx ? ' sel' : ''), sub: i.p ? won(best(i)) : '', ch: i.ch}));
+  const hsLanes = (set, pool, grp) => SETS[set].ch.map(c => ({grp, own: set === 'tv' && c.own, label: `${chDot(c.id)}${esc(c.name)}`, items: hsMap(pool, c.id)}));
   // same channels and order as the 재핑 타임라인 (TV 편성표); other home shopping channels follow at the end
   const byNum = epgOrder === 'num';
-  const hsItems = (pool, ch) => ((pool === 'tc' ? state.tcAll : state.tvItems) || []).filter(i => i.ch === ch).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs', sub: i.p ? won(best(i)) : '', ch: i.ch}));
-  const lanes = epgCols().map(c => c.hs
+  const hsItems = (pool, ch) => hsMap(pool === 'tc' ? state.tcAll : state.tvItems, ch);
+  const tab = zoomTab;
+  const lanes = tab === 'tv' ? hsLanes('tv', state.tvItems, '').filter(l => !l.own)
+    : tab === 'tc' ? hsLanes('tc', state.tcAll, '')
+    : epgCols().map(c => c.hs
     ? {grp: c.ns && !byNum ? '' : byNum ? '지니TV 번호순' : '홈쇼핑', own: c.ns, label: `${chDot(c.ch)}${esc(CHMAP[c.ch].name)}${byNum ? ` <span class="quiet mono">${c.no}</span>` : ''}`, items: hsItems(c.pool, c.ch)}
     : {grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(c.name)} <span class="quiet mono">${c.no ?? ''}</span>`,
        items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp'}))});
-  if (!byNum) lanes.push(...hsLanes('tv', state.tvItems, '다른 TV홈쇼핑').filter(l => !l.own));
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em);
   const step = W > 150 ? 30 : W > 70 ? 10 : 5;
@@ -862,27 +877,31 @@ function renderZoom() {
     const pct = m => ((Math.min(Math.max(m, w0), w1) - w0) / W * 100).toFixed(3) + '%';
     const bar = x => { const nar = (Math.min(x.b, w1) - Math.max(x.a, w0)) / W < 0.07 ? ' nar' : '';
       return `<div class="${cls(x)}${nar}" style="left:${pct(x.a)};width:calc(${pct(x.b)} - ${pct(x.a)})${x.ch ? `;--c:var(--ch-${x.ch})` : ''}" title="${tipT(x)}">${txt(x)}</div>`; };
-    const nsLane = lanes.find(l => l.own);
+    // NS홈쇼핑 TV is the reference on every tab
+    const nsLane = {label: `${chDot(SETS.tv.own)}${esc(CHMAP[SETS.tv.own].name)}`, items: hsMap(state.tvItems, SETS.tv.own).filter(x => x.b > w0 && x.a < w1)};
     let rows = nsLane ? `<div class="zr own zref"><div class="zl">${nsLane.label}<span class="zbadge">기준</span></div><div class="ztrack">${nsLane.items.map(bar).join('')}</div></div>` : '', g = '';
     for (const l of lanes) {
-      if (l.own && !byNum) continue; if (l.grp !== g) { g = l.grp; if (g) rows += `<div class="zg-h">${esc(g)}</div>`; } rows += `<div class="zr ${l.own ? 'own' : ''}"><div class="zl">${l.label}</div><div class="ztrack">${l.items.map(bar).join('')}</div></div>`; }
+      if (l.own && !(byNum && tab === 'zap')) continue; if (l.grp !== g) { g = l.grp; if (g) rows += `<div class="zg-h">${esc(g)}</div>`; } rows += `<div class="zr ${l.own ? 'own' : ''}"><div class="zl">${l.label}</div><div class="ztrack">${l.items.map(bar).join('')}</div></div>`; }
     const lines = `<div class="zslot" style="left:${pct(sm)};width:calc(${pct(em)} - ${pct(sm)})"></div>` + sw.map(s => `<div class="zsw ${s.list.length >= 3 ? 'big' : ''}" style="left:${pct(s.min)}"></div>`).join('');
-    body = `<div class="zscroll"><div class="zgrid">
+    body = tab === 'detail' ? `<div class="zscroll zdetail"><div class="zdin">${openDetail(src.idx, src.pool, true) || ''}</div></div>` : `<div class="zscroll"><div class="zgrid">
       <div class="zr zaxis"><div class="zl"></div><div class="ztrack">${ticks.map(m => `<span style="left:${pct(m)}">${m2hm(m)}</span>`).join('')}${sw.map(s => `<span class="${s.list.length >= 3 ? 'big' : 'sm'}" style="left:${pct(s.min)}">⇄${s.list.length}</span>`).join('')}</div></div>
       <div class="zbody"><div class="zlines">${lines}</div>${rows}</div></div></div>`;
   }
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
-      <div class="zbtns">${src ? '<button class="btn ghost" id="zDetail">상품 상세</button>' : ''}<button class="x" id="closeZoom">닫기</button></div></div>
-    <p class="quiet zsub">재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요. 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.</p>
+      <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>
+    <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>
+    ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.</p>`}
     ${body}`;
 }
 function closeZoom() { $('#zoom').hidden = true; }
 $('#zoom').addEventListener('click', e => {
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return closeZoom();
-  if (e.target.id === 'zDetail' && zoomSrc) { closeZoom(); openDetail(zoomSrc.idx, zoomSrc.pool); }
+  const t = e.target.closest('[data-zt]'); if (t) { zoomTab = t.dataset.zt; renderZoom(); return; }
+  // 상품 상세: other broadcasts listed there open in the same popup
+  const b = e.target.closest('.zdetail [data-idx]'); if (b && zoomSrc) zoomItem(zoomSrc.pool.find(i => i.idx === +b.dataset.idx), zoomSrc.pool, 'detail');
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
-$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail(); if (e.target.id === 'toZoom') { const it = detailPool.find(i => i.idx === detailIdx); closeDetail(); if (it) openZoom(it.sm, it.em, {ch: chDot(it.ch) + esc(CHMAP[it.ch].name), n: it.n}, {idx: it.idx, pool: detailPool}); return; } const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
+$('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail();  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
 $('#setSeg').addEventListener('click', e => { const b = e.target.closest('[data-set]'); if (!b || b.dataset.set === state.set) return; useSet(b.dataset.set); state.luScrolled = false; closeDetail(); if (state.docs.tv || state.docs.tc) render(); });
