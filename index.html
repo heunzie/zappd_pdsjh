@@ -364,6 +364,11 @@ tbody tr:hover td{background:var(--surface-2)}
 .zg.big .zn{color:var(--warn);font-weight:700}
 .zg ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;min-width:0}
 .zg li{overflow-wrap:anywhere}
+#hovercard{position:fixed;z-index:60;max-width:300px;padding:9px 12px;border-radius:8px;background:#15202a;color:#fff;border:1px solid rgba(255,255,255,.14);box-shadow:0 6px 24px rgba(0,0,0,.22);pointer-events:none;font-size:12.5px;line-height:1.4}
+#hovercard .hc-ch{font-size:11px;opacity:.7}
+#hovercard .hc-t{font-weight:600;margin:1px 0 3px}
+#hovercard .hc-n{font-weight:600;font-size:13.5px;overflow-wrap:anywhere}
+#hovercard .hc-p{margin-top:4px;font-weight:700}
 @media (max-width:760px){.tl .col.zapcol .blk{padding-right:10px}.zapmark{width:8px;border-top-width:3px}.zapmark span{display:none}.zg{grid-template-columns:44px minmax(0,1fr)}.zg .zn{display:none}}
 .epgnow div{display:grid;grid-template-columns:88px 48px minmax(0,1fr);gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)}
 .epgnow div:last-child{border-bottom:0}
@@ -442,6 +447,9 @@ const NEAR_MIN = 120;
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const won = n => n ? Math.round(n).toLocaleString('ko-KR') + '원' : '—';
+const m2hm = m => String(Math.floor(m / 60) % 24).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+// hover card data for a block: channel, start-end with length, full name, price
+const tip = (ch, sm, em, name, price) => `data-tc="${esc(ch)}" data-tt="${m2hm(sm)}–${m2hm(em)} · ${em - sm}분" data-tn="${esc(name)}"${price ? ` data-tp="${esc(price)}"` : ''}`;
 const toMin = hm => { const [h, m] = (hm || '0:0').split(':').map(Number); return h * 60 + m; };
 // a board day runs 01:00 to 02:00 the next day, so the late-night home shopping slots (to ~01:20) stay on the same page;
 // the 01:00-02:00 hour shows on both neighbouring days
@@ -626,7 +634,7 @@ function renderTimeline(items) {
       const own = c.own;
       const cls = ['blk', own ? 'own' : '', px < 96 ? 'short' : '', px < 50 ? 'tiny' : ''].join(' ');
       const price = it.p ? `<span class="pline"><span class="big">${won(best(it))}</span></span>` : `<span class="pline"><span class="more">가격 미표기</span></span>`;
-      col += `<button class="${cls}" style="--c:var(--ch-${c.id});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" title="${esc(it.s + '–' + it.e + ' ' + it.n)}">
+      col += `<button class="${cls}" style="--c:var(--ch-${c.id});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" ${tip(c.name, it.sm, it.em, it.n, it.p ? won(best(it)) : '')}>
         <span class="t">${esc(it.s)}–${esc(it.e)}${it.src === 'o' ? '<span class="src" title="홈쇼핑모아에 없어 홈쇼핑사 공식 편성표에서 가져온 방송">공식</span>' : ''}</span><span class="nm">${esc(it.n)}</span>${price}</button>`;
     }
     html += col + '</div>';
@@ -687,7 +695,7 @@ function renderEpg(items, keepScroll) {
       let hc = `<div class="col ${c.ns ? 'own zapcol' + flow : ''}" style="height:calc(${H - DAY_START} * var(--ppm))">${grid()}`;
       for (const it of pool.filter(i => i.ch === c.ch && i.em > DAY_START)) {
         const dur = Math.min(it.em, H) - Math.max(it.sm, DAY_START); const px = dur * 2;
-        hc += `<button class="blk ${c.ns ? 'own' : ''} ${px < 96 ? 'short' : ''} ${px < 50 ? 'tiny' : ''}" style="--c:var(--ch-${c.ch});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" data-pool="${c.pool}" title="${esc(it.s + '–' + it.e + ' ' + it.n)}"><span class="t">${esc(it.s)}–${esc(it.e)}</span><span class="nm">${esc(it.n)}</span><span class="pline">${it.p ? `<span class="big">${won(best(it))}</span>` : '<span class="more">가격 미표기</span>'}</span></button>`;
+        hc += `<button class="blk ${c.ns ? 'own' : ''} ${px < 96 ? 'short' : ''} ${px < 50 ? 'tiny' : ''}" style="--c:var(--ch-${c.ch});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" data-pool="${c.pool}" ${tip(CHMAP[c.ch].name, it.sm, it.em, it.n, it.p ? won(best(it)) : '')}><span class="t">${esc(it.s)}–${esc(it.e)}</span><span class="nm">${esc(it.n)}</span><span class="pline">${it.p ? `<span class="big">${won(best(it))}</span>` : '<span class="more">가격 미표기</span>'}</span></button>`;
       }
       // zapping moments: minutes when three or more TV channels change programme at once
       if (c.ns) for (const g of epgSwitches(DAY_START, H)) if (g.list.length >= 3)
@@ -697,7 +705,7 @@ function renderEpg(items, keepScroll) {
     let col = `<div class="col" style="height:calc(${H - DAY_START} * var(--ppm))">${grid()}`;
     for (const r of c.rows) {
       const dur = Math.min(r.em, H) - Math.max(r.sm, DAY_START); if (dur <= 0) continue; const px = dur * 2; const off = isOff(r.t);
-      col += `<div class="ep ${off ? 'off' : ''} ${px < 60 ? 'short' : ''} ${px < 36 ? 'tiny' : ''}" style="--g:var(--muted);top:calc(${Y(r.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" title="${esc(r.s + ' ' + r.t)}"><span class="t">${esc(r.s)}</span><span class="nm">${off ? '정파' : esc(r.t)}</span></div>`;
+      col += `<div class="ep ${off ? 'off' : ''} ${px < 60 ? 'short' : ''} ${px < 36 ? 'tiny' : ''}" style="--g:var(--muted);top:calc(${Y(r.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" ${tip(c.name, r.sm, r.em, off ? '정파' : r.t)}><span class="t">${esc(r.s)}</span><span class="nm">${off ? '정파' : esc(r.t)}</span></div>`;
     }
     html += col + '</div>';
   }
@@ -850,6 +858,44 @@ async function boot() {
   }, () => showEmpty('편성 데이터를 읽지 못했습니다', '잠시 후 페이지를 새로 고쳐 주세요.'));
 }
 boot();
+})();
+
+// floating card on hover (desktop) or tap (TV programmes on touch screens)
+(() => {
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const card = document.createElement('div'); card.id = 'hovercard'; card.hidden = true; document.body.appendChild(card);
+  let cur = null, timer = 0;
+  const fill = el => {
+    const d = el.dataset;
+    card.innerHTML = `<div class="hc-ch">${esc(d.tc)}</div><div class="hc-t mono">${esc(d.tt)}</div><div class="hc-n">${esc(d.tn)}</div>${d.tp ? `<div class="hc-p mono">${esc(d.tp)}</div>` : ''}`;
+  };
+  const place = (x, y) => {
+    card.hidden = false;
+    const w = card.offsetWidth, h = card.offsetHeight, vw = innerWidth, vh = innerHeight;
+    let left = x + 14, top = y + 16;
+    if (left + w > vw - 8) left = Math.max(8, x - w - 14);
+    if (top + h > vh - 8) top = Math.max(8, y - h - 12);
+    card.style.left = left + 'px'; card.style.top = top + 'px';
+  };
+  const hide = () => { cur = null; clearTimeout(timer); card.hidden = true; };
+  const hoverable = matchMedia('(hover: hover)');
+  document.addEventListener('pointermove', e => {
+    if (!hoverable.matches || e.pointerType === 'touch') return;
+    const el = e.target.closest && e.target.closest('.tl [data-tt]');
+    if (!el) { if (cur) hide(); return; }
+    if (el !== cur) { cur = el; fill(el); }
+    place(e.clientX, e.clientY);
+  });
+  document.addEventListener('scroll', hide, true);
+  document.addEventListener('pointerdown', e => { if (e.pointerType !== 'touch') hide(); });
+  // touch: TV programmes have no detail sheet, so a tap shows the card for a moment
+  document.addEventListener('click', e => {
+    if (hoverable.matches) return;
+    const el = e.target.closest && e.target.closest('.tl .ep[data-tt]');
+    if (!el) { hide(); return; }
+    fill(el); const b = el.getBoundingClientRect(); place(b.left, b.top + 4);
+    cur = el; clearTimeout(timer); timer = setTimeout(hide, 3500);
+  });
 })();
 </script>
 
