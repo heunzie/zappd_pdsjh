@@ -61,6 +61,8 @@ button{cursor:pointer}
   .bar .tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;max-width:100%}
   .bar .tabs::-webkit-scrollbar{display:none}
   .bar .tab{padding:5px 10px;font-size:12.5px;white-space:nowrap;flex:none}
+  .bar .tab .full{display:none}
+  .bar .tab .short{display:inline}
   .bar .setseg button{padding:4px 10px}
   #view-timeline > .tl-legend, #view-lineup > .tl-legend{display:none}
   .nowline span{font-size:9px;padding:0 3px;top:-8px}
@@ -91,6 +93,7 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 #dPick{position:absolute;inset:0;width:100%;height:100%;opacity:0;border:0;padding:0;margin:0;cursor:pointer}
 .meta{color:var(--muted);font-size:12px}
 .tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tab .short{display:none}
 .tab{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;font-weight:500;font-size:13px;display:flex;gap:6px;align-items:center}
 .tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 .tab .count{font-family:var(--f-mono);font-size:11px;padding:0 6px;border-radius:999px;background:var(--warn);color:#fff}
@@ -437,10 +440,10 @@ tbody tr:hover td{background:var(--surface-2)}
   <header class="bar">
     <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1></div>
     <span class="clock" id="clock">--:--</span>
-    <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV홈쇼핑</button><button data-set="tc" aria-pressed="false">데이터홈쇼핑</button></div>
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
-      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사 홈쇼핑 편성표</button>
+      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg"><span class="full">재핑 타임라인</span><span class="short">재핑</span></button>
+      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline" data-set="tv"><span class="full">경쟁사 홈쇼핑(TV)</span><span class="short">경쟁 TV</span></button>
+      <button class="tab" role="tab" id="tab-timeline-tc" aria-selected="false" data-view="timeline" data-set="tc"><span class="full">경쟁사 홈쇼핑(데이터)</span><span class="short">경쟁 데이터</span></button>
       <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS 기준 비교</button>
     </div>
     <span class="spacer"></span>
@@ -495,7 +498,6 @@ function useSet(k) {
   CH = S.ch; OWN = S.own; CHORD = Object.fromEntries(CH.map((c, i) => [c.id, i]));
   state.chOn = new Set(CH.map(c => c.id));
   document.querySelectorAll('#setSeg [data-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === state.set)));
-  try { localStorage.setItem('zap.set', state.set); } catch (e) {}
 }
 const NEAR_MIN = 120;
 const $ = s => document.querySelector(s);
@@ -559,8 +561,7 @@ const otherOps = it => (it.op || []).filter(o => o.rb && o.rb !== `${it.d}T${it.
 const opCount = it => (it.op || []).some(o => o.rb) ? ownOps(it).length : Math.max(it.opn || 0, (it.op || []).length);
 
 let state = {dates: [], date: null, day: null, docs: {tv: null, tc: null}, items: [], tvItems: [], set: 'tv', view: 'timeline', mode: 'cards', sort: {k: 's', dir: 1}, chOn: new Set()};
-let savedSet = 'tv'; try { savedSet = localStorage.getItem('zap.set') || 'tv'; } catch (e) {}
-useSet(savedSet);
+useSet('tv');
 try { const m = localStorage.getItem('zap.mode'); if (m === 'table' || m === 'cards') state.mode = m; } catch (e) {}
 let unsubDay = null;
 
@@ -584,18 +585,22 @@ function prep(items, OWN) {
 }
 
 // ---------- shell ----------
-function setView(v) {
+// the TV/데이터 split lives in the menu: 경쟁사(데이터) shows data channels, everything else is TV
+function setView(v, set) {
   state.view = v;
-  document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === v)));
+  const want = v === 'timeline' && set === 'tc' ? 'tc' : 'tv';
+  if (want !== state.set) { useSet(want); state.luScrolled = false; if (state.date && state.docs && (state.docs.tv || state.docs.tc)) render(); }
+  document.querySelectorAll('.bar .tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === v && (!t.dataset.set || t.dataset.set === state.set))));
   document.querySelectorAll('[data-view-panel]').forEach(p => p.hidden = p.dataset.viewPanel !== v);
-  try { history.replaceState(null, '', '#' + v); } catch (e) {}
+  try { history.replaceState(null, '', '#' + (v === 'timeline' && state.set === 'tc' ? 'timeline-tc' : v)); } catch (e) {}
   const sc = v === 'timeline' ? $('#tlScroll') : v === 'epg' ? $('#epgScroll') : null;
   if (sc && !sc.dataset.placed && state.date) { sc.dataset.placed = '1'; const n = kstNow(); const nm = nowMin(); sc.scrollTop = Y(nm !== null ? nm - 60 : (v === 'epg' ? 18 : 6) * 60) * 2; }
   if (v === 'lineup') scrollLineup();
   if (state.date && v === 'epg' && epgOrder === 'num') requestAnimationFrame(() => renderEpg(state.tvItems, true));
 }
-document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => setView(t.dataset.view)));
-const h0 = (location.hash || '').slice(1); setView(['lineup', 'timeline', 'epg'].includes(h0) ? h0 : (matchMedia('(max-width:760px)').matches ? 'lineup' : 'epg'));
+document.querySelectorAll('.bar .tab').forEach(t => t.addEventListener('click', () => setView(t.dataset.view, t.dataset.set)));
+const h0 = (location.hash || '').slice(1);
+if (h0 === 'timeline-tc') setView('timeline', 'tc'); else setView(['lineup', 'timeline', 'epg'].includes(h0) ? h0 : (matchMedia('(max-width:760px)').matches ? 'lineup' : 'epg'));
 
 // minute on the shown board day for "now" (after midnight it is still on yesterday's board until 02:00)
 function nowMin() {
@@ -671,6 +676,8 @@ $('#lineup').addEventListener('click', e => {
 // ---------- timeline ----------
 function renderTimeline(items) {
   const H = DAY_END;
+  const CH = state.set === 'tc' ? [{...CHMAP[SETS.tv.own], own: true, pool: 'tv'}, ...SETS.tc.ch.map(c => ({...c, own: false}))] : SETS.tv.ch;
+  const poolOf = c => c.pool === 'tv' ? state.tvItems : items;
   const w = colW(); const tlEl = $('#tl'); tlEl.style.setProperty('--railw', w.rail + 'px');
   tlEl.style.gridTemplateColumns = `${w.rail}px ` + CH.map(c => c.own ? `minmax(${w.ns}px,${w.narrow ? 0 : 1.6}fr)` : `minmax(${w.col}px,1fr)`).join(' '); tlEl.style.minWidth = `${w.rail + w.ns + (CH.length - 1) * w.col}px`;
   let html = `<div class="tl-head corner">KST</div>` + CH.map(c => `<div class="tl-head ${c.own ? 'own' : ''}">${chDot(c.id)}${esc(c.name)}</div>`).join('');
@@ -680,7 +687,7 @@ function renderTimeline(items) {
   for (const c of CH) {
     let col = `<div class="col ${c.own ? 'own' : ''}" style="height:calc(${H - DAY_START} * var(--ppm))">`;
     for (let hr = DAY_START / 60 + 1; hr < H / 60; hr++) col += `<div class="gridline ${hr === 24 ? 'midnight' : ''}" style="top:calc(${Y(hr * 60)} * var(--ppm))"></div><div class="gridline half" style="top:calc(${Y(hr * 60 - 30)} * var(--ppm))"></div>`;
-    const mine = items.filter(i => i.ch === c.id && i.em > DAY_START).sort((a, b) => a.sm - b.sm);
+    const mine = poolOf(c).filter(i => i.ch === c.id && i.em > DAY_START).sort((a, b) => a.sm - b.sm);
     // slots neither hsmoa nor the channel's own schedule covers
     mine.forEach((it, k) => { const nx = mine[k + 1]; if (nx && nx.sm - it.em >= 20) col += `<div class="gapblk" style="top:calc(${Y(it.em)} * var(--ppm) + 1px);height:calc(${nx.sm - it.em} * var(--ppm) - 2px)" title="수집된 편성 정보가 없는 시간">${esc(it.e)}–${esc(nx.s)}<br>편성 정보 없음</div>`; });
     for (const it of mine) {
@@ -688,7 +695,7 @@ function renderTimeline(items) {
       const own = c.own;
       const cls = ['blk', own ? 'own' : '', px < 96 ? 'short' : '', px < 50 ? 'tiny' : ''].join(' ');
       const price = it.p ? `<span class="pline"><span class="big">${won(best(it))}</span></span>` : `<span class="pline"><span class="more">가격 미표기</span></span>`;
-      col += `<button class="${cls}" style="--c:var(--ch-${c.id});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" ${tip(c.name, it.sm, it.em, it.n, it.p ? won(best(it)) : '')}>
+      col += `<button class="${cls}" style="--c:var(--ch-${c.id});top:calc(${Y(it.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" data-idx="${it.idx}" data-pool="${c.pool || state.set}" ${tip(c.name, it.sm, it.em, it.n, it.p ? won(best(it)) : '')}>
         <span class="t">${esc(it.s)}–${esc(it.e)}${it.src === 'o' ? '<span class="src" title="홈쇼핑모아에 없어 홈쇼핑사 공식 편성표에서 가져온 방송">공식</span>' : ''}</span><span class="nm">${esc(it.n)}</span>${price}</button>`;
     }
     html += col + '</div>';
@@ -699,7 +706,7 @@ function renderTimeline(items) {
   const target = Y(nm !== null ? nm - 60 : 6 * 60);
   requestAnimationFrame(() => { sc.scrollTop = target * 2; });
 }
-$('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) zoomItem(state.items.find(i => i.idx === +b.dataset.idx), state.items, state.set); });
+$('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (!b) return; const pool = b.dataset.pool === 'tv' ? state.tvItems : state.tcAll; zoomItem(pool.find(i => i.idx === +b.dataset.idx), pool, state.set); });
 
 
 // ---------- broadcast schedule (EPG) ----------
@@ -904,7 +911,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom();
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail();  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
-$('#setSeg').addEventListener('click', e => { const b = e.target.closest('[data-set]'); if (!b || b.dataset.set === state.set) return; useSet(b.dataset.set); state.luScrolled = false; closeDetail(); if (state.docs.tv || state.docs.tc) render(); });
 
 $('#dStrip').addEventListener('click', e => { const b = e.target.closest('[data-d]'); if (b) goDate(b.dataset.d); });
 $('#dPrev').addEventListener('click', () => { const a = [...state.dates].sort(); goDate(a[a.indexOf(state.date) - 1]); });
