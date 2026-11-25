@@ -1,0 +1,352 @@
+{
+ "at": "2026-11-25T07:00:51.889Z",
+ "date": "2026-11-26",
+ "fetch": {
+  "kbs2_api": {
+   "url": "https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=12&program_planned_date_from=20261126&program_planned_date_to=20261126",
+   "status": 200,
+   "final": "https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=12&program_planned_date_from=20261126&program_planned_date_to=20261126",
+   "type": "application/json; charset=utf-8",
+   "bytes": 41476,
+   "hasMBNshow": false
+  },
+  "kbs1_api": {
+   "url": "https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=11&program_planned_date_from=20261126&program_planned_date_to=20261126",
+   "status": 200,
+   "final": "https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=11&program_planned_date_from=20261126&program_planned_date_to=20261126",
+   "type": "application/json; charset=utf-8",
+   "bytes": 44984,
+   "hasMBNshow": false
+  },
+  "sbs_json": {
+   "url": "https://static.cloud.sbs.co.kr/schedule/2026/11/26/SBS.json",
+   "status": 200,
+   "final": "https://static.cloud.sbs.co.kr/schedule/2026/11/26/SBS.json",
+   "type": "application/json",
+   "bytes": 14592,
+   "hasMBNshow": false
+  },
+  "naver_mbn": {
+   "url": "https://search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "status": 200,
+   "final": "https://search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "type": "text/html; charset=UTF-8",
+   "bytes": 1209996,
+   "hasMBNshow": true
+  },
+  "naver_mbn_m": {
+   "url": "https://m.search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "status": 200,
+   "final": "https://m.search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "type": "text/html; charset=UTF-8",
+   "bytes": 996075,
+   "hasMBNshow": true
+  },
+  "mbc_ctl": {
+   "url": "https://control.imbc.com/Schedule/PCONTENT?sDate=20261126&sType=TV",
+   "status": 404,
+   "final": "https://control.imbc.com/Schedule/PCONTENT?sDate=20261126&sType=TV",
+   "type": "text/html; charset=utf-8",
+   "bytes": 1736,
+   "hasMBNshow": false
+  }
+ },
+ "pages": {
+  "naver_mbn_page": {
+   "url": "https://search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "status": 200,
+   "final": "https://search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+   "textBytes": 10723,
+   "reqs": [
+    "GET https://search.naver.com/search.naver?query=MBN%20%ED%8E%B8%EC%84%B1%ED%91%9C",
+    "GET https://nam.veta.naver.com/nac/1",
+    "GET https://s.search.naver.com/p/qra/1/search.naver?abt=&api_type=nd&enc_pageid=IggCADeCULiHAAAA5nNwF5d2jsCyBiQaQQRgxIU%2BBsCr5zK2TyjBbRuvdA8%3D&enlu_query=IggCABuDULiVAAAACIMVzvrsoLy0KkEH3aJNFKHydtXxpDgyExfmdy4Qj9RI1pxpiWlZk9OLlHkOHTAjCDMjfNRy2z29OGEBCalLHT4tfVfZYJw%2FZ24c2Urm12jsxrxO%2BQg5Bh1S%2BZz3eU",
+    "GET https://static-feedback.pstatic.net/css/like/BASIC/cdb8bc64-c6c9-4496-b9b2-14a8b56b295b/9a472b98-a461-4406-8cab-5903b4da8029/BASIC.css",
+    "GET https://static-feedback.pstatic.net/css/like/NCOSCHEDULE/1d8b18f4-3ddd-4651-aa1c-3f618a137696/6618bfe2-167c-4b84-80d6-f67c970af2d3/NCOSCHEDULE.css"
+   ]
+  },
+  "kbs": {
+   "url": "https://schedule.kbs.co.kr/index.html?source=episode&sname=schedule&stype=table&ch_code=11",
+   "status": 200,
+   "final": "https://schedule.kbs.co.kr/index.html?source=episode&sname=schedule&stype=table&ch_code=11&search_day=20261125",
+   "textBytes": 4651,
+   "reqs": [
+    "GET https://schedule.kbs.co.kr/index.html?source=episode&sname=schedule&stype=table&ch_code=11",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "GET https://cm.g.doubleclick.net/partnerpixels?gdpr=0&url=https%3A%2F%2Fschedule.kbs.co.kr%2Findex.html%3Fsource%3Depisode%26sname%3Dschedule%26stype%3Dtable%26ch_code%3D11",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWh2ITQSlyfqp0BI-VfFVY6SJkzpaMxGTDyE8jNN_WqCLvzwJq1umpK6krrpPBqYXWYxCL-jqS1MKibHBwsjHhvSrMp8e-7tnI0gqGNGm2r5ZpZZNAQq2NVTZsCY9WC_AavQX5aqA==",
+    "GET https://pwwwapi.kbs.co.kr/api/v1/user/info",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "GET https://static.kbs.co.kr/advertisement/ad_config.json",
+    "GET https://pwwwapi.kbs.co.kr/api/v1/user/info?_=1795590062231",
+    "GET https://cfpwwwapi.kbs.co.kr/api/v2/landing?source=plus&sname=main&stype=common_header&page_type=P",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "POST https://stat.kbs.co.kr/weblog",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWfIAMf5g4VNTMq5ZgM7jT31hEnagkEkGUaEROJi1EdNzV97CI29jeV1d7380pRRkHYOqU7I5LnZd1s2fbX7vAV5pz9rJoRklu9HbTlMfzJrW3lv7_7ogcCAu0PwVahUpJVVVPzqg==",
+    "POST https://www.google-analytics.com/j/collect?v=1&_v=j102&a=1636824026&t=pageview&_s=1&dl=https%3A%2F%2Fschedule.kbs.co.kr%2Findex.html%3Fsource%3Depisode%26sname%3Dschedule%26stype%3Dtable%26ch_code%3D11&ul=ko-kr&dt=TV%20%ED%8E%B8%EC%84%B1%ED%91%9C%20%7C%20%EB%94%94%EC%A7%80%ED%84%B8%20KBS&sr=1280x720",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-VQT8S2ZVPW&gtm=45je6bh1v874690402za208zd874690402xf1&_p=1795590062912&_gaz=1&gcs=G1--&gcd=13l3l3l3l5l1&npa=0&dma=0&tcfd=10000&_eu=AAAAAGA&are=1&cid=1896346248.1795590063&frm=0&pscdl=noapi&rcb=11&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW_q-VHFCzQ0D6GFuP5o8ChEQV1mmLAtlH3nY6OLilpm-PqSkGUA0RcBq4GcnmISkVLfEZFSE8hi4LHD_tiTecNnUOR91OnPHwkzQ7dahxx7SgikFTC3tiMRtbtR794puhDvxGX_A==",
+    "POST https://i.clarity.ms/collect",
+    "GET https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?local_station_code=00&channel_code=11%2C12%2C14&program_planned_date_from=20261125&program_planned_date_to=20261125",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gpt&tv=m202611120201&st=env&sjk=4188636383449572",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=4188636383449572&correlator=360714184322987&eid=122882284%2C122881324%2C95401809&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fifs&gdpr=0&iu_parts=22056527556%2Ckbsguide%2CKbsguideright&enc_prev_ius=%2F0%2F1%2C%2F0%2F2&prev_iu_szs=160x60",
+    "GET https://a6fc8eebf78a7d07d71567a8e9d0edba.safeframe.googlesyndication.com/safeframe/1-0-45/html/container.html",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsuMxFTu952fXs1q64ntKQhED7GX64ftT-UyW7OGQzoZyFq8xZ6aIRL-tVlR8GhQQFj-VdbfXiDGqUUNbV4RFNaM4CIRiscvTmcXjbUdCAVJ4pm2p0c_ObQqzLKcc50T3unqHM0aLTyOBp6jo2t-NCjy1RqZ6gXZMgyQ5ztyxn2gmWSKgxoIFlWXdiZIviZR4o4jOeTBaEaoT23ZFAx7KZt9GSxxJMBda_4G16ymLojzuaZvoQWK",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsucdweUHsuVQ4Iru-uabhii1NF4MHljGOpAswkpahMT49qi3QflmUtEEaOtqzkCGJMQQmbDOlGXdMd-0hS2CT2evGp24kzAinfG6Z_71ejYpq_pHBlOW2muAu8h_zpPglEpPEYOzZWrHm4wgFSd2KkWQA_Qq5Xkif8tUfP0mMvkHqU02eLaT3g01DERcANNHGMGljbhNL04pVqvIOTGhn21dw-4qJkwAZTwqIGq4mmPPY1r6mpV",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=colleague-executed&name=4",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=reach&proto=CAlgAWgD",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=colleague-executed&name=4",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=reach&proto=CAlgAWgD",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsvCQfXja_y6Sn-nmsy_ePoV6hWdxZyyzXMak6PVOUYsBopZv3hgzO4_kAHiXJErHjH6eGIBwY7Vu6Xh5-cdz-WY4HE_fwjqTiOwOYRhcH52UExdel6l5MzhqvHEU_UEsa2oRwTsCRObUOOR_6vk0nG87LE4eKOF8soTfsi1CJRmsti9khXYW7Uip1ZxNKX6peR1QPT0Dyt-oGYTm5XiMrVJNOL91Lrqv9bIftvJtP1VBdKNRkwG",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsvGHuGSLfdHzc7Btqu034a3y9W3IXiYXNelt8WKNdC2sq6o3KHIFqxOaL7uL_w54Lap6qJyLzxrSSViv3p1QI9NrsV1wW0ZQjto6vh5biho3wnGtvnm1aYNa3lP22_ZTvvwodPkW20BoXLST0igZmrDqE6BNyxaggBEtxvroXANoJwDD0JlNrBMVr3U-41DZ_IX7iKaFaTpUPkH2PG6Wqbd8QhJCQlygbvWAaDfdsnijM8akeGw",
+    "GET https://googleads.g.doubleclick.net/pagead/html/r20261118/r20190131/zrt_lookup_fy2021.html",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?gdpr=0&client=ca-pub-7538848195433103&output=html&adk=1812271804&adf=2751417941&abgtt=6&lmt=1795590063&plaf=1%3A2%2C2%3A2%2C7%3A2&plat=1%3A128%2C2%3A128%2C3%3A128%2C4%3A128%2C8%3A128%2C9%3A32%2C16%3A8388608%2C17%3A32%2C24%3A32%2C25%3A32%2C30%3A1081344%2",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?gdpr=0&client=ca-pub-7538848195433103&output=html&h=600&slotname=4513225534&adk=3978730217&adf=1346086464&pi=t.ma~as.4513225534&abgtt=6&w=160&fwrn=3&lmt=1795590063&format=160x600&url=https%3A%2F%2Fschedule.kbs.co.kr%2Findex.html%3Fsource%3Depisode%26sna",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gda&tv=r20261118&st=env&sjk=8212299441785394",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?gdpr=0&client=ca-pub-7538848195433103&output=html&adk=1812271804&adf=3279755404&abgtt=6&lmt=1795590064&plaf=1%3A2%2C2%3A2%2C7%3A2&plat=1%3A128%2C2%3A128%2C3%3A128%2C4%3A128%2C8%3A128%2C9%3A32%2C16%3A8388608%2C17%3A32%2C24%3A32%2C25%3A32%2C30%3A1081344%2",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?gdpr=0&client=ca-pub-7538848195433103&output=html&h=600&slotname=4513225534&adk=3978730217&adf=300593992&pi=t.ma~as.4513225534&abgtt=6&w=160&fwrn=3&lmt=1795590064&format=160x600&url=https%3A%2F%2Fschedule.kbs.co.kr%2Findex.html%3Fsource%3Depisode%26snam",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gda&tv=r20261118&st=env&sjk=3744532128400366",
+    "POST https://i.clarity.ms/collect",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "POST https://pagead2.googlesyndication.com/pagead/ping?e=1",
+    "POST https://i.clarity.ms/collect",
+    "POST https://pagead2.googlesyndication.com/pagead/ping?e=1",
+    "POST https://i.clarity.ms/collect"
+   ]
+  },
+  "mbc": {
+   "url": "https://schedule.imbc.com/",
+   "status": 200,
+   "final": "https://schedule.imbc.com/",
+   "textBytes": 1490,
+   "reqs": [
+    "GET https://schedule.imbc.com/",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-JL4VZVXJ8D&gtm=45je6bh1v9122562000za208zd9122562000xf1&_p=1795590071377&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&are=1&cid=1120989253.1795590072&frm=0&pscdl=noapi&rcb=7&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA",
+    "GET https://www.imbc.com/commons/ad/ad728_D.html",
+    "GET https://www.imbc.com/commons/ad/ad728_D.html",
+    "GET https://cm.g.doubleclick.net/partnerpixels?url=https%3A%2F%2Fwww.imbc.com%2Fcommons%2Fad%2Fad728_D.html",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=7706246982701094&correlator=4183170762879854&eid=95408119%2C95410729%2C122881323%2C31065644%2C31087490&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fifs&iu_parts=22823152358%2Cpcweb_banner_%EC%A0%95%ED%98%95%2Cpcweb_banner_list_728x90_st",
+    "GET https://8c7cc14835e2943278d3be84af9f4f69.safeframe.googlesyndication.com/safeframe/1-0-45/html/container.html?n=1",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gpt&tv=m202611120201&st=env&sjk=7706246982701094",
+    "GET https://datacollect.imbc.com:9320/nlog/log/event?v=545390506&s=schedule&u=https%3A%2F%2Fschedule.imbc.com%2F&a=Mozilla%2F5.0%20(Macintosh%3B%20Intel%20Mac%20OS%20X%2010_15_7)%20AppleWebKit%2F537.36%20(KHTML%2C%20like%20Gecko)%20Chrome%2F129.0%20Safari%2F537.36&c=nth_locale_lang%3Dko%3B%20nth_locale_",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjsvjd9vZjnUmWzLK4emnACART3iOjDSQhpn1HvSaLKCWlL300cxwP9R84sueOWfkaM-BgD_RicS-Q-0zCRvWZk-d9K4fGeBlGvKV6nu0VPWx2oIlP6aj2KUgvI6GjZ4bpaJrQuSUpUM2fFOMoTAwbwkuGf86m9eXX1HR9zG7uluzzKnMDoUjqsvDprAdE5GCFTN0d-fGh19GZOFXIcRdmL5xl1pfb2Wy3jGUf205IRMXUgyhEPWb",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=colleague-executed&name=4",
+    "GET https://pagead2.googlesyndication.com/pagead/gen_204?id=av-js&type=reach&proto=CAlgAWgD",
+    "GET https://securepubads.g.doubleclick.net/pcs/view?xai=AKAOjssfeNDtFm0ebAKAAf1wT8UpFTOPfYrlBTC1xYLEf_8CjyrnloryPrap8hngDB_nx9BqVoX8ZY5Et2N5JXtVal3YPgDxnqyc8vrswd9RfDgfX8tla3PWjJdYm-w7MpZA31mcnIbz7Xo5aAsv21Xv7YELmY6rfVcn57bJ2kWCCWPeCYZbRmL-P5xeNkX0juXhJSITJeBkSzME1lBdWcWlkh3O1Y4RxzQRf8lmv2z_9MhUdnTmtnsH",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-JL4VZVXJ8D&gtm=45je6bh1v9122562000za200zd9122562000xf1&_p=1795590071377&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AEAAAGQ&ae=a&are=1&cid=1120989253.1795590072&frm=0&pscdl=noapi&rcb=7&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA%2"
+   ]
+  },
+  "sbs": {
+   "url": "https://www.sbs.co.kr/schedule/index.html",
+   "status": 200,
+   "final": "https://www.sbs.co.kr/schedule/index.html",
+   "textBytes": 2549,
+   "reqs": [
+    "GET https://www.sbs.co.kr/schedule/index.html",
+    "GET https://www.sbs.co.kr/json/main/gnb/search_keyword.json?d=20261125",
+    "GET https://www.sbs.co.kr/json/main/notice/list_new.json",
+    "GET https://static.cloud.sbs.co.kr/schedule/2026/11/25/SBS.json?_=1795590078424",
+    "GET https://www.sbs.co.kr/pc/main/ad/main_right_web.html",
+    "GET https://www.sbs.co.kr/main/ad/main_right_web.html",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-89Z6K9WP1K&gtm=45je6bh1v898813420za208zd898813420xf1&_p=1795590081507&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&are=1&cid=758168865.1795590082&frm=0&pscdl=noapi&rcb=3&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA%25",
+    "POST https://www.google.com/measurement/conversion?random=1795590081605&cv=11&tid=G-L9E7Y63ZNE&fst=1795590081605&fmt=8&en=session_start&gtm=45je6bh1v899111357za208zd899111357xecxf1&gcd=13l3l3l3l1l1&dma=0&tag_exp=115938466~115938468~120213116~120385423~120469145~120469153~121246026~121246034&u_w=1280&u_h=",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-L9E7Y63ZNE&gtm=45je6bh1v899111357za208zd899111357xf1&_p=1795590081507&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGAC&_prs=ok&are=1&cid=758168865.1795590082&frm=0&pscdl=noapi&rcb=10&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNo",
+    "GET https://www.sbs.co.kr/pc/main/ad/main_middle_web.html",
+    "GET https://www.sbs.co.kr/main/ad/main_middle_web.html",
+    "GET https://googleads.g.doubleclick.net/pagead/html/r20261118/r20190131/zrt_lookup_fy2021.html",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-5467553313646187&output=html&adk=1812271804&adf=3279755397&abgtt=6&plaf=1%3A2%2C2%3A2%2C7%3A2&plat=1%3A128%2C2%3A128%2C3%3A128%2C4%3A128%2C8%3A128%2C9%3A32%2C16%3A8388608%2C17%3A32%2C24%3A32%2C25%3A32%2C30%3A1081344%2C32%3A32%2C41%3A32%2C4",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-5467553313646187&output=html&h=600&slotname=4460796592&adk=758661990&adf=1223260629&pi=t.ma~as.4460796592&abgtt=6&w=120&fwrn=3&format=120x600&url=https%3A%2F%2Fwww.sbs.co.kr%2Fschedule%2Findex.html&aiof=14&asro=0&aimartd=4&aieuf=1&aicrs=1&",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-5467553313646187&output=html&adk=1812271804&adf=3279755399&abgtt=6&plaf=1%3A2%2C2%3A2%2C7%3A2&plat=1%3A128%2C2%3A128%2C3%3A128%2C4%3A128%2C8%3A128%2C9%3A32%2C16%3A8388608%2C17%3A32%2C24%3A32%2C25%3A32%2C30%3A1081344%2C32%3A32%2C41%3A32%2C4",
+    "GET https://googleads.g.doubleclick.net/pagead/ads?client=ca-pub-5467553313646187&output=html&h=90&slotname=3642732468&adk=970982994&adf=1223260627&pi=t.ma~as.3642732468&abgtt=6&w=970&format=970x90&url=https%3A%2F%2Fwww.sbs.co.kr%2Fschedule%2Findex.html&aiof=14&asro=0&aimartd=4&aieuf=1&aicrs=1&uach=WyJt",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gda&tv=r20261118&st=env&sjk=93118783633805",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gda&tv=r20261118&st=env&sjk=6840923783208635",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe"
+   ]
+  },
+  "ebs": {
+   "url": "https://www.ebs.co.kr/schedule?channelCd=TV&date=20261126&onor=TV",
+   "status": 200,
+   "final": "https://www.ebs.co.kr/schedule?channelCd=TV&date=20261126&onor=TV",
+   "textBytes": 3726,
+   "reqs": [
+    "GET https://www.ebs.co.kr/schedule?channelCd=TV&date=20261126&onor=TV",
+    "GET https://ad.ad4989.co.kr/cgi-bin/PelicanC.dll?impr?pageid=07YM&out=iframe",
+    "GET https://ad.ad4989.co.kr/cgi-bin/PelicanC.dll?impr?pageid=07YP&out=iframe",
+    "GET https://ad.ad4989.co.kr/cgi-bin/PelicanC.dll?impr?pageid=091c&out=iframe",
+    "GET https://t1.kakaocdn.net/kas/static/third-party/cookie/ct2.html",
+    "GET https://nam.veta.naver.com/nac/2",
+    "GET https://bc.ds.kakao.com/bc?d=%7B%22track_id%22%3A%225796045570273949620%22%2C%22event_code%22%3A%22PageView%22%2C%22params%22%3A%7B%7D%2C%22props%22%3A%7B%22lmt%22%3A%22N%22%7D%2C%22site%22%3A%7B%22identifier%22%3A%22www.ebs.co.kr%22%7D%2C%22sdk%22%3A%7B%22type%22%3A%22WEB%22%2C%22version%22%3A%221.",
+    "GET https://bc.ds.kakao.com/bc?d=%7B%22track_id%22%3A%222196886758809647769%22%2C%22event_code%22%3A%22PageView%22%2C%22params%22%3A%7B%7D%2C%22props%22%3A%7B%22lmt%22%3A%22N%22%7D%2C%22site%22%3A%7B%22identifier%22%3A%22www.ebs.co.kr%22%7D%2C%22sdk%22%3A%7B%22type%22%3A%22WEB%22%2C%22version%22%3A%221."
+   ]
+  },
+  "jtbc": {
+   "url": "https://tv.jtbc.co.kr/schedule",
+   "status": 500,
+   "final": "https://tv.jtbc.co.kr/schedule",
+   "textBytes": 459,
+   "reqs": [
+    "GET https://tv.jtbc.co.kr/schedule",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-RNZND85K07&gtm=45je6bi0h2v9116591513za208zd9116591513xf1&_p=1795590094811&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&are=1&cid=170828892.1795590095&frm=0&pscdl=noapi&rcb=10&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253"
+   ]
+  },
+  "mbn": {
+   "url": "https://www.mbn.co.kr/vod/programSchedule",
+   "status": 404,
+   "final": "https://www.mbn.co.kr/vod/programSchedule",
+   "textBytes": 965,
+   "reqs": [
+    "GET https://www.mbn.co.kr/vod/programSchedule",
+    "POST https://www.google-analytics.com/g/collect?v=2&tid=G-RZLHCJZXXM&gtm=45je6bh1h1v9122481271za20oxf1&_p=1795590102402&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=EAAI&are=1&cid=88882880.1795590103&frm=0&ir=1&ngs=1&pscdl=noapi&rcb=7&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA%253FBr"
+   ]
+  },
+  "channela": {
+   "url": "https://www.ichannela.com/broad/schedule",
+   "status": 404,
+   "final": "https://ichannela.com/main/error.do?code=404",
+   "textBytes": 57,
+   "reqs": [
+    "GET https://www.ichannela.com/broad/schedule",
+    "GET https://www.ichannela.com/main/error.do?code=404",
+    "GET https://ichannela.com/main/error.do?code=404",
+    "POST https://www.google-analytics.com/j/collect?v=1&_v=j102&a=544636204&t=pageview&_s=1&dl=https%3A%2F%2Fichannela.com%2Fmain%2Ferror.do%3Fcode%3D404&dr=https%3A%2F%2Fwww.ichannela.com%2F&ul=ko-kr&dt=ErrorPage&sr=1280x720&vp=1280x720&_u=KGBAgEAjAAAAACAAI~&jid=870638644&gjid=348433393&cid=392505043.179559",
+    "POST https://stats.g.doubleclick.net/j/collect?t=dc&aip=1&_r=3&v=1&_v=j102&tid=UA-90564884-1&cid=392505043.1795590110&jid=870638644&gjid=348433393&_gid=557555432.1795590110&_u=KGBAgEAjAAAAAGAAI~&z=1504625148"
+   ]
+  },
+  "tvchosun": {
+   "url": "https://broadcast.tvchosun.com/broadcast/schedule.cstv",
+   "status": 200,
+   "final": "https://img.tvchosun.com/error/404.html",
+   "textBytes": 1575,
+   "reqs": [
+    "GET https://broadcast.tvchosun.com/broadcast/schedule.cstv",
+    "GET https://img.tvchosun.com/error/404.html",
+    "POST https://www.tvchosun.com/event/gnbEventCount.cstv",
+    "GET https://www.tvchosun.com/broadcast/tag/todaypop.cstv",
+    "GET https://www.tvchosun.com/broadcast/search/todayprog.cstv",
+    "POST https://www.tvchosun.com/cscenter/notice/footNotice.cstv",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-D5GZR50LJV&gtm=45je6bh1v9136105223za20ozb9203332377zd9203332377xf1&_p=1795590122156&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=EAAAAGAC&_ng=1&are=1&cid=744790556.1795590122&frm=0&ir=1&pscdl=noapi&rcb=7&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B12"
+   ]
+  },
+  "tvn": {
+   "url": "https://tvn.cjenm.com/ko/schedule/",
+   "status": 404,
+   "final": "https://tvn.cjenm.com/ko/schedule/",
+   "textBytes": 73,
+   "reqs": [
+    "GET https://tvn.cjenm.com/ko/schedule/",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "GET https://cm.g.doubleclick.net/partnerpixels?gdpr=0&url=https%3A%2F%2Ftvn.cjenm.com%2Fko%2Fschedule%2F",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxXUk90PUvIfzjsE6WPUvKBJo6NBxUBlSoXFAr66tlM6OuOrhovhh5izB25AUP9SgB5C5cqO5Qmgkmxh226ap97eCni34jxy2w6svhnjx7RwyovU56sU9DQLuAZ5TqyVAtF6me4_0Q==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxW6ccW-g6u6r3ij_DgxwodDD9aOLtQ-3tUTm3FVBa8iO_BLPvM2ydmFitJJ8HvDMFv7nSKtSKegfKzamkvOzgGvG4gLPK5F3MYm9HWQuJW8HDqOGfZv4mafb1Q25yLlzsf3kxDgAw==",
+    "POST https://fundingchoicesmessages.google.com/el/AGSKWxWJwY3Xs4H4rBGyMt-HenEm34AnTBDlV7g8DAQUt2bMMYm0nnX4o3DBFF_fhdV4vUbXUzraaZ2Tg5eYEhp040w1ceS5eo1AneAHSAOAFRhdeTDzWxLchTANOMp5qXWRQUJ_MOGy6Q=="
+   ]
+  },
+  "ena": {
+   "url": "https://www.enatv.com/",
+   "status": 403,
+   "final": "https://www.hugedomains.com/domain_profile.cfm?d=enatv.com",
+   "textBytes": 167,
+   "reqs": [
+    "GET https://www.enatv.com/",
+    "GET https://www.hugedomains.com/domain_profile.cfm?d=enatv.com",
+    "GET https://www.enatv.com/",
+    "GET https://www.hugedomains.com/domain_profile.cfm?d=enatv.com",
+    "POST https://www.hugedomains.com/cdn-cgi/challenge-platform/h/b/fo/1692243751:1795585225:ZFCa77tHdqchb73y-uRxW-36Sd0_I1Gz3ZaQf5K2pu0/a5fec96c2a5f644c/nVi9EbgCyXV5knT1pV3HKa6w__Pe.9bEl4cXchJabQk-1795590135-1.2.1.1-PMfcS3lVHwdrZyYTTMtswqRlQuchvED00eiwM6k0.UOOsd0XFUgUXhAiliTUy5Q_",
+    "GET https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/turnstile/f/av0/rch/wshyu/0x4AAAAAAADnPIDROrmt1Wwj/light/fbE/new/normal?lang=auto",
+    "POST https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/fo/2625516106:1795585227:d63SB6iY6KuxC9rXytMU5xLc4KZByVoHcsk1zDZJRao/a5fec96e6aeaf022/ClI-ofAERuQqMsprXVbLdlbgkI-b2B9HXlgg4fEeN20k8Ol8pcqQ4XjnV5m4LYCoGJjLsePy1nnz3iAfIJFRqtxWVoGm3wBa69L886edqNEBsgSda43dNlOJVrH2yYrOUg",
+    "GET https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/pat/a5fec96e6aeaf022/1795590136289/eda23b0daf4e69054f3dae13520fe3cda61e05bf67c92726d2bd223eca0fac26/CoXyFxVRF7ur_O7QDMaGzts3hKLiLRHIxc_FJThZv4nfsiVXPKjZgTsBZLqMVJTFHaenOvImC98qR1bYMSVjEFeY66PBIBetrvbyfvlmG4jzlgFS3M3pMICu9sVVX3Qt2AU0x1z",
+    "GET https://brunhild.challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/i/a5fec96e6aeaf022/ClI-ofAERuQqMsprXVbLdlbgkI-b2B9HXlgg4fEeN20k8Ol8pcqQ4XjnV5m4LYCoGJjLsePy1nnz3iAfIJFRqtxWVoGm3wBa69L886edqNEBsgSda43dNlOJVrH2yYrOUg",
+    "POST https://challenges.cloudflare.com/cdn-cgi/challenge-platform/h/b/fo/2625516106:1795585227:d63SB6iY6KuxC9rXytMU5xLc4KZByVoHcsk1zDZJRao/a5fec96e6aeaf022/ClI-ofAERuQqMsprXVbLdlbgkI-b2B9HXlgg4fEeN20k8Ol8pcqQ4XjnV5m4LYCoGJjLsePy1nnz3iAfIJFRqtxWVoGm3wBa69L886edqNEBsgSda43dNlOJVrH2yYrOUg"
+   ]
+  },
+  "ytn": {
+   "url": "https://www.ytn.co.kr/",
+   "status": 200,
+   "final": "https://www.ytn.co.kr/",
+   "textBytes": 3595,
+   "reqs": [
+    "GET https://www.ytn.co.kr/",
+    "GET https://www.ytn.co.kr/_comm/ylog.php?m=0100&s=T&u=https%3A//www.ytn.co.kr/&r=&p=&e=",
+    "POST https://www.ytn.co.kr/ajax/getBreakNews.php",
+    "POST https://www.ytn.co.kr/ajax/getManyNews.php",
+    "GET https://www.ytn.co.kr/inc_banner/AdServerChange.php?n=9",
+    "POST https://www.ytn.co.kr/ajax/getManyNews.php",
+    "GET https://www.ytn.co.kr/inc_banner/AdServerChange.php?n=11",
+    "GET https://www.ytn.co.kr/inc_banner/AdServerChange.php?n=8",
+    "POST https://www.google-analytics.com/j/collect?v=1&_v=j102&a=337098174&t=pageview&_s=1&dl=https%3A%2F%2Fwww.ytn.co.kr%2F&ul=ko-kr&dt=YTN%20%7C%20%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%2024%EC%8B%9C%EA%B0%84%20%EB%89%B4%EC%8A%A4%EC%B1%84%EB%84%90&sr=1280x720&vp=1280x720&_u=IEBAAAABAAAAACAAI~&jid=2115216398",
+    "POST https://www.google-analytics.com/g/collect?v=2&tid=G-1TK77MPGTM&gtm=45je6bh1v878899258za208zd878899258xf1&_p=1795590142445&gcd=13l3l3l3l1l1&npa=0&dma=0&are=1&cid=743853341.1795590143&frm=0&ngs=1&pscdl=noapi&rcb=6&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA%253FBrand%3",
+    "GET https://cm.g.doubleclick.net/partnerpixels?url=https%3A%2F%2Fwww.ytn.co.kr%2F",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=8572947960395630&correlator=4305774474171036&eid=95408120%2C95410729%2C122882087%2C122882283%2C122882289%2C95409356&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fifs&iu_parts=5932629%3A60115377%2Cca-pub-1474238860523410-tag%2Cytn-radio_a",
+    "GET https://7ca540516b23179a65c732c71024ccdc.safeframe.googlesyndication.com/safeframe/1-0-45/html/container.html",
+    "GET https://gum.criteo.com/syncframe?origin=publishertagids&topUrl=www.ytn.co.kr",
+    "GET https://gum.criteo.com/sid/json?origin=publishertagids&domain=ytn.co.kr&sn=ChromeSyncframe&so=0&topUrl=www.ytn.co.kr",
+    "POST https://bidder.criteo.com/cdb?ptv=110615&profileId=206&bundle=NuWTyl80am4zTnQ2bW8lMkJOZDROQmcwQ2JIQW9IVnRDdVZRTjNWM1hMOTFrSzg3VjhzQk5qWGFvdVl6M2xYZWQyWGExUTlYaUppR3RHaTdqNmRIVUtGMlk2YTIlMkJaOUdpOE5OM0ZXcUhLJTJCZG9JUFFmenlQem14WUlldG5xSzUybmxyJTJCTllxM3NhWEVBdEU2dEtRJTJGaVJUMmY4UzBRJTNEJTNE&cb=349644",
+    "GET https://platform.twitter.com/widgets/widget_iframe.1227a5674072e080ffb1ba14ac0c1079.html?origin=https%3A%2F%2Fwww.ytn.co.kr",
+    "GET https://gum.criteo.com/syncframe?origin=publishertag&topUrl=www.ytn.co.kr",
+    "GET https://tsn.dmcmedia.co.kr/dmcadcdn/dmctag.html",
+    "GET https://www.youtube.com/subscribe_embed?usegapi=1&channel=ytnnews24&layout=default&count=hidden&origin=https%3A%2F%2Fwww.ytn.co.kr&gsrc=3p&ic=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://www.ytn.co.kr/inc_banner/main_banner1.html",
+    "GET https://www.ytn.co.kr/inc_banner/main_banner2.html",
+    "GET https://www.ytn.co.kr/inc_banner/main_banner3.html",
+    "GET https://www.ytn.co.kr/inc_banner/main_banner4.html",
+    "GET https://www.ytn.co.kr/inc_banner/main_banner5.html",
+    "GET https://www.youtube.com/subscribe_embed?usegapi=1&channel=ytnnews24&layout=default&count=hidden&origin=https%3A%2F%2Fwww.ytn.co.kr&gsrc=3p&ic=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://www.youtube.com/subscribe_embed?usegapi=1&channel=ytnnews24&layout=default&count=hidden&origin=https%3A%2F%2Fwww.ytn.co.kr&gsrc=3p&ic=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://www.youtube.com/subscribe_embed?usegapi=1&channel=ytnnews24&layout=default&count=hidden&origin=https%3A%2F%2Fwww.ytn.co.kr&gsrc=3p&ic=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://tsn.dmcmedia.co.kr/dmcadcdn/dmctag.html",
+    "GET https://syndication.twitter.com/settings?session_id=8ff481c81730bac3077fe054212bcab19e9a71bb",
+    "GET https://gum.criteo.com/sid/json?origin=publishertag&domain=ytn.co.kr&sn=ChromeSyncframe&so=3&topUrl=www.ytn.co.kr&bundle=NuWTyl80am4zTnQ2bW8lMkJOZDROQmcwQ2JIQW9IVnRDdVZRTjNWM1hMOTFrSzg3VjhzQk5qWGFvdVl6M2xYZWQyWGExUTlYaUppR3RHaTdqNmRIVUtGMlk2YTIlMkJaOUdpOE5OM0ZXcUhLJTJCZG9JUFFmenlQem14WUlldG5xSzUybmx",
+    "GET https://accounts.google.com/o/oauth2/postmessageRelay?parent=https%3A%2F%2Fwww.ytn.co.kr&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://platform.twitter.com/widgets/follow_button.1227a5674072e080ffb1ba14ac0c1079.en.html",
+    "GET https://platform.twitter.com/widgets/follow_button.1227a5674072e080ffb1ba14ac0c1079.en.html",
+    "GET https://platform.twitter.com/widgets/follow_button.1227a5674072e080ffb1ba14ac0c1079.en.html",
+    "GET https://www.youtube.com/subscribe_embed?action_card=1&channelid=UChlgI3UHCOnwUGzWzbJ3H5w&usegapi=1&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.ko.RTUH1ZiyuXI.O%2Fd%3D1%2Frs%3DAHpOoo81hLe3JzdONP8XmrLp67AGwYPTBg%2Fm%3D__features__",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=8572947960395630&correlator=3855091189831630&eid=95408120%2C95410729%2C122882087%2C122882283%2C122882289%2C95409356&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fifs&iu_parts=5932629%3A60115377%2Cca-pub-1474238860523410-tag%2Cytn-radio_a",
+    "GET https://cm.g.doubleclick.net/partnerpixels?url=https%3A%2F%2Fwww.ytn.co.kr%2Finc_banner%2FAdServerChange.php%3Fn%3D9",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=3669230880486025&correlator=3295131206110332&eid=122882200%2C122882288%2C122882289%2C122882291%2C95409159&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fif&iu_parts=83673359%3A60115377%2Cytn_mainright_p_250_250&enc_prev_ius=%2F0%2F1&prev_",
+    "GET https://bfcbe712855b03770495e40c1b0f28eb.safeframe.googlesyndication.com/safeframe/1-0-45/html/container.html?n=1",
+    "GET https://media.adpnut.com/cgi-bin/PelicanC.dll?impr?pageid=07U6&grade=3&out=iframe",
+    "GET https://securepubads.g.doubleclick.net/gampad/ads?pvsid=8572947960395630&correlator=2765681419607808&eid=95408120%2C95410729%2C122882087%2C122882283%2C122882289%2C95409356&output=ldjh&gdfp_req=1&vrg=202611120201&ptt=17&impl=fifs&iu_parts=5932629%3A60115377%2Cca-pub-1474238860523410-tag%2Cytn-radio_a",
+    "POST https://engine.tend-table.com/news/get_code.jsp",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gpt&tv=m202611120201&st=env&sjk=3669230880486025",
+    "GET https://ep1.adtrafficquality.google/getconfig/sodar?sv=200&tid=gpt&tv=m202611120201&st=env&sjk=8572947960395630",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe",
+    "GET https://ep2.adtrafficquality.google/sodar/sodar2/257/runner.html",
+    "GET https://www.google.com/recaptcha/api2/aframe"
+   ]
+  },
+  "yonhaptv": {
+   "url": "https://www.yonhapnewstv.co.kr/",
+   "status": 200,
+   "final": "https://www.yonhapnewstv.co.kr/",
+   "textBytes": 3164,
+   "reqs": [
+    "GET https://www.yonhapnewstv.co.kr/",
+    "POST https://analytics.google.com/g/collect?v=2&tid=G-T9Y6VESGMM&gtm=45je6bh1v898276162za208zd898276162xf1&_p=1795590151756&_gaz=1&gcd=13l3l3l3l1l1&npa=0&dma=0&_eu=AAAAAGA&are=1&cid=1994856458.1795590152&frm=0&pscdl=noapi&rcb=0&sr=1280x720&uaa=x64&uab=64&uafvl=HeadlessChrome%3B129.0.6668.29%7CNot%253DA%2",
+    "GET https://www.yonhapnewstv.co.kr/yn/v1/search/getPopularList",
+    "GET https://www.yonhapnewstv.co.kr/getBreakingNews?term=-30",
+    "GET https://www.yonhapnewstv.co.kr/newsFeed/getCategoryList",
+    "GET https://www.yonhapnewstv.co.kr/weather/getAreaList",
+    "GET https://www.yonhapnewstv.co.kr/weather/getWeatherMap?a=%EC%84%9C%EC%9A%B8"
+   ]
+  }
+ }
+}
