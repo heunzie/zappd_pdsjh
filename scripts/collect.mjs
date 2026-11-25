@@ -246,13 +246,39 @@ export function parseNaver(t, year) {
   for (const d in out) out[d].sort((a, b) => a[0].localeCompare(b[0]));
   return out;
 }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+let naverPage = null;
 async function naverChannel(name, year) {
-  return parseNaver(await getText('https://search.naver.com/search.naver?query=' + encodeURIComponent(DAUM_Q[name] + ' 편성표')), year);
+  const url = 'https://search.naver.com/search.naver?where=nexearch&query=' + encodeURIComponent(DAUM_Q[name] + ' 편성표');
+  try {
+    const r = await fetch(url, {headers: {'User-Agent': EPG_UA, 'Accept-Language': 'ko-KR,ko;q=0.9', 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', 'Referer': 'https://www.naver.com/'}, signal: AbortSignal.timeout(25000)});
+    if (r.ok) { const out = parseNaver(await r.text(), year); if (Object.keys(out).length) return out; }
+    else EPG_LOG.push('naver ' + name + ' HTTP ' + r.status + ' → browser');
+  } catch (e) { EPG_LOG.push('naver ' + name + ' ' + String(e).slice(0, 80) + ' → browser'); }
+  // Naver refuses bursts of plain requests; a real browser page gets the same box
+  if (!naverPage) { const b = await chromium.launch(); naverPage = await (await b.newContext({locale: 'ko-KR', timezoneId: 'Asia/Seoul', userAgent: EPG_UA})).newPage(); naverPage._browser = b; }
+  await naverPage.goto(url, {waitUntil: 'domcontentloaded', timeout: 30000});
+  await naverPage.waitForTimeout(1500);
+  return parseNaver(await naverPage.content(), year);
 }
 
 // broadcasters' own schedules, each returns [[HH:MM, title, ''], ...] for day d (YYYY-MM-DD)
+// KBS, SBS, MBC and tvN publish a broadcast day (05:00 to 29:00); MBN, YTN and JTBC a calendar day
 export const OFFICIAL_PARSE = {
-  kbs: t => JSON.parse(t).flatMap(x => x.schedules || []).map(s => [String(s.service_start_time || s.program_planned_start_time).replace(/^(\d\d)(\d\d).*/, '$1:$2'), (s.programming_table_title || s.program_title || '').trim(), '']),
+  kbs: t => JSON.parse(t).flatMap(x => x.schedules || []).map(s => [String(s.program_planned_start_time).replace(/^(\d\d)(\d\d).*/, '$1:$2'), (s.programming_table_title || s.program_title || '').trim(), '']),
+  mbc: t => JSON.parse(t.slice(t.indexOf('(') + 1, t.lastIndexOf(')'))).map(x => [x.StartTime.slice(0, 2) + ':' + x.StartTime.slice(2, 4), (x.Title || '').trim(), '']),
+  jtbc: t => [...t.matchAll(/class="time_v">\s*(\d{1,2}:\d{2})[\s\S]*?<strong class="title">([\s\S]*?)<\/strong>/g)].map(m => [m[1].padStart(5, '0'), cleanTitle(m[2]), '']),
+  // tvN: one response holds the week; times run past midnight within a scheDt, so wrap them to 24:xx+
+  tvn: (t, d) => {
+    const list = ((JSON.parse(t).result || {}).data || {}).schePgmList || [];
+    const rows = []; let prev = -1;
+    for (const x of list.filter(x => x.scheDt === d.replace(/-/g, '') && /tvN$/.test(x.chnNm || 'tvN'))) {
+      let [h, m] = (x.bdStrTtm || '').split(':').map(Number); if (isNaN(h)) continue;
+      if (h * 60 + m < prev - 600) h += 24; prev = h * 60 + m;
+      rows.push([pad2(h) + ':' + pad2(m), (x.pgmEpinoNm || x.pgmNm || '').trim(), '']);
+    }
+    return rows;
+  },
   sbs: t => JSON.parse(t).map(s => [s.start_time, (s.title || '').trim(), '']),
   mbn: (t, d) => [...t.matchAll(/<program>([\s\S]*?)<\/program>/g)].map(m => {
     const g = k => ((m[1].match(new RegExp(`<${k}>(?:<!\\[CDATA\\[)?([\\s\\S]*?)(?:\\]\\]>)?</${k}>`)) || [])[1] || '').trim();
@@ -262,6 +288,9 @@ export const OFFICIAL_PARSE = {
   ytn: t => [...t.matchAll(/<div class="time">\s*(\d{1,2}:\d{2})\s*<\/div>[\s\S]*?<span class="title">([\s\S]*?)<\/span>/g)].map(m => [m[1].padStart(5, '0'), cleanTitle(m[2]), '']),
 };
 const OFFICIAL_EPG = {
+  MBC: d => getText(`https://control.imbc.com/Schedule/TV?callback=cb&sDate=${ymd(d)}&sType=ALL`).then(OFFICIAL_PARSE.mbc),
+  JTBC: d => getText(`https://jtbc.co.kr/schedule/jtbc/${ymd(d)}`).then(OFFICIAL_PARSE.jtbc),
+  tvN: (() => { let week = null; return d => (week = week || getText('https://poc-cf-api.cjenm.com/apis/v1/tmplModul/13865?removeCacheYn=N')).then(t => OFFICIAL_PARSE.tvn(t, d)); })(),
   KBS1: d => getText(`https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=11&program_planned_date_from=${ymd(d)}&program_planned_date_to=${ymd(d)}`).then(OFFICIAL_PARSE.kbs),
   KBS2: d => getText(`https://static.api.kbs.co.kr/mediafactory/v1/schedule/weekly?rtype=json&local_station_code=00&channel_code=12&program_planned_date_from=${ymd(d)}&program_planned_date_to=${ymd(d)}`).then(OFFICIAL_PARSE.kbs),
   SBS: d => getText(`https://static.cloud.sbs.co.kr/schedule/${d.replace(/-/g, '/')}/SBS.json`).then(OFFICIAL_PARSE.sbs),
@@ -269,11 +298,21 @@ const OFFICIAL_EPG = {
   YTN: d => getText(`https://m.ytn.co.kr/schedule.php?date=${d}`).then(OFFICIAL_PARSE.ytn),
 };
 
+const BROADCAST_DAY = new Set(['KBS1', 'KBS2', 'SBS', 'MBC', 'tvN']);
+const officialCache = {};
+const officialRaw = (name, d) => (officialCache[name + d] = officialCache[name + d] || OFFICIAL_EPG[name](d));
+// the calendar day d: its own rows before midnight plus the previous broadcast day's 24:00+ rows
+async function officialDay(name, d) {
+  if (!BROADCAST_DAY.has(name)) return officialRaw(name, d);
+  const [today, before] = await Promise.all([officialRaw(name, d), officialRaw(name, prevDay(d)).catch(() => [])]);
+  const early = before.filter(r => +r[0].slice(0, 2) >= 24).map(r => [pad2(+r[0].slice(0, 2) - 24) + r[0].slice(2), r[1], r[2]]);
+  return [...early, ...today.filter(r => +r[0].slice(0, 2) < 24)];
+}
 const sameStarts = (a, b) => a.length === b.length && a.every((r, i) => r[0] === b[i][0]);
 // signs of a broken copy: two programmes at one time, or programmes cut to 10 minutes or less
 const oddness = rows => rows.reduce((n, r, i) => n + (i && toMinutes(r[0]) - toMinutes(rows[i - 1][0]) <= 10 ? 1 : 0), 0);
 const toMinutes = hm => { const [h, m] = hm.split(':').map(Number); return h * 60 + m; };
-const cleanRows = rows => rows.filter(r => /^\d\d:\d\d$/.test(r[0]) && +r[0].slice(0, 2) < 24 && r[1]).sort((a, b) => a[0].localeCompare(b[0]));
+const cleanRows = rows => rows.map(r => [r[0], String(r[1] || '').replace(/\s+/g, ' ').trim(), r[2] || '']).filter(r => /^\d\d:\d\d$/.test(r[0]) && +r[0].slice(0, 2) < 24 && r[1]).sort((a, b) => a[0].localeCompare(b[0]));
 const EPG_CHECK = {};
 const EPG_SOURCE = 'search.daum.net + search.naver.com cross-checked; broadcaster schedule where they differ';
 
@@ -286,7 +325,14 @@ async function epgDays(days) {
       catch (e) { EPG_LOG.push(tag + ' ' + name + ' ' + attempt + ' ' + String(e).slice(0, 120)); }
     }
   };
-  await Promise.all(EPG_CH.map(([, name]) => Promise.all([grab(daum, daumChannel, name, 'daum'), grab(naver, naverChannel, name, 'naver')])));
+  await Promise.all(EPG_CH.map(([, name]) => grab(daum, daumChannel, name, 'daum')));
+  for (const [, name] of EPG_CH) { await grab(naver, naverChannel, name, 'naver'); await sleep(1200); }
+  if (naverPage) await naverPage._browser.close().catch(() => {});
+  const official = async (name, d) => {
+    if (!OFFICIAL_EPG[name]) return null;
+    try { const rows = cleanRows(await officialDay(name, d)); return rows.length >= 5 ? rows : null; }
+    catch (e) { EPG_LOG.push('official ' + name + ' ' + d + ' ' + String(e).slice(0, 100)); return null; }
+  };
   const out = {};
   for (const d of days) {
     const ch = [], check = EPG_CHECK[d] = {};
@@ -294,15 +340,18 @@ async function epgDays(days) {
       const a = cleanRows((daum[name] && daum[name][d]) || []), b = cleanRows((naver[name] && naver[name][d]) || []);
       let items = a, how;
       if (!a.length && !b.length) how = 'none';
-      else if (!b.length) how = 'daum only';
+      else if (!b.length) {
+        // no Naver copy: check Daum against the broadcaster instead
+        const off = await official(name, d);
+        if (!off) how = 'daum only';
+        else if (sameStarts(a, off)) how = 'same as official';
+        else { items = off; how = 'differ → official'; }
+      }
       else if (!a.length) { items = b; how = 'naver only'; }
       else if (sameStarts(a, b)) how = 'same';
       else {
-        let off = null;
-        if (OFFICIAL_EPG[name]) {
-          try { off = cleanRows(await OFFICIAL_EPG[name](d)); } catch (e) { EPG_LOG.push('official ' + name + ' ' + d + ' ' + String(e).slice(0, 100)); }
-        }
-        if (off && off.length >= 5) { items = off; how = 'differ → official'; }
+        const off = await official(name, d);
+        if (off) { items = off; how = 'differ → official'; }
         else {
           // no official copy: keep the one with fewer broken-looking rows, Naver on a tie
           const pickDaum = oddness(a) < oddness(b);
@@ -324,7 +373,6 @@ async function main() {
   fs.mkdirSync(DATA, { recursive: true });
   const days = Array.from({ length: AHEAD + 1 }, (_, i) => kst(i));
   const browser = await chromium.launch();
-  try { const {probe} = await import('./probe.mjs'); await probe(browser); } catch (e) { console.log('probe failed', e); } // TEMP probe
   const ctx = await browser.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36' });
   const page = await ctx.newPage();
   const summary = { at: nowIso(), days: {}, hsLog: HS_LOG, epgLog: EPG_LOG, epgCheck: EPG_CHECK, officialLog: OFFICIAL_LOG };
