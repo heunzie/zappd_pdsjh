@@ -234,8 +234,9 @@ export function parseNaver(t, year) {
   const cols = {};
   for (const m of seg.matchAll(/<li class="col(\d+)[^"]*">\s*<a[^>]*>\s*(\d{1,2})\.(\d{1,2})\./g)) if (!cols[m[1]]) cols[m[1]] = `${yearFor(year, +m[2])}-${pad2(m[2])}-${pad2(m[3])}`;
   const out = {};
-  for (const block of seg.split('<li class="item">').slice(1)) {
-    const h = (block.match(/<div class="time_box">\s*<span>(\d{1,2})시/) || [])[1]; if (h == null) continue;
+  // the current hour's row is <li class="item _now">, so split on any item row
+  for (const block of seg.split(/<li class="item[^"]*">/).slice(1)) {
+    const h = (block.match(/<div class="time_box[^"]*">\s*<span>(\d{1,2})시/) || [])[1]; if (h == null) continue;
     for (const p of block.split('<div class="ind_program col').slice(1)) {
       const d = cols[(p.match(/^(\d+)/) || [])[1]]; if (!d) continue;
       // one column of an hour can hold several programmes, each with its own minute
