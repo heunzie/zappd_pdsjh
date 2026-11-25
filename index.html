@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap&text=2026%20TV%EC%8B%9D%ED%92%88%EC%BB%A8%ED%85%90%EC%B8%A0%ED%8C%80%20%EB%A7%89%EB%82%B4%20%ED%94%BC%EB%94%94%20%EB%91%98">
 </head>
 <body>
 <title>NS 재핑 보드</title>
@@ -53,6 +54,8 @@ button{cursor:pointer}
 /* on-air bar */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);padding-block:12px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;border-bottom:1px solid var(--line)}
 @media (max-width:700px){.bar{position:static}}
+.credit{position:absolute;top:3px;right:4px;font-family:'Nanum Pen Script',cursive;font-size:15px;line-height:1;color:var(--muted);opacity:.7;transform:rotate(-2deg);pointer-events:none;white-space:nowrap}
+@media (max-width:760px){.credit{position:static;order:-1;flex-basis:100%;text-align:right;font-size:14px;margin-bottom:-8px}}
 /* phones: a shorter header so the schedule starts higher on screen */
 @media (max-width:760px){
   .bar{gap:8px 10px;padding-block:10px 8px}
@@ -435,6 +438,7 @@ tbody tr:hover td{background:var(--surface-2)}
 
 <div class="wrap">
   <header class="bar">
+    <span class="credit">2026 TV식품컨텐츠팀 막내 피디 둘</span>
     <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1></div>
     <span class="clock" id="clock">--:--</span>
     <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV홈쇼핑</button><button data-set="tc" aria-pressed="false">데이터홈쇼핑</button></div>
