@@ -1,0 +1,49 @@
+{
+ "date": "2026-11-26",
+ "fetch": {
+  "mbc": {
+   "status": 200,
+   "bytes": 19441
+  },
+  "channela": {
+   "error": "TypeError: fetch failed"
+  }
+ },
+ "pages": {
+  "channela": {
+   "error": "TimeoutError: page.goto: Timeout 25000ms exceeded.\nCall log:\n  - navigating to \"https://ichannela.com/com/cmm/schedule.do\", waiting until \"domcontentl",
+   "reqs": [
+    "GET https://ichannela.com/com/cmm/schedule.do"
+   ]
+  },
+  "tvn": {
+   "clicked": true,
+   "final": "https://tvn.cjenm.com/ko/tvn-schedule/",
+   "reqs": [
+    "GET https://tvn.cjenm.com/ko/tvn-schedule/",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/search/searchLayerInfo?ctgCd=MC010003&siteCd=ST000007",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/site/popup?siteCd=ST000007&ctgCd=MC010003&menuCd=MN00222741",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/tmplModul/13865?removeCacheYn=N",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/tmplModul/14307?removeCacheYn=N",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/tmplModul/16422?removeCacheYn=N",
+    "GET https://poc-cf-api.cjenm.com/apis/v1/ctg/MC010003/menu/MN00222741/tmpl/1040?svcCd=SV003&siteCd=ST000007",
+    "POST https://browser-intake-datadoghq.com/api/v2/rum?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=3fd75c38-6200-4d41-a2f1-5d7c6c580608&batch_time=1795591204880 BODY {\"_dd\":{\"format_version\":2,\"drift\":0,\"configuration\":{\"session_sample_rate\":10,\"session_replay_sample_rate\":100},\"discarded\":false},\"application\":{\"id\":\"500ba16e-a64f-4917-98d6-aad434f7e33e\"},\"date\":1",
+    "POST https://browser-intake-datadoghq.com/api/v2/rum?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=2b3209a7-1a58-4ed1-b563-cabe94b56472&batch_time=1795591204883 BODY {\"_dd\":{\"format_version\":2,\"drift\":0,\"configuration\":{\"session_sample_rate\":10,\"session_replay_sample_rate\":100},\"discarded\":false},\"application\":{\"id\":\"500ba16e-a64f-4917-98d6-aad434f7e33e\"},\"date\":1",
+    "POST https://browser-intake-datadoghq.com/api/v2/rum?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=dc3a5967-6332-413a-94c7-03200d8d8cc4&batch_time=1795591204886 BODY {\"_dd\":{\"format_version\":2,\"drift\":0,\"configuration\":{\"session_sample_rate\":10,\"session_replay_sample_rate\":100},\"discarded\":false},\"application\":{\"id\":\"500ba16e-a64f-4917-98d6-aad434f7e33e\"},\"date\":1",
+    "POST https://browser-intake-datadoghq.com/api/v2/replay?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Axhr%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=8ceb647c-6886-4661-9d3a-3e81ffcf95cf",
+    "POST https://browser-intake-datadoghq.com/api/v2/rum?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=37168f76-8359-4f6f-b6cb-ebadbce1e53c&batch_time=1795591205402 BODY {\"_dd\":{\"format_version\":2,\"drift\":0,\"configuration\":{\"session_sample_rate\":10,\"session_replay_sample_rate\":100},\"discarded\":false},\"application\":{\"id\":\"500ba16e-a64f-4917-98d6-aad434f7e33e\"},\"date\":1",
+    "POST https://browser-intake-datadoghq.com/api/v2/rum?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=1289ab9a-881f-46fe-aaa0-4e68d993a0fb&batch_time=1795591206146 BODY {\"_dd\":{\"format_version\":2,\"drift\":0,\"configuration\":{\"session_sample_rate\":10,\"session_replay_sample_rate\":100},\"discarded\":false},\"application\":{\"id\":\"500ba16e-a64f-4917-98d6-aad434f7e33e\"},\"date\":1",
+    "POST https://browser-intake-datadoghq.com/api/v2/replay?ddsource=browser&ddtags=sdk_version%3A5.29.1%2Capi%3Afetch%2Cenv%3Aprod%2Cservice%3Awebcms%2Cversion%3Av20260629&dd-api-key=pube7c47b3c377109657448d56cb703648e&dd-evp-origin-version=5.29.1&dd-evp-origin=browser&dd-request-id=61fabaaf-d2b4-4340-b9e3-6ffc8b610f38"
+   ]
+  },
+  "jtbc": {
+   "clicked": true,
+   "final": "https://jtbc.co.kr/schedule/jtbc/20261126",
+   "reqs": [
+    "GET https://jtbc.co.kr/schedule",
+    "GET https://jtbc.co.kr/schedule/jtbc/20261126",
+    "GET https://cast-imp.jtbc.co.kr/trac?event=unload&vid=UlsuMKFxSkaARY3jKuXphw&vt=1795591218089"
+   ]
+  }
+ }
+}
