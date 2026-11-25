@@ -1,0 +1,717 @@
+	
+	
+	
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+	<head>
+		<title>24시간 뉴스 생방송 | YTN</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-itunes-app" content="app-id=353117998">
+		<!-- <meta name="theme-color" content="#00aeef"> -->
+		<meta name="theme-color" content="#FFFFFF">
+		<meta property="fb:pages" content="237776059583039" />
+		<meta name="naver-site-verification" content="b103fc9d6193ce7c65a6ad5a9fd971b64f43c1b5"/>
+		<meta name="description" content="YTN 24시간 뉴스 생방송. 실시간 속보와 주요 뉴스 프로그램을 온라인으로 시청하고 TV 편성표를 확인하세요."/>
+		<!-- Facebook Open Graph-->
+		<meta property="og:type" content="website"/>
+		<meta property="og:locale" content="ko_KR"/>
+		<meta property="og:site_name" content="YTN"/>
+		<meta property="og:title" content="24시간 뉴스 생방송 | YTN"/>
+		<meta property="og:url" content="https://www.ytn.co.kr/_hd/hd_live.html"/>
+		<meta property="og:image" content="https://m.ytn.co.kr/img/common/ytnlogo_2024.jpg"/>
+		<meta property="og:description" content="YTN 24시간 뉴스 생방송. 실시간 속보와 주요 뉴스 프로그램을 온라인으로 시청하고 TV 편성표를 확인하세요."/>
+		<meta property="og:image:width" content="1280"/>
+		<meta property="og:image:height" content="720"/>
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image"/>
+		<meta name="twitter:site" content="@YTN24"/>
+		<meta name="twitter:creator" content="@YTN24" />
+		<meta name="twitter:url" content="https://www.ytn.co.kr/_hd/hd_live.html"/>
+		<meta name="twitter:image" content="https://m.ytn.co.kr/img/common/ytnlogo_2024.jpg"/>
+		<meta name="twitter:title" content="24시간 뉴스 생방송 | YTN"/>
+		<meta name="twitter:description" content="YTN 24시간 뉴스 생방송. 실시간 속보와 주요 뉴스 프로그램을 온라인으로 시청하고 TV 편성표를 확인하세요."/>
+		<meta name="dailymotion-domain-verification" content="dm0cefk202n1f11wp" />
+		<!-- 2024-03-26 노인규 신규추가항목 -->
+		<meta name="kakao:app_id" content="378838"/>
+		<meta name="google-play-app" content="app-id=com.estsoft.android.ytn"/>
+		<meta name="robots" content="max-image-preview:large"/>
+		<meta name="nate:title" content="24시간 뉴스 생방송 | YTN"/>
+		<meta name="nate:description" content="YTN 24시간 뉴스 생방송. 실시간 속보와 주요 뉴스 프로그램을 온라인으로 시청하고 TV 편성표를 확인하세요."/>
+		<meta name="nate:site_name" content="YTN"/>
+		<meta name="nate:url" content="https://m.ytn.co.kr/schedule.php"/>
+		<link rel="shortcut icon"   href="/img/favico.ico" type="image/x-icon">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114"  href="img/favicon114.png">
+		<link rel="canonical" href="https://www.ytn.co.kr/_hd/hd_live.html">
+		<script src="/js/jquery/jquery-1.11.3.min.js" ></script>
+		<script type="text/javascript" src="/js/common/common.js?" charset="utf-8"></script>
+		<script type="text/javascript" src="/js/jquery/iscroll.js" charset="utf-8"></script>
+
+		<script type="text/javascript" src="/js/ylog.js"></script>
+		<script type="text/javascript">_L2('ytn_schedule','T','',"MW","");</script>
+
+		<script type="text/javascript" src="/_comm/yct.js?123"></script>
+
+		<!-- Google Tag Manager -->
+<!--
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5K8PFC4');</script>
+-->
+<!-- End Google Tag Manager -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-40735280-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J6FBWKRX3W"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-J6FBWKRX3W');
+</script>
+
+<!-- Dable 스크립트 시작 / 문의 support@dable.io -->
+	<script>
+		(function(d,a,b,l,e,_) {
+			d[b]=d[b]||function(){(d[b].q=d[b].q||[]).push(arguments)};e=a.createElement(l);
+			e.async=1;e.charset='utf-8';e.src='//static.dable.io/dist/plugin.min.js';
+			_=a.getElementsByTagName(l)[0];_.parentNode.insertBefore(e,_);
+			})(window,document,'dable','script');
+			dable('setService', 'm.ytn.co.kr');
+			dable('sendLogOnce');
+	</script>
+<!-- Dable 스크립트 종료 / 문의 support@dable.io -->
+
+
+
+
+
+<!--엔센스-->
+<script>
+//var nsense={n:function(){},d:function(p){for(var i=0;i<p.length;i++){nsense[p[i]]=this.n;}}};nsense.d(["set","start","draw","setup","drawPage","setUserParam","setUserUrlFunction","setTag"]);
+//document.write("<scr"+"ipt type=\"text/javascript\" src=\"//z.o00.kr/s/cutebin/nsense/js/nsense3.js?v=20170220\"></scr"+"ipt>");
+</script>
+
+<script>
+//nsense.set("sitecode","68975220746d45e9a6472d7f1bb1b7ff");
+//nsense.set("idx","");
+//nsense.set("url","//www.ytn.co.kr/_ln/_");
+//nsense.setUserParam("s_mcd","");
+//
+//nsense.setUserUrlFunction(function(canonical_url,idx,item){ return "//m.ytn.co.kr/news_view.php?key="+idx+"&s_mcd="+item.USERPARAM.S_MCD;});
+//nsense.set("thumb","");
+//
+//nsense.start();
+
+</script>
+
+		<script type="text/javascript">
+			var _hideLayer = "";
+		</script>
+
+		<link rel="stylesheet" href="/css/main.css?202407251435" />
+		<link rel="stylesheet" href="/css/landscape.css?202611251041" />
+
+		<style>
+			/* 로그인안내 임시 css start */
+			.no_scroll {
+				overflow : hidden !important;
+			}
+			/* 노출되면 안되는 element가 있다면 해당 class 부여 */
+			.no-print-box {
+				display : none !important;
+			}
+		</style>
+	</head>
+	<body class="darkmode">
+		<!--wrapper-->
+		<div class="wrapper darkmode">
+			<!--GNB-->
+			<div class="header">
+				<a href="https://m.ytn.co.kr/_comm/menuLayer.php" class="btn_top_menu YTN_CSA_topmenu">전체메뉴</a>
+				<h1>
+					<a href="https://m.ytn.co.kr/news_main.html" class="btn_top_logo YTN_CSA_logo">YTN</a>
+				</h1>
+									<span class="cate">LIVE</span>
+							</div>
+
+			<!--메뉴 카테고리-->
+			<div class="menu_wrap">
+				<div class="scroll_wrap" style="background-color : #1F1F1F; ">
+					<ul class="menu_list">
+						<li class="YTN_CSA_home"><a style="color: #fff" href="https://m.ytn.co.kr/news_main.html">홈</a></li>
+						<!-- gnb 클릭 로그 쌓는다고 할경 우 mcd 값으로 쌓도혹 -->
+						
+												<!-- <li class="YTN_CSA_gnbElection2025"><a href="https://m.ytn.co.kr/issue/election2025/index.php?gubun=W">대선2025</a></li> -->
+						
+						
+						<!-- YTN_CSA_0101 -->
+						<li class="YTN_CSA_gnbPolitics"><a style="color: #fff" href="https://m.ytn.co.kr/newslist/news_list.php?s_mcd=0101">정치</a></li>
+						<!-- YTN_CSA_0102 -->
+						<li class="YTN_CSA_gnbEconomy"><a style="color: #fff" href="https://m.ytn.co.kr/newslist/news_list.php?s_mcd=0102">경제</a></li>
+						<!-- YTN_CSA_0103 -->
+						<li class="YTN_CSA_gnbSociety"><a style="color: #fff" href="https://m.ytn.co.kr/newslist/news_list.php?s_mcd=0103">사회</a></li>
+						<!-- YTN_CSA_0104 -->
+						<li class="YTN_CSA_gnbInternational"><a style="color: #fff" href="https://m.ytn.co.kr/newslist/news_list.php?s_mcd=0104">국제</a></li>
+						<!-- YTN_CSA_starmain -->
+						<li class="YTN_CSA_starmain"><a style="color: #fff" href="https://m.star.ytn.co.kr/star/star_main.html">연예
+						</a></li>
+						<!-- YTN_CSA_0135 -->
+						<!-- <li class="YTN_CSA_gnbGame"><a style="color: #fff" href="https://m.game.ytn.co.kr/newslist/news_list.php?s_mcd=0135">게임</a></li> -->
+					</ul>
+				</div>
+			</div>
+
+
+
+<script type="text/javascript">
+
+	function get_cookie(name) {
+		var arg = name + "=";
+		var alen = arg.length;
+		var clen = document.cookie.length;
+		var i = 0;
+		while(i< clen) {
+			var j = i + alen;
+			if(document.cookie.substring(i,j)==arg){
+				var end = document.cookie.indexOf(";",j);
+				if(end == -1)
+					end = document.cookie.length;
+				return unescape(document.cookie.substring(j,end));
+			}
+			i=document.cookie.indexOf(" ",i)+1;
+			if (i==0) break;
+		}
+		return null;
+	}
+</script>			<form name="replayListForm" method="get" action="?">
+				<input type="hidden" name="date" id="date" value="2026-11-25" />
+			</form>
+
+			<!--container-->
+			<div class="container">
+				<div class="live_top_wrapper">
+					<div class="live_top">
+						<h2 class="title">TV 편성표</h2>
+						<div class="right"><a href="./live.php" class="btn_home">LIVE홈</a></div>
+					</div>
+				</div>
+				<!--날짜별 기사보기-->
+				<div class="btn_arti_by_date">
+										<a href="javascript:chgURL('date','2026-11-24');" class="btn_prev"><div class="on">이전</div></a>
+										<span class="date">2026년 11월 25일 (수)<a href="javascript:toggleCalendar();" class="btn_cal">달력보기</a></span>
+										<a href="javascript:chgURL('date','2026-11-26');" class="btn_next"><div class="on">다음</div></a>
+					
+				</div>
+				<!--//날짜별 기사보기-->
+				<!--달력 보기-->
+				
+<div  class="pop_calendar_select" id="calendarArea" style="display:none;">
+	<a href="javascript:toggleCalendar();" class="btn_close">닫기</a>
+	<div class="month_select">
+		<a href="javascript:getMonth('PREV', '', '2026-11-25', '', '', '','','2026-11-15','');" class="btn_prev"><div class="on">이전</div></a>
+		2026년 11월
+					<a href="javascript:getMonth('NEXT',  '', '2026-11-25', '', '', '','','2026-11-15','');" class="btn_next"><div class="on">다음</div></a>
+			</div>
+	<div class="calendar">
+		<table class="date_table" cellspacing="0" cellpadding="0">
+			<caption class="blind">달력</caption>
+			<colgroup>
+				<col width="14.285%" span="7">
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col"><span title="일" class="day_week">일</span></th>
+					<th scope="col"><span title="월" class="day_week">월</span></th>
+					<th scope="col"><span title="화" class="day_week">화</span></th>
+					<th scope="col"><span title="수" class="day_week">수</span></th>
+					<th scope="col"><span title="목" class="day_week">목</span></th>
+					<th scope="col"><span title="금" class="day_week">금</span></th>
+					<th scope="col"><span title="토" class="day_week">토</span></th>
+				</tr>
+			</thead>
+			<tbody>
+								<tr>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-01');" class="">1</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-02');" class="">2</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-03');" class="">3</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-04');" class="">4</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-05');" class="">5</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-06');" class="">6</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-07');" class="">7</a></td>
+								</tr>
+								<tr>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-08');" class="">8</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-09');" class="">9</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-10');" class="">10</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-11');" class="">11</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-12');" class="">12</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-13');" class="">13</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-14');" class="">14</a></td>
+								</tr>
+								<tr>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-15');" class="">15</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-16');" class="">16</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-17');" class="">17</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-18');" class="">18</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-19');" class="">19</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-20');" class="">20</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-21');" class="">21</a></td>
+								</tr>
+								<tr>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-22');" class="">22</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-23');" class="">23</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-24');" class="">24</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-25');" class="on">25</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-26');" class="">26</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-27');" class="">27</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-28');" class="">28</a></td>
+								</tr>
+								<tr>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-29');" class="">29</a></td>
+									<td class="date"><a href="javascript:chgURL('date','2026-11-30');" class="">30</a></td>
+							</tbody>
+		</table>
+	</div>
+</div>
+
+
+
+
+
+
+
+<script>
+function toggleCalendar(){
+	var el = $("#calendarArea");
+	if(el.is(":visible")) el.hide();
+	else el.show();
+}
+function getMonth(sort,  m_cd,  date, mode, writer, h_cd, inc_cal_kind, curDate, clickMode){
+	$.ajax({
+		type: "POST",
+		url: "/ajax/etc/getMonthExist.php",
+		data: {sort:sort, m_cd:m_cd,  date: date, mode:mode, writer:writer, h_cd:h_cd, inc_cal_kind:inc_cal_kind, curDate:curDate, clickMode:clickMode},
+		success:function( data ) {
+			console.log(data);
+			$("#calendarArea").html( data );
+		}
+	});
+}
+</script>				<!--//달력 보기-->
+				<ul class="schedule_list_wrap">
+											<li class="schedule_list">
+								<div class="time">00:50</div>
+								<div class="program_name">
+																<span class="title">YTN24</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">01:50</div>
+								<div class="program_name">
+																<span class="title">YTN24</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">02:50</div>
+								<div class="program_name">
+																<span class="title">YTN24</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">03:20</div>
+								<div class="program_name">
+																<span class="title">사이언스 투데이</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">03:50</div>
+								<div class="program_name">
+																<span class="title">뉴스퀘어 4AM</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">04:50</div>
+								<div class="program_name">
+																<span class="title">뉴스START 1부</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">05:50</div>
+								<div class="program_name">
+																<span class="title">뉴스START 2부</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">06:50</div>
+								<div class="program_name">
+																<span class="title">뉴스START 3부</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">07:50</div>
+								<div class="program_name">
+																<span class="title">뉴스UP</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">09:40</div>
+								<div class="program_name">
+																<span class="title">뉴스퀘어 10AM</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li><li class="program_label">해</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">11:40</div>
+								<div class="program_name">
+																<span class="title">뉴스NOW</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li><li class="program_label">수</li><li class="program_label">화</li><li class="program_label">해</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">13:50</div>
+								<div class="program_name">
+																<span class="title">뉴스퀘어 2PM</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list onair">
+								<div class="time">15:50</div>
+								<div class="program_name">
+								<div class="ico_onair">ON AIR</div>								<span class="title">뉴스ON</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">17:50</div>
+								<div class="program_name">
+																<span class="title">뉴스PLUS</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">19:50</div>
+								<div class="program_name">
+																<span class="title">뉴스퀘어 8PM</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li><li class="program_label">수</li><li class="program_label">화</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">21:40</div>
+								<div class="program_name">
+																<span class="title">뉴스NIGHT</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+											<li class="schedule_list">
+								<div class="time">23:50</div>
+								<div class="program_name">
+																<span class="title">YTN24</span><ul class="label_wrap"><li class="program_label">HD</li><li class="program_label">생</li><li class="program_label">본</li><li class="program_label">자</li></ul>								</div>
+							</li>
+								
+				</ul>
+				<div class="schedule_info">
+					<ul class="noti">
+						<li>최종 업데이트 : 2026-11-16 16:39</li> 						<li>이 편성표는 방송사 사정에 따라 변경될 수 있습니다.</li>
+					</ul>
+					<ul class="noti_icons">
+						<li><span class="program_label">HD</span>HD 방송</li>
+						<li><span class="program_label">생</span>생방송</li>
+						<li><span class="program_label">본</span>본방송</li>
+						<li><span class="program_label">재</span>재방송</li>
+						<li><span class="program_label">자</span>자막방송</li>
+						<li><span class="program_label">해</span>화면해설(DVS)</li>
+						<li><span class="program_label">수</span>수어방송</li>
+						<li><span class="program_label">화</span>스마트수어방송</li>
+						<li><span class="program_label">12</span>12세 이상</li>
+						<li><span class="program_label">15</span>15세 이상</li>
+					</ul>
+				</div>
+			</div>
+			<!--//container-->
+<script>
+
+	function chgURL(key, val){
+		document.getElementById(key).value = val;
+		document.replayListForm.submit();
+	}
+
+
+
+
+
+
+</script>
+			<!--footer-->
+			
+			<style>
+				.bottom_menu_bar {
+					position : relative;
+					bottom : 0px;
+					transition : all 0.3s ease;	/* 애니매이션 효과가 필요없다면 삭제무방 */
+					pointer-events : auto;
+				}
+				
+				/* 애니메이션 효과가 필요없다면 삭제무방 */
+				.bar_hide {
+					pointer-events : none;
+					opacity : 0;
+					bottom : -70px; /* 아래에서 올라오는 느낌을 위해 추가 */
+					height : 0px;
+				}
+
+				#float_bottom {
+					position : relative;
+				}
+				.btnExx {
+					position : absolute;
+					z-index:100;
+					/* 2024-06-17 노인규 수정 : 광고소재 height에 맞게 bottom px값 변경 */
+					bottom:80px;
+					/*bottom:30px;*/
+					right:0px;
+					display:block;
+					width:20px;
+					height:20px;
+				}
+			</style>
+
+						<div class="footer">
+				<ul class="footer_menu YTN_CSA_bottommenu">
+					<li><a href="https://m.ytn.co.kr/customer/notice.php">공지사항</a></li>
+					<li><a href="https://www.ytn.co.kr/member_m/privacy.php">개인정보처리방침</a></li>
+					<li><a href="https://www.ytn.co.kr/member_m/contract.php">이용약관</a></li>
+					<li><a href="https://www.ytn.co.kr/member_m/youth_protection_policy.php">청소년보호정책</a></li> <!-- 페이지생성후 URL 연결필요 -->
+					<li><a href="/customer/business_info.php?gubun=W">사업자정보</a></li> <!-- 페이지생성후 URL 연결필요 -->
+											<li><a href="javascript:movePCmode()">PC버전</a></li>
+									</ul>
+				<span class="cpr">Copyright Ⓒ YTN. All rights reserved.<br>무단 전재, 재배포 및 AI 데이터 활용 금지</span>
+
+				<!--하단 고정 배너 모음-->
+				<div class="bottom_wrapper">
+					
+					<!-- 2024-06-17 노인규 조건식 추가 : noad : y 1층로비에서 광고없이 출력되어야함 -->
+					
+						<!-- 플로팅광고 -->
+						 
+
+
+						<!-- 띠배너 -->
+																					<div id="float_bottom" style="background:#fff" >
+																		
+																			<script>
+											var aedi_b = { pb_id:'3532', size:'320x100', pbu:'', loc:location.href };
+										</script>
+										<script type='text/javascript' src='https://apis.aedi.ai/v3/publish/banner/aedi.min.js'></script>
+									
+									<script type="text/javascript">
+										function hideAD(){
+											//$("#float_bottom").hide();
+											$("#float_bottom").empty();
+										}
+									</script>
+																		<div class="btnExx" onclick="javascript:hideAD();"><img src="../img/etc/btn_ad_close.png" alt="광고닫기버튼"></div>
+																	</div>
+													
+
+					
+					
+					<!--[APP용] 하단 메뉴 바-->
+					<!-- 앱에서만 노출되도록 -->
+										<!--//[APP용] 하단 메뉴 바-->
+				</div>
+				<!--//하단 고정 배너 모음-->
+			</div>
+			<!--//footer-->
+			<script>
+
+				function movePCmode(){
+					var _script = document.createElement("script");
+					_script.setAttribute("type", "text/javascript");
+					_script.setAttribute("src", "/_comm/ylog.php?m=PCMode&s=T&u="+escape(document.URL)+"&r="+escape(document.referrer)+"&g=MW");
+					document.head.appendChild(_script);
+
+					var start = new Date().getTime();
+					while(new Date().getTime() < start + 500); //sleep 0.5초 안주면 못찍는다.
+
+					var key, s_mcd, pos;
+					var currentURL = location.href;
+					if(currentURL.indexOf("news_view") > -1){
+						key = currentURL.substr(currentURL.indexOf("key")+4, 18);
+						s_mcd = currentURL.substr(currentURL.indexOf("s_mcd")+6, 4);
+						pos_idx = currentURL.indexOf("pos");
+						pos = currentURL.substr(pos_idx+4, 3);
+						if(pos_idx > 0 && pos != ''){
+							pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key+"_"+pos;
+						}else{
+							pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key;
+						}
+						//pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key;
+					}else if(currentURL.indexOf("ent_view") > -1){
+						key = currentURL.substr(currentURL.indexOf("key")+4, 18);
+						s_mcd = currentURL.substr(currentURL.indexOf("s_mcd")+6, 4);
+						pos_idx = currentURL.indexOf("pos");
+						pos = currentURL.substr(pos_idx+4, 3);
+						if(pos_idx > 0 && pos != ''){
+							pcURL = "https://star.ytn.co.kr/_ln/"+s_mcd+"_"+key+"_"+pos;
+						}else{
+							pcURL = "https://star.ytn.co.kr/_ln/"+s_mcd+"_"+key;
+						}
+						pcURL = "https://star.ytn.co.kr/_sn/"+s_mcd+"_"+key;
+					}else if(currentURL.indexOf("\/news\/") > -1){
+						key = currentURL.substr(currentURL.indexOf("news\/")+5, 18);
+						s_mcd = currentURL.substr(currentURL.indexOf("news\/")+24, 4);
+						pos = currentURL.substr(currentURL.indexOf("news\/")+29, 3);
+						if(pos.match(/^[0-9]{3}$/)){
+							pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key+"_"+pos;
+						}
+						else{
+							pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key;
+						}
+						pcURL = "https://www.ytn.co.kr/_ln/"+s_mcd+"_"+key;
+					}else if(currentURL.indexOf("star_main") > -1){
+						pcURL = "https://star.ytn.co.kr";
+					}else{
+						pcURL = "https://www.ytn.co.kr";
+					}
+
+					location.href = pcURL;
+				}
+
+				
+				// _top에 있는 scroll이벤트에 같이 넣어도됨
+				var fs_now = 0;
+				var fs_now_ad = 0;
+					
+
+				var _ad_kind = "ad_new";
+				var is_float_bottom_box = false;
+				$(window).scroll( function( e ) {
+					var currentURL = location.href;
+					
+					if(_ad_kind.indexOf("ad_new") > -1){
+						// 2026-04-01 노인규 수정 : 연예뷰도 포함, 메인/리스트는 아님
+						if(currentURL.indexOf("news_view") > -1 || currentURL.indexOf("ent_view") > -1 ){	//연예뷰 제외 뉴스뷰
+							//광고
+							var fs_top_ad = $(this).scrollTop();
+
+							if( fs_top_ad > fs_now_ad  && fs_now_ad > -1 ) {
+								console.log("ad test!!!");
+								$('#float_bottom_box').css('display', 'none');
+								$('#float_bottom').css('display', 'block');
+							}
+							else if( fs_top_ad < fs_now_ad  ) {
+								if( !is_float_bottom_box ) {
+									$('#float_bottom_box').append('<script async src="https://cdn.adshub.kr/sdk/inventory_252.js"><\/script>');
+								}else {
+									$('#float_bottom_box').css('display', 'block');
+								}
+								is_float_bottom_box = true;
+
+								$('#float_bottom').css('display', 'none');
+
+		//							$("#float_bottom_box").addClass("bar_hide");
+		//							$("#float_bottom").removeClass("bar_hide");
+							}
+
+							fs_now_ad = fs_top_ad;
+						}
+					}
+
+					if( $(".bottom_menu_bar").length > 0 ) {
+						var fs_top = $(this).scrollTop();
+
+						if( fs_top > fs_now && !$(".bottom_menu_bar").hasClass("bar_hide") && fs_now > -1 ) {
+							$(".bottom_menu_bar").addClass("bar_hide");
+						}
+						else if( fs_top < fs_now && $(".bottom_menu_bar").hasClass("bar_hide") ) {
+							$(".bottom_menu_bar").removeClass("bar_hide");
+						}
+						fs_now = fs_top;
+					}
+
+				} );
+
+				// 안드로이드 클라이언트에서 호출
+				function canGoBackYTN(bool) {
+					//alert(bool);
+					if (bool == true) {	
+						$(".btn_prev").removeClass("off");
+						$(".btn_prev").attr("href", "javascript:window.history.back()");
+					} else {
+						$(".btn_prev").addClass("off");
+						$(".btn_prev").attr("href", "javascript:void(0)");
+					}
+				}
+				function canGoForwardYTN(bool) {
+					//alert(bool);
+					if (bool == true) {
+						$(".btn_next").removeClass("off");
+						$(".btn_next").attr("href", "javascript:window.history.forward()");
+					} else {
+						$(".btn_next").addClass("off");
+						$(".btn_next").attr("href", "javascript:void(0)");
+					}
+				}
+
+				//App 버전 체크
+				function _chk_version(){
+					if(navigator.userAgent.match(/iPhone|iPad/) != null){
+						try{
+							//window.webkit.messageHandlers.ioshandler.postMessage('openSetting');
+							location.href = "config::";
+						}catch(e){
+							document.location = "toApp:relationButton:ver";
+							console.log("여기는 ios웹");
+						}
+					}else if(navigator.userAgent.match(/Android/) != null){
+						try{
+							window.android._getAppVersion();
+						}catch(e){
+							console.log("여기는 android웹");
+						}
+					}else{
+						alert("Android / iOS 에서 지원됩니다.");
+					}
+				}
+
+				function setAppVersion(ver){
+					_version = ver;
+					if(ver >="3.3.0.4"){
+						if(_hideLayer === "hide"){
+							if(_version >= "3.4.0.0"){
+								window.android.setLeftLayerState(false);
+							}
+							history.back();
+						}else {
+							location.href = "https://app1.ytn.co.kr/settingAppData.php";
+							if(_userAgent === "android"){
+								try{
+									window.android.setLeftLayerState(true);
+									window.android.getQPlayerPlaying();
+								}catch(e){
+									console.log("여기는 android웹~~");
+								}
+							}else if(_userAgent === "ios" && _gubun == "A"){
+								window.location="jsclosemenu://";
+							}
+						}
+					}else{
+						alert("해당 기능 사용을 위해서 어플리케이션을 최신 버전으로 업데이트 해주세요.");
+					}
+				}
+				function iOSgetAppVersion(ver){
+					if(navigator.userAgent.match(/iPad/) != null){
+						location.href = "https://app1.ytn.co.kr/settingAppData.php";
+					}
+					else{
+						if(ver >="3.1.1"){
+							location.href = "https://app1.ytn.co.kr/settingAppData.php";
+						}else{
+							alert("Version 3.1.1 이상에서 지원됩니다.");
+						}
+					}
+				}
+
+			</script>
+		</div>
+
+		<!--//wrapper-->
+		<!-- 2025-10-10 : 앱 전면광고 테스트 -->
+			</body>
+</html>
