@@ -358,6 +358,11 @@ async function epgDays(days) {
           items = pickDaum ? a : b; how = 'differ → ' + (pickDaum ? 'daum' : 'naver');
         }
       }
+      // which start times only one side had (D = Daum only, N = Naver only), to see why they disagree
+      if (how.startsWith('differ') && b.length) {
+        const A = new Set(a.map(r => r[0])), B = new Set(b.map(r => r[0]));
+        how += ` [D ${a.filter(r => !B.has(r[0])).slice(0, 4).map(r => r[0] + ' ' + r[1].slice(0, 10)).join(', ')} | N ${b.filter(r => !A.has(r[0])).slice(0, 4).map(r => r[0] + ' ' + r[1].slice(0, 10)).join(', ')} | ${a.length}/${b.length}]`;
+      }
       check[name] = how;
       ch.push({no, name, grp, items});
     }
