@@ -2,8 +2,8 @@ name: collect
 
 on:
   schedule:
-    # KST 03:07, 08:07, 11:07, 14:07, 17:07, 20:07 (UTC = KST - 9)
-    - cron: '7 18,23,2,5,8,11 * * *'
+    # KST 06:07, 10:07, 15:07, 21:07 (UTC = KST - 9); "지금 수집" runs it by hand in between
+    - cron: '7 21,1,6,12 * * *'
   workflow_dispatch:
   push:
     branches: [main]
