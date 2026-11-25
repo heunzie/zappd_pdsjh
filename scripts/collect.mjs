@@ -197,7 +197,6 @@ async function daumChannel(name, year) {
   const url = 'https://search.daum.net/search?w=tot&q=' + encodeURIComponent(DAUM_Q[name] + ' 편성표');
   const r = await fetch(url, {headers: {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36', 'Accept-Language': 'ko-KR,ko;q=0.9'}, signal: AbortSignal.timeout(30000)});
   const t = await r.text();
-  if (name === 'MBN') { try { fs.mkdirSync(DATA, {recursive: true}); fs.writeFileSync(DATA + '/debug-daum-mbn.html', t); } catch (e) {} } // TEMP probe
   const days = {};
   for (const m of t.matchAll(/id="channelTitle(\d+)"[^>]*>\s*<span class="date">(\d{1,2})\.(\d{1,2})<\/span>/g)) {
     let y = year; const mo = +m[2];
