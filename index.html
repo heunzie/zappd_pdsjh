@@ -590,7 +590,7 @@ function setView(v) {
   document.querySelectorAll('[data-view-panel]').forEach(p => p.hidden = p.dataset.viewPanel !== v);
   try { history.replaceState(null, '', '#' + v); } catch (e) {}
   const sc = v === 'timeline' ? $('#tlScroll') : v === 'epg' ? $('#epgScroll') : null;
-  if (sc && !sc.dataset.placed && state.date) { sc.dataset.placed = '1'; const n = kstNow(); const nm = nowMin(); sc.scrollTop = Y(nm !== null ? nm - 60 : (v === 'epg' ? 18 : 6) * 60) * 2; }
+  if (sc && !sc.dataset.placed && state.date) { sc.dataset.placed = '1'; const n = kstNow(); const nm = nowMin(); sc.scrollTop = Y(viewMin() - 60) * 2; }
   if (v === 'lineup') scrollLineup();
   if (state.date && v === 'epg' && epgOrder === 'num') requestAnimationFrame(() => renderEpg(state.tvItems, true));
 }
@@ -604,6 +604,8 @@ function nowMin() {
   if (state.date === addDays(n.date, -1) && n.min + 1440 < DAY_END) return n.min + 1440;
   return null;
 }
+// where a board opens: now on today's board, the same clock time on any other date
+function viewMin() { const nm = nowMin(); if (nm !== null) return nm; const m = kstNow().min; return m < DAY_START ? m + 1440 : m; }
 // before 01:00 the running broadcast belongs to yesterday's board
 const boardToday = () => { const n = kstNow(); return n.min < DAY_START ? addDays(n.date, -1) : n.date; };
 function tick() {
@@ -651,15 +653,16 @@ function renderLineup(items) {
       const more = extra > 0 ? `<button class="lu-more" data-n="${extra}" title="이 시간에 걸친 앞뒤 방송 ${extra}개 더 보기">+${extra}</button>` : '';
       return `<div class="lu-ch"><div class="who"><span class="wn">${chDot(c.id)}${esc(c.name)}</span>${more}</div><div class="progs">${progs}</div></div>`;
     }).join('');
-    return `<article class="lu-row ${isNow ? 'now' : ''} ${past ? 'past' : ''}" ${isNow ? 'id="luNow"' : ''}>
+    return `<article class="lu-row ${isNow ? 'now' : ''} ${past ? 'past' : ''}" data-em="${it.em}" ${isNow ? 'id="luNow"' : ''}>
       <button class="lu-ns" data-idx="${it.idx}"><span class="t">${it.nx ? '<span class="nx">익일</span>' : ''}${esc(it.s)}–${esc(it.e)}${isNow ? '<span class="live">지금</span>' : ''}</span><span class="nm">${esc(it.n)}</span>${nsPrice}</button>
       <div class="lu-rv">${rows}</div></article>`;
   }).join('');
   if (state.view === 'lineup') scrollLineup();
 }
 function scrollLineup() {
-  if (state.luScrolled || nowMin() === null) return;
-  const target = $('#luNow') || [...document.querySelectorAll('.lu-row')].find(r => !r.classList.contains('past'));
+  if (state.luScrolled) return;
+  const m = viewMin();
+  const target = $('#luNow') || [...document.querySelectorAll('.lu-row')].find(r => !r.classList.contains('past') && +r.dataset.em > m);
   if (target) { state.luScrolled = true; requestAnimationFrame(() => target.scrollIntoView({block: 'start'})); }
 }
 $('#lineup').addEventListener('click', e => {
@@ -696,7 +699,7 @@ function renderTimeline(items) {
   html += `<div class="nowline" id="nowline" hidden><span></span></div>`;
   $('#tl').innerHTML = html;
   const sc = $('#tlScroll'); const nm = nowMin();
-  const target = Y(nm !== null ? nm - 60 : 6 * 60);
+  const target = Y(viewMin() - 60);
   requestAnimationFrame(() => { sc.scrollTop = target * 2; });
 }
 $('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) zoomItem(state.items.find(i => i.idx === +b.dataset.idx), state.items, state.set); });
@@ -774,7 +777,7 @@ function renderEpg(items, keepScroll) {
   const sideTo = () => { if (!nsHead) return 0; const prev = nsHead.previousElementSibling; return prev && !prev.classList.contains('corner') ? Math.max(0, prev.offsetLeft - w.rail) : 0; };
   if (keepScroll) { sc.scrollTop = keep; sc.scrollLeft = sideTo(); tick(); return; }
   const nm = nowMin();
-  const target = Y(nm !== null ? nm - 60 : 18 * 60);
+  const target = Y(viewMin() - 60);
   requestAnimationFrame(() => { sc.scrollTop = target * 2; sc.scrollLeft = sideTo(); });
 }
 $('#epgOrder').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b || b.dataset.o === epgOrder) return; epgOrder = b.dataset.o; try { localStorage.setItem('zap.epgOrder', epgOrder); } catch (er) {} renderEpg(state.tvItems, true); });

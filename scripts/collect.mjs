@@ -238,9 +238,10 @@ export function parseNaver(t, year) {
     const h = (block.match(/<div class="time_box">\s*<span>(\d{1,2})시/) || [])[1]; if (h == null) continue;
     for (const p of block.split('<div class="ind_program col').slice(1)) {
       const d = cols[(p.match(/^(\d+)/) || [])[1]]; if (!d) continue;
-      const mm = (p.match(/<div class="time_min">\s*(\d{1,2})/) || [])[1]; if (mm == null) continue;
-      const tt = p.match(/class="pr_title"[^>]*>([\s\S]*?)<\/(?:a|span|strong|div)>/); if (!tt) continue;
-      const title = cleanTitle(tt[1]).replace(/\((\d+)회\)$/, ' $1회'); if (title) (out[d] = out[d] || []).push([pad2(h) + ':' + pad2(mm), title, '']);
+      // one column of an hour can hold several programmes, each with its own minute
+      for (const m of p.matchAll(/<div class="time_min">\s*(\d{1,2})[\s\S]*?class="pr_title"[^>]*>([\s\S]*?)<\/(?:a|span|strong|div)>/g)) {
+        const title = cleanTitle(m[2]).replace(/\((\d+)회\)$/, ' $1회'); if (title) (out[d] = out[d] || []).push([pad2(h) + ':' + pad2(m[1]), title, '']);
+      }
     }
   }
   for (const d in out) out[d].sort((a, b) => a[0].localeCompare(b[0]));
@@ -263,7 +264,7 @@ async function naverChannel(name, year) {
 }
 
 // broadcasters' own schedules, each returns [[HH:MM, title, ''], ...] for day d (YYYY-MM-DD)
-// KBS, SBS, MBC and tvN publish a broadcast day (05:00 to 29:00); MBN, YTN and JTBC a calendar day
+// KBS, SBS, MBC, MBN and tvN publish a broadcast day (to 29:00); YTN and JTBC a calendar day
 export const OFFICIAL_PARSE = {
   kbs: t => JSON.parse(t).flatMap(x => x.schedules || []).map(s => [String(s.program_planned_start_time).replace(/^(\d\d)(\d\d).*/, '$1:$2'), (s.programming_table_title || s.program_title || '').trim(), '']),
   mbc: t => JSON.parse(t.slice(t.indexOf('(') + 1, t.lastIndexOf(')'))).map(x => [x.StartTime.slice(0, 2) + ':' + x.StartTime.slice(2, 4), (x.Title || '').trim(), '']),
@@ -298,7 +299,7 @@ const OFFICIAL_EPG = {
   YTN: d => getText(`https://m.ytn.co.kr/schedule.php?date=${d}`).then(OFFICIAL_PARSE.ytn),
 };
 
-const BROADCAST_DAY = new Set(['KBS1', 'KBS2', 'SBS', 'MBC', 'tvN']);
+const BROADCAST_DAY = new Set(['KBS1', 'KBS2', 'SBS', 'MBC', 'MBN', 'tvN']);
 const officialCache = {};
 const officialRaw = (name, d) => (officialCache[name + d] = officialCache[name + d] || OFFICIAL_EPG[name](d));
 // the calendar day d: its own rows before midnight plus the previous broadcast day's 24:00+ rows
