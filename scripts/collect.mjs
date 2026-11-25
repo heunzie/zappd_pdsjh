@@ -239,7 +239,6 @@ async function main() {
   fs.mkdirSync(DATA, { recursive: true });
   const days = Array.from({ length: AHEAD + 1 }, (_, i) => kst(i));
   const browser = await chromium.launch();
-  try { const {probe} = await import('./probe.mjs'); await probe(browser); } catch (e) { console.log('probe failed', e); } // TEMP probe
   const ctx = await browser.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36' });
   const page = await ctx.newPage();
   const summary = { at: nowIso(), days: {}, hsLog: HS_LOG, epgLog: EPG_LOG, officialLog: OFFICIAL_LOG };
