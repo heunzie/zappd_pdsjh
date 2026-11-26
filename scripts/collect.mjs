@@ -210,7 +210,9 @@ async function daumChannel(name, year) {
     for (const e of m[3].matchAll(/<dt class="tit">\s*(\d+)\s*<\/dt>\s*<dd class="cont">([\s\S]*?)<\/dd>/g)) {
       const title = decodeHtml(e[2].replace(/<span class="img_tv[^"]*">[\s\S]*?<\/span>/g, '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim());
       if (!title) continue;
-      (out[d] = out[d] || []).push([hh + ':' + String(+e[1]).padStart(2, '0'), title, '']);
+      // Daum marks live (생방송) and repeat (재방송) airings with icons; keep that as the row's flag
+      const flag = /ico_live/.test(e[2]) ? '생' : /ico_re\b|ico_re"/.test(e[2]) ? '재' : '';
+      (out[d] = out[d] || []).push([hh + ':' + String(+e[1]).padStart(2, '0'), title, flag]);
     }
   }
   for (const d in out) out[d].sort((a, b) => a[0].localeCompare(b[0]));
@@ -366,6 +368,8 @@ async function epgDays(days) {
         how += ` [D ${a.filter(r => !B.has(r[0])).slice(0, 4).map(r => r[0] + ' ' + r[1].slice(0, 10)).join(', ')} | N ${b.filter(r => !A.has(r[0])).slice(0, 4).map(r => r[0] + ' ' + r[1].slice(0, 10)).join(', ')} | ${a.length}/${b.length}]`;
       }
       check[name] = how;
+      // the live/repeat flag only comes from Daum: carry it over by start time when another source won
+      if (items !== a && a.length) { const flag = new Map(a.filter(x => x[2]).map(x => [x[0], x[2]])); items = items.map(x => x[2] || !flag.has(x[0]) ? x : [x[0], x[1], flag.get(x[0])]); }
       ch.push({no, name, grp, items});
     }
     const n = ch.reduce((s, c) => s + c.items.length, 0);
