@@ -384,10 +384,12 @@ tbody tr:hover td{background:var(--surface-2)}
 .zb.tvp{cursor:pointer}
 .zb.tvp:hover{border-color:var(--ink)}
 .zb[aria-current="true"]{box-shadow:0 0 0 2px var(--accent);z-index:3}
-.zprog{position:relative;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:10px 40px 10px 14px;background:var(--surface-2);display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.zpop{position:fixed;z-index:70;width:min(360px,calc(100vw - 16px))}
+.zpop[hidden]{display:none}
+.zprog{position:relative;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:10px 36px 10px 14px;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.22);display:flex;flex-direction:column;gap:4px}
 .zp-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px}
 .zp-t{font-size:15px;font-weight:700}
-.zp-s{margin:0;font-size:12.5px;line-height:1.55;max-height:5.2em;overflow:auto}
+.zp-s{margin:0;font-size:12.5px;line-height:1.55;max-height:9.5em;overflow:auto}
 .zp-g{margin:0;font-size:12px;color:var(--muted)}
 .zp-a{font-size:12px;color:var(--accent);align-self:flex-start}
 .zp-x{position:absolute;top:8px;right:8px;border:0;background:transparent;color:var(--muted);font-size:14px;cursor:pointer;padding:4px}
@@ -493,7 +495,7 @@ tbody tr:hover td{background:var(--surface-2)}
   </div>
 </div>
 
-<div class="zoom" id="zoom" hidden><div class="zpanel" id="zpanel" role="dialog" aria-modal="true"></div></div>
+<div class="zoom" id="zoom" hidden><div class="zpanel" id="zpanel" role="dialog" aria-modal="true"></div><div class="zpop" id="zpop" hidden></div></div>
 <div class="sheet" id="sheet" hidden><div class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="pTitle"></div></div>
 
 <script>
@@ -871,7 +873,9 @@ function closeDetail() { $('#sheet').hidden = true; }
 let zoomSrc = null, zoomArgs = null, zoomTab = 'zap';
 const ZTABS = [['zap', '재핑 타임라인', '재핑'], ['tv', '경쟁사 홈쇼핑(TV)', '경쟁 TV'], ['tc', '경쟁사 홈쇼핑(데이터)', '경쟁 데이터'], ['detail', '상품 상세', '상세']];
 let zoomProg = null, zoomProgs = [];
-function openZoom(sm, em, head, src, tab, prog) { zoomProg = prog || null; zoomSrc = src || null; zoomArgs = [sm, em, head]; zoomTab = tab || 'zap'; if (zoomTab === 'detail' && !src) zoomTab = 'zap'; renderZoom(); $('#zoom').hidden = false; $('#zpanel').scrollTop = 0; }
+function openZoom(sm, em, head, src, tab, prog) { zoomProg = prog || null; zoomSrc = src || null; zoomArgs = [sm, em, head]; zoomTab = tab || 'zap'; if (zoomTab === 'detail' && !src) zoomTab = 'zap'; $('#zpop').hidden = true; renderZoom(); $('#zoom').hidden = false; $('#zpanel').scrollTop = 0;
+  if (zoomProg) requestAnimationFrame(() => { const el = $('#zpanel [data-zp][aria-current]'); if (el) { el.scrollIntoView({block: 'nearest', inline: 'nearest'}); showProg(zoomProg, el.getBoundingClientRect()); } });
+}
 // a home shopping broadcast: open the popup on the given tab
 function zoomItem(it, pool, tab) { if (it) openZoom(it.sm, it.em, {ch: chDot(it.ch) + esc(CHMAP[it.ch].name), n: it.n}, {idx: it.idx, pool}, tab); }
 function renderZoom() {
@@ -922,8 +926,7 @@ function renderZoom() {
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
       <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>
     <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>
-    ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.${tab === 'zap' ? ' TV 프로그램 막대를 누르면 회차 정보가 보여요.' : ''}</p>`}
-    ${tab === 'zap' && zoomProg ? progCard(zoomProg) : ''}
+    ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.${tab === 'zap' ? ' TV 프로그램 막대를 누르면 회차 정보가 작게 떠요.' : ''}</p>`}
     ${body}`;
 }
 // one TV programme picked in the popup: live/repeat, first airing, and Daum's episode synopsis
@@ -935,21 +938,36 @@ function progCard(p) {
   const isEp = /\d+회$/.test(p.t) && ['JTBC', 'MBN', 'TV조선', '채널A'].includes(p.ch);
   const body = n && n.full ? `<p class="zp-s">${esc(n.full)}</p>${n.guest ? `<p class="zp-g">게스트 ${esc(n.guest)}</p>` : ''}`
     : `<p class="quiet zp-s">${n && n.pending ? '다음 방송정보에 줄거리가 아직 올라오지 않았어요. 다음 수집 때 다시 확인해요.' : isEp ? '다음 방송정보에 이 회차 소개가 없어요.' : '회차 소개는 종편(JTBC·MBN·TV조선·채널A)의 회차 프로그램만 가져와요.'}</p>`;
-  return `<section class="zprog"><div class="zp-h"><b>${esc(p.ch)}</b> <span class="mono">${m2hm(p.a)}–${m2hm(p.b)}</span> <span class="quiet">${p.b - p.a}분</span> ${badges}<button class="zp-x" id="zpClose" aria-label="회차 정보 닫기">✕</button></div>
+  return `<section class="zprog" role="dialog" aria-label="회차 정보"><div class="zp-h"><b>${esc(p.ch)}</b> <span class="mono">${m2hm(p.a)}–${m2hm(p.b)}</span> <span class="quiet">${p.b - p.a}분</span> ${badges}<button class="zp-x" id="zpClose" aria-label="회차 정보 닫기">✕</button></div>
     <div class="zp-t">${esc(p.t)}</div>${body}<a class="zp-a" href="https://search.daum.net/search?w=tot&q=${encodeURIComponent(p.ch + ' ' + p.t)}" target="_blank" rel="noopener">다음에서 보기 ↗</a></section>`;
 }
-function closeZoom() { $('#zoom').hidden = true; }
-// re-render the popup without losing where the timeline was scrolled
-function rezoom() { const sc = $('#zpanel .zscroll'), top = sc ? sc.scrollTop : 0, left = sc ? sc.scrollLeft : 0; renderZoom(); const n = $('#zpanel .zscroll'); if (n) { n.scrollTop = top; n.scrollLeft = left; } }
+// mini popup beside the programme bar that was clicked
+function showProg(p, rect) {
+  const pop = $('#zpop'); pop.innerHTML = progCard(p); pop.hidden = false;
+  const w = pop.offsetWidth, h = pop.offsetHeight, vw = innerWidth, vh = innerHeight;
+  let left = Math.min(Math.max(8, rect.left), vw - w - 8), top = rect.bottom + 6;
+  if (top + h > vh - 8) top = Math.max(8, rect.top - h - 6);
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+}
+function hideProg() { $('#zpop').hidden = true; zoomProg = null; document.querySelectorAll('#zpanel [data-zp][aria-current]').forEach(x => x.removeAttribute('aria-current')); }
+function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return closeZoom();
-  const t = e.target.closest('[data-zt]'); if (t) { zoomTab = t.dataset.zt; renderZoom(); return; }
-  if (e.target.id === 'zpClose') { zoomProg = null; rezoom(); return; }
-  const zp = e.target.closest('[data-zp]'); if (zp) { zoomProg = zoomProgs[+zp.dataset.zp]; rezoom(); return; }
+  const t = e.target.closest('[data-zt]'); if (t) { hideProg(); zoomTab = t.dataset.zt; renderZoom(); return; }
+  if (e.target.id === 'zpClose') { hideProg(); return; }
+  if (e.target.closest('#zpop')) return;
+  const zp = e.target.closest('[data-zp]');
+  if (zp) {
+    hideProg(); zoomProg = zoomProgs[+zp.dataset.zp]; zp.setAttribute('aria-current', 'true');
+    showProg(zoomProg, zp.getBoundingClientRect()); return;
+  }
+  if (!$('#zpop').hidden) hideProg();
   // 상품 상세: other broadcasts listed there open in the same popup
   const b = e.target.closest('.zdetail [data-idx]'); if (b && zoomSrc) zoomItem(zoomSrc.pool.find(i => i.idx === +b.dataset.idx), zoomSrc.pool, 'detail');
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
+// the popup is pinned to the screen, so it goes away when the timeline moves under it
+document.addEventListener('scroll', e => { if (!$('#zpop').hidden && e.target.closest && e.target.closest('#zpanel')) hideProg(); }, true);
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail();  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
