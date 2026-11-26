@@ -376,13 +376,69 @@ async function epgDays(days) {
   return out;
 }
 
+// ---------- 종편 episode notes: Daum's programme box for "채널 프로그램 N회" ----------
+// one line about what an episode covers, its first airing date (a rerun shows here) and guests; no AI involved
+const EP_CH = ['JTBC', 'MBN', 'TV조선', '채널A'];
+const EP_FILE = () => path.join(DATA, 'episodes.json');
+const EP_LOG = [];
+const pageText = t => decodeHtml(t.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/g, ' ').replace(/<[^>]+>/g, ' ').replace(/&#\d+;/g, ' ')).replace(/\s+/g, ' ');
+export function parseDaumEpisode(html, ep) {
+  const tx = pageText(html);
+  if (/이전 회차 (?:다음 회차 )?줄거리 정보 준비 중/.test(tx)) {
+    const m = tx.match(/줄거리 정보 준비 중입니다 더보기 방영일 (\d{4})\.(\d\d)\.(\d\d)\.\S* 회차 (\d+)회/);
+    return m && +m[4] === ep ? {pending: true, air: `${m[1]}-${m[2]}-${m[3]}`} : null;
+  }
+  const m = tx.match(/이전 회차 (?:다음 회차 )?([\s\S]{5,2000}?) 더보기 방영일 (\d{4})\.(\d\d)\.(\d\d)\.\S* 회차 (\d+)회((?: 시청률 [\d.]+%)?)(?: 게스트 (.+?) (?:이전 컨텐츠보기|회차 더보기|다음 컨텐츠보기))?/);
+  if (!m || +m[5] !== ep) return null;
+  // the box's own headline when it has one, otherwise the synopsis' opening sentence
+  const tit = pageText((html.match(/<strong class="tit_story">([\s\S]*?)<\/strong>/) || [])[1] || '').trim();
+  const full = m[1].trim();
+  return {line: oneLine(tit || full), air: `${m[2]}-${m[3]}-${m[4]}`, guest: (m[7] || '').trim().slice(0, 60), full: full.slice(0, 400)};
+}
+function oneLine(t) {
+  t = t.replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu, '').trim();
+  const parts = t.split(/(?<=[.!?…])\s+/).filter(Boolean);
+  let line = parts[0] || '';
+  if (line.length < 12 && parts[1]) line += ' ' + parts[1];
+  return line.length > 70 ? line.slice(0, 68).replace(/\s\S*$/, '') + '…' : line;
+}
+async function episodeNotes(epg, days) {
+  const store = readJson(EP_FILE()) || {};
+  const want = [];
+  for (const d of days.filter(near)) for (const c of epg[d] || []) {
+    if (!EP_CH.includes(c.name)) continue;
+    for (const [s, t] of c.items) {
+      const m = t.match(/^(.*\S)\s+(\d+)회$/); if (!m || /뉴스|news/i.test(t)) continue;
+      const key = c.name + '|' + t, have = store[key];
+      if (have && !have.pending) continue;
+      if (have && have.pending && have.tried === nowIso().slice(0, 13)) continue;
+      if (!want.some(w => w.key === key)) want.push({key, ch: c.name, title: m[1], ep: +m[2]});
+    }
+  }
+  let found = 0;
+  for (const w of want.slice(0, 120)) {
+    try {
+      const html = await getText('https://search.daum.net/search?w=tot&q=' + encodeURIComponent(`${w.ch} ${w.title} ${w.ep}회`));
+      const note = parseDaumEpisode(html, w.ep);
+      if (note) { store[w.key] = {...note, at: nowIso().slice(0, 10), tried: nowIso().slice(0, 13)}; if (!note.pending) found++; }
+      else store[w.key] = {pending: true, none: true, tried: nowIso().slice(0, 13)};
+    } catch (e) { EP_LOG.push(w.key + ' ' + String(e).slice(0, 80)); }
+    await sleep(1200);
+  }
+  // keep two months of notes
+  const cut = kst(-60);
+  for (const [k, v] of Object.entries(store)) if ((v.at || v.tried || '').slice(0, 10) < cut) delete store[k];
+  writeJson(EP_FILE(), store);
+  EP_LOG.push(`asked ${Math.min(want.length, 120)}, found ${found}, stored ${Object.keys(store).length}`);
+}
+
 async function main() {
   fs.mkdirSync(DATA, { recursive: true });
   const days = Array.from({ length: AHEAD + 1 }, (_, i) => kst(i));
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ locale: 'ko-KR', timezoneId: 'Asia/Seoul', userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36' });
   const page = await ctx.newPage();
-  const summary = { at: nowIso(), days: {}, hsLog: HS_LOG, epgLog: EPG_LOG, epgCheck: EPG_CHECK, officialLog: OFFICIAL_LOG };
+  const summary = { at: nowIso(), days: {}, hsLog: HS_LOG, epgLog: EPG_LOG, epgCheck: EPG_CHECK, epLog: EP_LOG, officialLog: OFFICIAL_LOG };
 
   const hs = {};
   for (const d of days) hs[d] = await hsmoaDay(page, d);
@@ -390,6 +446,7 @@ async function main() {
   for (const d of days) if (near(d) && hs[d].filter(i => TV.includes(i.ch)).length >= minTvFor(d)) hs[d] = hs[d].concat(await fillFromOfficial(ctx.request, d, hs[d]));
   await browser.close();
   const epg = await epgDays(days);
+  try { await episodeNotes(epg, days); } catch (e) { EP_LOG.push('episode notes failed ' + String(e).slice(0, 120)); }
 
   // once a broadcast has started hsmoa points its products at their next airing, so keep the line-up captured before it aired
   const nowKst = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 16);

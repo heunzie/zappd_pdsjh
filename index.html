@@ -423,6 +423,10 @@ tbody tr:hover td{background:var(--surface-2)}
 #hovercard .hc-ch{font-size:11px;opacity:.7}
 #hovercard .hc-t{font-weight:600;margin:1px 0 3px}
 #hovercard .hc-n{font-weight:600;font-size:13.5px;overflow-wrap:anywhere}
+#hovercard .hc-note{margin-top:7px;padding-top:7px;border-top:1px solid rgba(255,255,255,.18);font-size:12px;line-height:1.45;opacity:.92;white-space:pre-line}
+.rr{display:inline-block;font-size:9.5px;font-weight:700;color:var(--warn);border:1px solid currentColor;border-radius:3px;padding:0 3px;margin-right:4px;line-height:1.35;vertical-align:1px}
+.zb .zn.one{-webkit-line-clamp:1}
+.zb .zs{font-size:10.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 #hovercard .hc-p{margin-top:4px;font-weight:700}
 @media (max-width:760px){.tl .col.zapcol .blk{padding-right:10px}.zapmark{width:8px;border-top-width:3px}.zapmark span{display:none}.zg{grid-template-columns:44px minmax(0,1fr)}.zg .zn{display:none}}
 .epgnow div{display:grid;grid-template-columns:88px 48px minmax(0,1fr);gap:8px;font-size:12.5px;padding:5px 0;border-bottom:1px solid var(--line)}
@@ -607,6 +611,13 @@ function nowMin() {
   if (state.date === addDays(n.date, -1) && n.min + 1440 < DAY_END) return n.min + 1440;
   return null;
 }
+// Daum episode note for a 종편 programme (data/episodes.json): what it covers and whether it is a rerun
+function epNote(ch, title, day) {
+  const n = (state.episodes || {})[ch + '|' + title]; if (!n || n.none) return null;
+  return {rerun: !!(n.air && n.air < day), air: n.air || '', line: n.pending ? '' : (n.line || ''), guest: n.guest || ''};
+}
+const epNoteText = n => !n ? '' : [n.rerun ? `재방 · 원 방영 ${n.air.replace(/-/g, '.')}` : '본방', n.line, n.guest ? '게스트 ' + n.guest : ''].filter(Boolean).join('\n');
+const rrTag = n => n && n.rerun ? '<span class="rr">재</span>' : '';
 // where a board opens: now on today's board, the same clock time on any other date
 function viewMin() { const nm = nowMin(); if (nm !== null) return nm; const m = kstNow().min; return m < DAY_START ? m + 1440 : m; }
 // before 01:00 the running broadcast belongs to yesterday's board
@@ -769,7 +780,8 @@ function renderEpg(items, keepScroll) {
     let col = `<div class="col" style="height:calc(${H - DAY_START} * var(--ppm))">${grid()}`;
     for (const r of c.rows) {
       const dur = Math.min(r.em, H) - Math.max(r.sm, DAY_START); if (dur <= 0) continue; const px = dur * 2; const off = isOff(r.t);
-      col += `<div class="ep ${off ? 'off' : ''} ${px < 60 ? 'short' : ''} ${px < 36 ? 'tiny' : ''}" style="--g:var(--muted);top:calc(${Y(r.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" ${tip(c.name, r.sm, r.em, off ? '정파' : r.t)} data-sm="${r.sm}" data-em="${r.em}"><span class="t">${esc(r.s)}</span><span class="nm">${off ? '정파' : esc(r.t)}</span></div>`;
+      const note = off ? null : epNote(c.name, r.t, r.nx ? addDays(state.date, 1) : state.date);
+      col += `<div class="ep ${off ? 'off' : ''} ${px < 60 ? 'short' : ''} ${px < 36 ? 'tiny' : ''}" style="--g:var(--muted);top:calc(${Y(r.sm)} * var(--ppm) + 1px);height:calc(${dur} * var(--ppm) - 2px)" ${tip(c.name, r.sm, r.em, off ? '정파' : r.t)} data-sm="${r.sm}" data-em="${r.em}" data-nt="${esc(epNoteText(note))}"><span class="t">${esc(r.s)}</span><span class="nm">${rrTag(note)}${off ? '정파' : esc(r.t)}</span></div>`;
     }
     html += col + '</div>';
   }
@@ -866,7 +878,7 @@ function renderZoom() {
     : epgCols().map(c => c.hs
     ? {grp: c.ns && !byNum ? '' : byNum ? '지니TV 번호순' : '홈쇼핑', own: c.ns, label: `${chDot(c.ch)}${esc(CHMAP[c.ch].name)}${byNum ? ` <span class="quiet mono">${c.no}</span>` : ''}`, items: hsItems(c.pool, c.ch)}
     : {grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(c.name)} <span class="quiet mono">${c.no ?? ''}</span>`,
-       items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp'}))});
+       items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp', note: isOff(r.t) ? null : epNote(c.name, r.t, r.nx ? addDays(state.date, 1) : state.date)}))});
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em);
   const step = W > 150 ? 30 : W > 70 ? 10 : 5;
@@ -876,8 +888,8 @@ function renderZoom() {
     const inSlot = Math.min(x.b, em) - Math.max(x.a, sm) > 0;
     return `zb ${x.cls}${cut}${inSlot ? '' : ' out'}`;
   };
-  const txt = x => `<span class="zt mono">${m2hm(x.a)}–${m2hm(x.b)}${x.sub ? ` · <b>${esc(x.sub)}</b>` : ''}</span><span class="zn">${esc(x.n)}</span>`;
-  const tipT = x => esc(m2hm(x.a) + '–' + m2hm(x.b) + ' ' + x.n);
+  const txt = x => `<span class="zt mono">${m2hm(x.a)}–${m2hm(x.b)}${x.sub ? ` · <b>${esc(x.sub)}</b>` : ''}</span><span class="zn ${x.note && x.note.line ? 'one' : ''}">${rrTag(x.note)}${esc(x.n)}</span>${x.note && x.note.line ? `<span class="zs">${esc(x.note.line)}</span>` : ''}`;
+  const tipT = x => esc(m2hm(x.a) + '–' + m2hm(x.b) + ' ' + x.n + (x.note ? '\n' + epNoteText(x.note) : ''));
   let body;
   {
     const pct = m => ((Math.min(Math.max(m, w0), w1) - w0) / W * 100).toFixed(3) + '%';
@@ -957,13 +969,15 @@ async function bootStatic() {
     render();
   };
   $('#dateSel').addEventListener('change', e => { state.luScrolled = false; load(e.target.value); });
+  const loadEps = () => get('data/episodes.json').then(e => { state.episodes = e || {}; }).catch(() => {});
+  await loadEps();
   const today = boardToday();
   await load(state.dates.includes(today) ? today : state.dates[0]);
   // manual run link (needs GitHub login) + a quiet check every 2 minutes for a newer collection
   $('#runNow').hidden = false;
   let fresh = null;
   setInterval(async () => { try { const i = await get('data/index.json'); if (i.updatedAt !== idx.updatedAt) { fresh = i; $('#newData').hidden = false; } } catch (e) {} }, 120000);
-  $('#newData').addEventListener('click', async () => { if (!fresh) return; applyIndex(fresh); fresh = null; $('#newData').hidden = true; await load(state.dates.includes(state.date) ? state.date : state.dates[0]); });
+  $('#newData').addEventListener('click', async () => { if (!fresh) return; applyIndex(fresh); fresh = null; $('#newData').hidden = true; await loadEps(); await load(state.dates.includes(state.date) ? state.date : state.dates[0]); });
   return true;
 }
 async function boot() {
@@ -1001,7 +1015,7 @@ boot();
   let cur = null, timer = 0;
   const fill = el => {
     const d = el.dataset;
-    card.innerHTML = `<div class="hc-ch">${esc(d.tc)}</div><div class="hc-t mono">${esc(d.tt)}</div><div class="hc-n">${esc(d.tn)}</div>${d.tp ? `<div class="hc-p mono">${esc(d.tp)}</div>` : ''}`;
+    card.innerHTML = `<div class="hc-ch">${esc(d.tc)}</div><div class="hc-t mono">${esc(d.tt)}</div><div class="hc-n">${esc(d.tn)}</div>${d.tp ? `<div class="hc-p mono">${esc(d.tp)}</div>` : ''}${d.nt ? `<div class="hc-note">${esc(d.nt)}</div>` : ''}`;
   };
   const place = (x, y) => {
     card.hidden = false;
