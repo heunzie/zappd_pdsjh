@@ -53,7 +53,10 @@ button{cursor:pointer}
 
 /* on-air bar */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);padding-block:12px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;border-bottom:1px solid var(--line)}
-@media (max-width:700px){.bar{position:static}}
+/* phone: the menu bar stays on top; lists scroll under it and grids fill the space below it */
+@media (max-width:760px){
+  .tl-scroll{height:calc(100dvh - var(--barh,0px) - 64px)}
+}
 .credit{position:absolute;top:3px;right:4px;font-size:11px;line-height:1;color:var(--muted);opacity:.6;pointer-events:none;white-space:nowrap}
 @media (max-width:760px){.credit{position:static;order:-1;flex-basis:100%;text-align:right;font-size:11px;margin-bottom:-8px}}
 /* phones: a shorter header so the schedule starts higher on screen */
@@ -67,6 +70,13 @@ button{cursor:pointer}
   .bar .setseg button{padding:4px 10px}
   #view-timeline > .tl-legend, #view-lineup > .tl-legend{display:none}
   .nowline span{font-size:9px;padding:0 3px;top:-8px}
+  /* fixed menu: shorter labels so the set toggle and the three views share one row */
+  .bar .lg{display:none}
+  .bar{gap:6px 8px;padding-block:6px 6px}
+  .bar .setseg button{padding:4px 9px;font-size:12.5px}
+  .bar .tab{padding:4px 10px}
+  .bar .dnav{height:30px}
+  .bar .meta{font-size:11px}
 }
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .onair{font-family:var(--f-mono);font-weight:600;font-size:11px;letter-spacing:.12em;padding:3px 7px;border-radius:3px;background:var(--now);color:#fff}
@@ -113,7 +123,7 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 
 /* lineup: one row per NS broadcast, competitors on the same clock to the right */
 .lineup{display:flex;flex-direction:column;gap:10px}
-.lu-row{display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:120px}
+.lu-row{display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:calc(var(--barh,110px) + 10px)}
 .lu-row.now{border-color:var(--now);box-shadow:0 0 0 1px var(--now)}
 .lu-row.past{opacity:.62}
 .lu-ns{text-align:left;border:0;border-right:3px solid var(--accent);background:var(--accent-soft);padding:12px 14px;display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -462,11 +472,11 @@ tbody tr:hover td{background:var(--surface-2)}
     <span class="credit">2026 TV식품컨텐츠팀 막내 피디 둘</span>
     <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1></div>
     <span class="clock" id="clock">--:--</span>
-    <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV홈쇼핑</button><button data-set="tc" aria-pressed="false">데이터홈쇼핑</button></div>
+    <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV<span class="lg">홈쇼핑</span></button><button data-set="tc" aria-pressed="false">데이터<span class="lg">홈쇼핑</span></button></div>
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
-      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사 홈쇼핑 편성표</button>
-      <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS 기준 비교</button>
+      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑<span class="lg"> 타임라인</span></button>
+      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사<span class="lg"> 홈쇼핑</span> 편성표</button>
+      <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS<span class="lg"> 기준</span> 비교</button>
     </div>
     <span class="spacer"></span>
     <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><label class="dnav dcal" title="지난 날짜 찾기"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6.5h13M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.4"/></svg><input type="date" id="dPick" aria-label="날짜 직접 고르기"></label><select id="dateSel" hidden></select></div>
@@ -695,7 +705,7 @@ function scrollLineup() {
   if (state.luScrolled) return;
   const m = viewMin();
   const target = $('#luNow') || [...document.querySelectorAll('.lu-row')].find(r => !r.classList.contains('past') && +r.dataset.em > m);
-  if (target) { state.luScrolled = true; requestAnimationFrame(() => target.scrollIntoView({block: 'start'})); }
+  if (target) { state.luScrolled = true; window.__luTarget = target; requestAnimationFrame(() => target.scrollIntoView({block: 'start'})); }
 }
 $('#lineup').addEventListener('click', e => {
   const m = e.target.closest('.lu-more');
@@ -1092,5 +1102,17 @@ boot();
 })();
 </script>
 
+<script>
+// keep --barh equal to the sticky menu bar's height (it wraps differently per screen)
+(() => { const bar = document.querySelector('.bar'); if (!bar) return; const set = () => {
+    document.documentElement.style.setProperty('--barh', bar.offsetHeight + 'px');
+    // the bar can grow after the opening jump to "now" (collect line fills in); keep that row just below it
+    const t = window.__luTarget; if (t && t.isConnected && t.offsetParent) t.scrollIntoView({block: 'start'});
+  };
+  new ResizeObserver(set).observe(bar); set();
+  // once the user scrolls by hand, stop re-aligning
+  for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, () => { window.__luTarget = null; }, {passive: true});
+})();
+</script>
 </body>
 </html>
