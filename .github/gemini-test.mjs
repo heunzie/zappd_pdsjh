@@ -18,7 +18,8 @@ try {
   const m = await (await fetch(api + 'models?pageSize=200&key=' + KEY)).json();
   const names = (m.models || []).filter(x => (x.supportedGenerationMethods || []).includes('generateContent')).map(x => x.name.replace('models/', ''));
   res.available = names.filter(n => /flash/.test(n)).slice(0, 30);
-  res.model = ['gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash'].find(n => names.includes(n)) || names.find(n => /flash/.test(n) && !/lite|tts|image|live|audio/.test(n)) || names[0];
+  res.candidates = ['gemini-flash-latest', 'gemini-3.8-flash', 'gemini-3.7-flash', 'gemini-3.5-flash'].filter(n => names.includes(n));
+  res.model = res.candidates[0];
 } catch (e) { res.error = 'list models: ' + String(e).slice(0, 200); save(); process.exit(0); }
 for (const [ch, ep] of EPS) {
   const prompt = `한국 TV ${ch} 「${ep}」(${DATE} 방송) 회차의 내용을 Google 검색으로 찾아서 아래 형식으로만 답해줘.
@@ -31,7 +32,13 @@ for (const [ch, ep] of EPS) {
     const r = await fetch(`${api}models/${res.model}:generateContent?key=${KEY}`, {method: 'POST', headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({contents: [{parts: [{text: prompt}]}], tools: [{google_search: {}}]}), signal: AbortSignal.timeout(60000)});
     const j = await r.json();
-    if (!r.ok) row.error = (j.error && j.error.message || 'HTTP ' + r.status).slice(0, 300);
+    if (!r.ok) {
+      row.error = (j.error && j.error.message || 'HTTP ' + r.status).slice(0, 300);
+      // model retired for new keys: move to the next candidate and retry this episode once
+      const next = res.candidates[res.candidates.indexOf(res.model) + 1];
+      if (next && /no longer available|not found|not supported/i.test(row.error)) { res.model = next; res.results.push({...row, model: res.model}); EPS.splice(EPS.findIndex(e => e[1] === ep) + 1, 0, [ch, ep]); continue; }
+    }
+    row.model = res.model;
     const c = (j.candidates || [])[0] || {};
     row.text = ((c.content || {}).parts || []).map(p => p.text || '').join('').trim();
     const g = c.groundingMetadata || {};
