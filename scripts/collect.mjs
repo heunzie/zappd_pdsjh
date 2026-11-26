@@ -393,10 +393,14 @@ export function parseDaumEpisode(html, ep) {
   // the box's own headline when it has one, otherwise the synopsis' opening sentence
   const tit = pageText((html.match(/<strong class="tit_story">([\s\S]*?)<\/strong>/) || [])[1] || '').trim();
   const full = m[1].trim();
+  if (NO_INFO.test(full)) return {none: true, air: `${m[2]}-${m[3]}-${m[4]}`};
   return {line: oneLine(tit || full), air: `${m[2]}-${m[3]}-${m[4]}`, guest: (m[7] || '').trim().slice(0, 60), full: full.slice(0, 400)};
 }
+// boxes the broadcaster left empty say so in words
+const NO_INFO = /회차\s*정보가 없습니다|줄거리 정보 준비 중/;
 function oneLine(t) {
-  t = t.replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu, '').trim();
+  // drop emoji, hashtags (#입만살았네예고) and leading bullets (- ■ ▶)
+  t = t.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu, '').replace(/#\S+/g, ' ').replace(/^[\s\-■□▶▷●○◆◇★☆※·•>]+/, '').replace(/\s+/g, ' ').trim();
   const parts = t.split(/(?<=[.!?…])\s+/).filter(Boolean);
   let line = parts[0] || '';
   if (line.length < 12 && parts[1]) line += ' ' + parts[1];
@@ -404,6 +408,8 @@ function oneLine(t) {
 }
 async function episodeNotes(epg, days) {
   const store = readJson(EP_FILE()) || {};
+  // tidy notes saved by earlier versions
+  for (const v of Object.values(store)) if (v.line) { if (NO_INFO.test(v.line)) { delete v.line; v.none = true; } else v.line = oneLine(v.line); }
   const want = [];
   for (const d of days.filter(near)) for (const c of epg[d] || []) {
     if (!EP_CH.includes(c.name)) continue;
