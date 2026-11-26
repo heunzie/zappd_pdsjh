@@ -384,7 +384,8 @@ tbody tr:hover td{background:var(--surface-2)}
 .zb.tvp{cursor:pointer}
 .zb.tvp:hover{border-color:var(--ink)}
 .zb[aria-current="true"]{box-shadow:0 0 0 2px var(--accent);z-index:3}
-.zpop{position:fixed;z-index:70;width:min(360px,calc(100vw - 16px))}
+.zpop{position:fixed;z-index:70;right:44px;bottom:44px;width:360px}
+@media (max-width:760px){.zpop{left:8px;right:8px;bottom:8px;width:auto}}
 .zpop[hidden]{display:none}
 .zprog{position:relative;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:10px 36px 10px 14px;background:var(--surface);box-shadow:0 10px 30px rgba(0,0,0,.22);display:flex;flex-direction:column;gap:4px}
 .zp-h{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px}
@@ -874,7 +875,7 @@ let zoomSrc = null, zoomArgs = null, zoomTab = 'zap';
 const ZTABS = [['zap', '재핑 타임라인', '재핑'], ['tv', '경쟁사 홈쇼핑(TV)', '경쟁 TV'], ['tc', '경쟁사 홈쇼핑(데이터)', '경쟁 데이터'], ['detail', '상품 상세', '상세']];
 let zoomProg = null, zoomProgs = [];
 function openZoom(sm, em, head, src, tab, prog) { zoomProg = prog || null; zoomSrc = src || null; zoomArgs = [sm, em, head]; zoomTab = tab || 'zap'; if (zoomTab === 'detail' && !src) zoomTab = 'zap'; $('#zpop').hidden = true; renderZoom(); $('#zoom').hidden = false; $('#zpanel').scrollTop = 0;
-  if (zoomProg) requestAnimationFrame(() => { const el = $('#zpanel [data-zp][aria-current]'); if (el) { el.scrollIntoView({block: 'nearest', inline: 'nearest'}); showProg(zoomProg, el.getBoundingClientRect()); } });
+  if (zoomProg) requestAnimationFrame(() => { const el = $('#zpanel [data-zp][aria-current]'); if (el) el.scrollIntoView({block: 'nearest', inline: 'nearest'}); showProg(zoomProg); });
 }
 // a home shopping broadcast: open the popup on the given tab
 function zoomItem(it, pool, tab) { if (it) openZoom(it.sm, it.em, {ch: chDot(it.ch) + esc(CHMAP[it.ch].name), n: it.n}, {idx: it.idx, pool}, tab); }
@@ -941,14 +942,8 @@ function progCard(p) {
   return `<section class="zprog" role="dialog" aria-label="회차 정보"><div class="zp-h"><b>${esc(p.ch)}</b> <span class="mono">${m2hm(p.a)}–${m2hm(p.b)}</span> <span class="quiet">${p.b - p.a}분</span> ${badges}<button class="zp-x" id="zpClose" aria-label="회차 정보 닫기">✕</button></div>
     <div class="zp-t">${esc(p.t)}</div>${body}<a class="zp-a" href="https://search.daum.net/search?w=tot&q=${encodeURIComponent(p.ch + ' ' + p.t)}" target="_blank" rel="noopener">다음에서 보기 ↗</a></section>`;
 }
-// mini popup beside the programme bar that was clicked
-function showProg(p, rect) {
-  const pop = $('#zpop'); pop.innerHTML = progCard(p); pop.hidden = false;
-  const w = pop.offsetWidth, h = pop.offsetHeight, vw = innerWidth, vh = innerHeight;
-  let left = Math.min(Math.max(8, rect.left), vw - w - 8), top = rect.bottom + 6;
-  if (top + h > vh - 8) top = Math.max(8, rect.top - h - 6);
-  pop.style.left = left + 'px'; pop.style.top = top + 'px';
-}
+// mini popup for the programme that was clicked, always in the same corner of the window
+function showProg(p) { const pop = $('#zpop'); pop.innerHTML = progCard(p); pop.hidden = false; }
 function hideProg() { $('#zpop').hidden = true; zoomProg = null; document.querySelectorAll('#zpanel [data-zp][aria-current]').forEach(x => x.removeAttribute('aria-current')); }
 function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
@@ -959,15 +954,13 @@ $('#zoom').addEventListener('click', e => {
   const zp = e.target.closest('[data-zp]');
   if (zp) {
     hideProg(); zoomProg = zoomProgs[+zp.dataset.zp]; zp.setAttribute('aria-current', 'true');
-    showProg(zoomProg, zp.getBoundingClientRect()); return;
+    showProg(zoomProg); return;
   }
   if (!$('#zpop').hidden) hideProg();
   // 상품 상세: other broadcasts listed there open in the same popup
   const b = e.target.closest('.zdetail [data-idx]'); if (b && zoomSrc) zoomItem(zoomSrc.pool.find(i => i.idx === +b.dataset.idx), zoomSrc.pool, 'detail');
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
-// the popup is pinned to the screen, so it goes away when the timeline moves under it
-document.addEventListener('scroll', e => { if (!$('#zpop').hidden && e.target.closest && e.target.closest('#zpanel')) hideProg(); }, true);
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail();  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
