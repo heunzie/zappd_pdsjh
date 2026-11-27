@@ -1,0 +1,54 @@
+# 베타 → 메인 반영
+# 테스트 페이지(beta.html)를 두 사람이 모두 확인한 뒤에만 실제 보드(index.html)로 옮긴다.
+# GitHub > Actions > "베타 → 메인 반영" > Run workflow 에서 두 칸 모두 체크 + 메모를 적고 실행.
+name: 베타 → 메인 반영
+on:
+  workflow_dispatch:
+    inputs:
+      heunzie_ok:
+        description: 'heunzie: 테스트 페이지에서 확인했어요'
+        type: boolean
+        default: false
+      daarmoon_ok:
+        description: 'Daarmoon: 테스트 페이지에서 확인했어요'
+        type: boolean
+        default: false
+      memo:
+        description: '무엇을 반영하나요? (예: 폰 확대·축소, 날짜 왼쪽 배치)'
+        type: string
+        required: true
+permissions:
+  contents: write
+concurrency:
+  group: promote
+  cancel-in-progress: false
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 두 사람 확인 체크
+        if: ${{ !inputs.heunzie_ok || !inputs.daarmoon_ok }}
+        run: |
+          echo "::error::두 사람 모두 '확인했어요'에 체크해야 반영돼요. 실제 보드는 그대로예요."
+          exit 1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: beta.html → index.html
+        run: node .github/promote.mjs
+      - name: 실제 보드에 올리기
+        env:
+          MEMO: ${{ inputs.memo }}
+        run: |
+          if git diff --quiet index.html; then
+            echo "::notice::테스트 페이지와 실제 보드가 이미 같아요. 반영할 게 없어요."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -q -m "베타 → 메인 반영: ${MEMO}" -m "확인: heunzie, Daarmoon"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
+          echo "::notice::실제 보드에 반영했어요. 1~2분 뒤 https://heunzie.github.io/zappd_pdsjh/ 에서 보여요."

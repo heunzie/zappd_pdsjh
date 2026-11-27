@@ -1,0 +1,25 @@
+# 실제 보드(index.html)를 '베타 → 메인 반영' 말고 다른 방법으로 고치면 빨간 경고를 띄운다.
+# (막지는 못하고 알리기만 함. 되돌리려면 그 커밋을 Revert)
+name: 실제 보드 직접 수정 경고
+on:
+  push:
+    branches: [main]
+    paths: ['index.html']
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: index.html을 바꾼 커밋 확인
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$BEFORE" 2>/dev/null; then exit 0; fi
+          bad=$(git log --format='%h %s' "$BEFORE..$GITHUB_SHA" -- index.html | grep -v -E '^[0-9a-f]+ (베타 → 메인 반영|Revert "베타 → 메인 반영)' || true)
+          if [ -n "$bad" ]; then
+            echo "::error::실제 보드(index.html)를 직접 고친 커밋이 있어요. 수정은 beta.html에서 하고 '베타 → 메인 반영'으로 옮겨 주세요."
+            echo "$bad"
+            exit 1
+          fi

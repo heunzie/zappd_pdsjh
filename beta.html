@@ -460,6 +460,7 @@ tbody tr:hover td{background:var(--surface-2)}
 .empty h2{margin:0;font-size:16px}
 .empty p{margin:0;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* BETA-ONLY */
 /* test page markers: striped strip on top, badge next to the title, red tag bottom-left, [테스트] in the tab title */
 .betabar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 16px;font-size:12px;color:#5a3a00;background:repeating-linear-gradient(135deg,#ffe08a 0 14px,#ffd25e 14px 28px);border-bottom:1px solid #e0b240}
 .betabar b{font-weight:800;letter-spacing:.02em}
@@ -467,6 +468,7 @@ tbody tr:hover td{background:var(--surface-2)}
 @media (max-width:760px){.betabar span{display:none}}
 .betabadge{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:#5a3a00;background:#ffd25e;border:1px solid #e0b240;border-radius:3px;padding:1px 5px}
 .betatag{position:fixed;left:8px;bottom:8px;z-index:90;font-size:10px;font-weight:700;letter-spacing:.08em;color:#fff;background:#d63b2f;border-radius:4px;padding:2px 6px;opacity:.85;pointer-events:none}
+/* /BETA-ONLY */
 /* phone page (pv-on): the popup becomes the page under the menu bar */
 .pv-on #app,.pv-on .tabs,.pv-on #epgOrder,.pv-on #setSeg,.pv-on .zsub,.pv-on .zbtns,.pv-on .footnote{display:none!important}
 .pv-on .zoom{position:static;padding:0;background:none;display:block;z-index:auto}
@@ -557,12 +559,12 @@ tbody tr:hover td{background:var(--surface-2)}
 @media (max-width:760px){.expm{display:none!important}}
 </style>
 
-<div class="betabar" role="note"><b>테스트 페이지</b><span>새 기능·디자인을 미리 써보는 곳이에요. 동료에게 공유할 땐 실제 보드 주소로.</span><a href="./">실제 보드로 가기 →</a></div>
+<!--BETA-ONLY--><div class="betabar" role="note"><b>테스트 페이지</b><span>새 기능·디자인을 미리 써보는 곳이에요. 동료에게 공유할 땐 실제 보드 주소로.</span><a href="./">실제 보드로 가기 →</a></div><!--/BETA-ONLY-->
 <div class="wrap">
   <header class="bar">
-    <span class="betatag" title="디자인 테스트용 페이지 · 실제 보드는 index.html">TEST</span>
+    <!--BETA-ONLY--><span class="betatag" title="디자인 테스트용 페이지 · 실제 보드는 index.html">TEST</span><!--/BETA-ONLY-->
     <span class="credit"><span id="collected"></span><a id="runNow" hidden href="https://github.com/heunzie/zappd_pdsjh/actions/workflows/collect.yml" target="_blank" rel="noopener" title="GitHub에 로그인한 관리자만 실행할 수 있어요. 열린 화면에서 Run workflow를 누르면 3~4분 뒤 반영돼요.">지금 수집 ↗</a><span>2026 TV식품컨텐츠팀 막내 피디 둘</span></span>
-    <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1><span class="betabadge">TEST</span></div>
+    <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1><!--BETA-ONLY--><span class="betabadge">TEST</span><!--/BETA-ONLY--></div>
     <span class="clock" id="clock">--:--</span>
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
