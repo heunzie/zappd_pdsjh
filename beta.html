@@ -501,6 +501,13 @@ tbody tr:hover td{background:var(--surface-2)}
 .pv-on .zprog::before{content:"";position:absolute;top:6px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--line)}
 @keyframes rise{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
 .hsc-p{font-size:15px}.hsc-p .off{color:var(--warn);font-weight:700}
+/* PC: the date comes first on the second row (it applies to every view), then this view's option */
+@media (min-width:761px){
+  .subrow .datepick{order:1}
+  .subrow .gonow{order:2}
+  .subrow #epgOrder,.subrow #setSeg{order:3;margin-left:20px}
+  .subrow .spacer{order:4}
+}
 </style>
 
 <div class="wrap">
