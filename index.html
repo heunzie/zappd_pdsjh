@@ -52,7 +52,8 @@ button{cursor:pointer}
 
 /* on-air bar */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);padding-block:12px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;border-bottom:1px solid var(--line)}
-@media (max-width:700px){.bar{position:static}}
+/* phone: the menu bar stays on top; grids fill the space below it */
+@media (max-width:760px){.tl-scroll{height:calc(100dvh - var(--barh,0px) - 64px)}}
 .credit{position:absolute;top:3px;right:4px;font-size:11px;line-height:1;color:var(--muted);opacity:.6;pointer-events:none;white-space:nowrap;display:flex;gap:0}
 .credit > *:not([hidden]) ~ *:not([hidden])::before{content:"·";margin:0 6px}
 .credit a{pointer-events:auto;color:inherit;text-decoration:none}
@@ -119,7 +120,7 @@ h1{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em;text-wrap:balan
 
 /* lineup: one row per NS broadcast, competitors on the same clock to the right */
 .lineup{display:flex;flex-direction:column;gap:10px}
-.lu-row{display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:120px}
+.lu-row{display:grid;grid-template-columns:minmax(250px,330px) minmax(0,1fr);background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;scroll-margin-top:calc(var(--barh,110px) + 10px)}
 .lu-row.now{border-color:var(--now);box-shadow:0 0 0 1px var(--now)}
 .lu-row.past{opacity:.62}
 .lu-ns{text-align:left;border:0;border-right:3px solid var(--accent);background:var(--accent-soft);padding:12px 14px;display:flex;flex-direction:column;gap:5px;min-width:0}
@@ -459,6 +460,46 @@ tbody tr:hover td{background:var(--surface-2)}
 .empty h2{margin:0;font-size:16px}
 .empty p{margin:0;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* phone page (pv-on): the popup becomes the page under the menu bar */
+.pv-on #app,.pv-on .tabs,.pv-on #epgOrder,.pv-on #setSeg,.pv-on .zsub,.pv-on .zbtns,.pv-on .footnote{display:none!important}
+.pv-on .zoom{position:static;padding:0;background:none;display:block;z-index:auto}
+.pv-on .zpanel{--zl:62px;height:calc(100dvh - var(--barh,0px));max-height:none;width:100%;border:0;border-radius:0;box-shadow:none;padding:6px 0 0;gap:0;background:var(--bg)}
+.pv-on .zhead{flex-direction:column;align-items:stretch;padding:0 12px 6px;gap:0}
+.pv-on .zhead h3{font-size:15px;margin-top:2px}
+.pv-on .ztabs{padding:0 6px}
+.pv-on .ztabs button{padding:7px 10px;font-size:13px}
+.pv-on .zscroll{border:0;border-radius:0;background:var(--surface)}
+.pv-on .zgrid{min-width:0}
+.pv-on .zr,.pv-on .ztrack{min-height:40px}
+.pv-on .zaxis,.pv-on .zaxis .ztrack{min-height:34px}
+.pv-on .zaxis .ztrack span{top:3px;font-size:10px}
+.pv-on .zaxis .ztrack span[class]{top:auto;bottom:1px;font-size:9.5px}
+.pv-on .subrow{flex-wrap:nowrap}
+.pv-on .subrow .datepick{flex:1 1 auto;order:1;min-width:0}
+.pv-on .subrow .gonow{order:2;margin-left:0}
+.pv-on .zr.zref{top:34px}
+.pv-on .zr.zref .ztrack{min-height:46px}
+.pv-on .zl{font-size:11.5px;padding:0 6px}
+.pv-on .zb{top:3px;bottom:3px;padding:2px 4px}
+.pv-on .zb .zt{display:none}
+.pv-on .zr.zref .zb .zt{display:block;font-size:10px}
+.pv-on .zb .zn{font-size:11px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pv-on .zg-h{padding:3px 8px;font-size:10.5px}
+.pv-on .zb[data-hs]{cursor:pointer}
+.pv-on .zb[data-hs][aria-current="true"]{box-shadow:0 0 0 2px var(--ink);z-index:3}
+.pager{display:flex;align-items:center;gap:6px;margin-top:6px}
+.pager button{border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:11.5px;color:var(--ink);background:var(--surface);white-space:nowrap;max-width:38%;overflow:hidden;text-overflow:ellipsis}
+.pager button:disabled{color:var(--muted);opacity:.5}
+.pager .dots{flex:1;display:flex;justify-content:center;flex-wrap:wrap;gap:3px}
+.pager .dots i{width:5px;height:5px;border-radius:50%;background:var(--line);cursor:pointer}
+.pager .dots i.live{background:var(--now)}
+.pager .dots i.on{background:var(--accent);width:14px;border-radius:3px}
+/* tapped details rise from the bottom */
+.pv-on .zpop{left:0;right:0;bottom:0;width:auto}
+.pv-on .zprog{border-radius:16px 16px 0 0;border:0;border-top:3px solid var(--accent);max-height:55dvh;overflow:auto;padding:14px 40px calc(16px + env(safe-area-inset-bottom,0px)) 16px;box-shadow:0 -10px 30px rgba(0,0,0,.22);animation:rise .18s ease-out}
+.pv-on .zprog::before{content:"";position:absolute;top:6px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--line)}
+@keyframes rise{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.hsc-p{font-size:15px}.hsc-p .off{color:var(--warn);font-weight:700}
 </style>
 
 <div class="wrap">
@@ -678,6 +719,7 @@ function render() {
   const k = ca ? new Date(new Date(ca).getTime() + 9 * 3600e3).toISOString() : '';
   $('#collected').innerHTML = ca ? `<span class="lg">마지막 </span>수집 ${+k.slice(5, 7)}/${+k.slice(8, 10)} ${k.slice(11, 16)}` : '';
   renderLineup(items); renderTimeline(items); renderEpg(state.tvItems); tick();
+  if (PHONE()) pvShow();
 }
 
 const overlaps = (a, b) => Math.min(a.em, b.em) - Math.max(a.sm, b.sm) > 0;
@@ -710,7 +752,7 @@ function scrollLineup() {
   if (state.luScrolled) return;
   const m = viewMin();
   const target = $('#luNow') || [...document.querySelectorAll('.lu-row')].find(r => !r.classList.contains('past') && +r.dataset.em > m);
-  if (target) { state.luScrolled = true; requestAnimationFrame(() => target.scrollIntoView({block: 'start'})); }
+  if (target) { state.luScrolled = true; window.__luTarget = target; requestAnimationFrame(() => target.scrollIntoView({block: 'start'})); }
 }
 $('#lineup').addEventListener('click', e => {
   const m = e.target.closest('.lu-more');
@@ -887,6 +929,53 @@ function closeDetail() { $('#sheet').hidden = true; }
 let zoomSrc = null, zoomArgs = null, zoomTab = 'zap';
 const ZTABS = [['zap', '재핑 타임라인', '재핑'], ['tv', '경쟁사 홈쇼핑(TV)', '경쟁 TV'], ['tc', '경쟁사 홈쇼핑(데이터)', '경쟁 데이터'], ['detail', '상품 상세', '상세']];
 let zoomProg = null, zoomProgs = [];
+// ---------- phone page: one NS broadcast per screen, time running sideways ----------
+const phoneMQ = matchMedia('(max-width:760px)');
+const PHONE = () => phoneMQ.matches;
+const SHORT = {'NS홈쇼핑': 'NS', '현대홈쇼핑': '현대', '롯데홈쇼핑': '롯데', '홈앤쇼핑': '홈앤', '공영쇼핑': '공영', 'CJ온스타일': 'CJ', 'CJ온스타일+': 'CJ+', '현대홈쇼핑+샵': '현대+샵', '롯데OneTV': '롯데One', 'KT알파쇼핑': 'KT알파', 'KT알파쇼핑+': 'KT알파+', '신세계쇼핑': '신세계', 'NS Shop+': 'NS+', '연합뉴스TV': '연합뉴스'};
+const sn = name => PHONE() && SHORT[name] || name;
+let pv = {date: null, i: -1, list: []};
+function pvList() { return state.tvItems.filter(i => i.ch === SETS.tv.own && !i.nx).sort((a, b) => a.sm - b.sm); }
+function pvGo(i, keepTab) {
+  const L = pv.list; if (!L.length) return;
+  pv.i = Math.max(0, Math.min(L.length - 1, i));
+  const tab = keepTab && zoomTab !== 'detail' ? zoomTab : keepTab ? 'detail' : 'zap';
+  zoomItem(L[pv.i], state.tvItems, tab);
+}
+function pvShow() {
+  document.body.classList.toggle('pv-on', PHONE());
+  if (!PHONE()) return;
+  pv.list = pvList();
+  if (!pv.list.length) { $('#zoom').hidden = true; return; }
+  if (pv.date !== state.date || pv.i < 0) {
+    const m = viewMin();
+    let i = pv.list.findIndex(x => x.sm <= m && m < x.em); if (i < 0) i = pv.list.findIndex(x => x.em > m); if (i < 0) i = pv.list.length - 1;
+    pv.date = state.date; pv.i = i;
+    return pvGo(i, false);
+  }
+  pvGo(pv.i, true);
+}
+function pvPager() {
+  if (!PHONE() || !pv.list.length) return '';
+  const L = pv.list, i = pv.i, nm = nowMin();
+  const lab = x => `${esc(x.s)} ${esc(x.n.replace(/^\[[^\]]*\]\s*|^\([^)]*\)\s*/g, '').slice(0, 6))}`;
+  const live = j => state.date === boardToday() && nm !== null && L[j].sm <= nm && nm < L[j].em;
+  return `<div class="pager"><button data-pv="${i - 1}" ${i ? '' : 'disabled'}>‹ ${i ? lab(L[i - 1]) : '첫 방송'}</button>
+    <span class="dots">${L.map((x, j) => `<i data-pv="${j}" class="${j === i ? 'on' : ''} ${live(j) ? 'live' : ''}" title="${esc(x.s)}"></i>`).join('')}</span>
+    <button data-pv="${i + 1}" ${i < L.length - 1 ? '' : 'disabled'}>${i < L.length - 1 ? lab(L[i + 1]) : '마지막'} ›</button></div>`;
+}
+// a home shopping broadcast tapped in the page: a short card from the bottom
+function hsCard(it) {
+  const off = offPct(it);
+  return `<section class="zprog hsc" role="dialog" aria-label="방송 상품"><div class="zp-h">${chDot(it.ch)}<b>${esc(CHMAP[it.ch].name)}</b> <span class="mono">${esc(it.s)}–${esc(it.e)}</span> <span class="quiet">${it.em - it.sm}분</span><button class="zp-x" id="zpClose" aria-label="닫기">✕</button></div>
+    <div class="zp-t">${esc(it.n)}</div>
+    <div class="hsc-p">${it.p ? `<b class="mono">${won(best(it))}</b>${off ? ` <span class="off">-${off}%</span>` : ''}` : '<span class="quiet">가격 미표기</span>'}${it.ifm ? ` <span class="quiet">· 무이자 ${it.ifm}개월</span>` : ''}</div>
+    ${it.u ? `<a class="zp-a" href="${esc(it.u)}" target="_blank" rel="noopener">상품 페이지 열기 ↗</a>` : ''}</section>`;
+}
+function showHs(key) {
+  const [pool, idx] = key.split(':'); const it = (pool === 'tc' ? state.tcAll : state.tvItems).find(i => i.idx === +idx); if (!it) return;
+  const pop = $('#zpop'); pop.innerHTML = hsCard(it); pop.hidden = false;
+}
 function openZoom(sm, em, head, src, tab, prog) { zoomProg = prog || null; zoomSrc = src || null; zoomArgs = [sm, em, head]; zoomTab = tab || 'zap'; if (zoomTab === 'detail' && !src) zoomTab = 'zap'; $('#zpop').hidden = true; renderZoom(); $('#zoom').hidden = false; $('#zpanel').scrollTop = 0;
   if (zoomProg) requestAnimationFrame(() => { const el = $('#zpanel [data-zp][aria-current]'); if (el) el.scrollIntoView({block: 'nearest', inline: 'nearest'}); showProg(zoomProg); });
 }
@@ -897,8 +986,8 @@ function renderZoom() {
   const w0 = Math.max(DAY_START, Math.floor((sm - 10) / 5) * 5), w1 = Math.min(DAY_END, Math.ceil((em + 10) / 5) * 5), W = w1 - w0;
   // every channel as a lane of programmes, home shopping first
   const selIdx = src ? src.idx : -1, selPool = src ? src.pool : null;
-  const hsMap = (pool, ch) => (pool || []).filter(i => i.ch === ch).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs' + (pool === selPool && i.idx === selIdx ? ' sel' : ''), sub: i.p ? won(best(i)) : '', ch: i.ch}));
-  const hsLanes = (set, pool, grp) => SETS[set].ch.map(c => ({grp, own: set === 'tv' && c.own, label: `${chDot(c.id)}${esc(c.name)}`, items: hsMap(pool, c.id)}));
+  const hsMap = (pool, ch) => (pool || []).filter(i => i.ch === ch).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs' + (pool === selPool && i.idx === selIdx ? ' sel' : ''), sub: i.p ? won(best(i)) : '', ch: i.ch, hs: (pool === state.tcAll ? 'tc' : 'tv') + ':' + i.idx}));
+  const hsLanes = (set, pool, grp) => SETS[set].ch.map(c => ({grp, own: set === 'tv' && c.own, label: `${chDot(c.id)}${esc(sn(c.name))}`, items: hsMap(pool, c.id)}));
   // same channels and order as the 재핑 타임라인 (TV 편성표); other home shopping channels follow at the end
   const byNum = epgOrder === 'num';
   const hsItems = (pool, ch) => hsMap(pool === 'tc' ? state.tcAll : state.tvItems, ch);
@@ -906,12 +995,12 @@ function renderZoom() {
   const lanes = tab === 'tv' ? hsLanes('tv', state.tvItems, '').filter(l => !l.own)
     : tab === 'tc' ? hsLanes('tc', state.tcAll, '')
     : epgCols().map(c => c.hs
-    ? {grp: c.ns && !byNum ? '' : byNum ? '지니TV 번호순' : '홈쇼핑', own: c.ns, label: `${chDot(c.ch)}${esc(CHMAP[c.ch].name)}${byNum ? ` <span class="quiet mono">${c.no}</span>` : ''}`, items: hsItems(c.pool, c.ch)}
-    : {grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(c.name)} <span class="quiet mono">${c.no ?? ''}</span>`,
+    ? {grp: c.ns && !byNum ? '' : byNum ? '지니TV 번호순' : '홈쇼핑', own: c.ns, label: `${chDot(c.ch)}${esc(sn(CHMAP[c.ch].name))}${byNum ? ` <span class="quiet mono">${c.no}</span>` : ''}`, items: hsItems(c.pool, c.ch)}
+    : {grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(sn(c.name))} <span class="quiet mono">${c.no ?? ''}</span>`,
        items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp', prog: isOff(r.t) ? null : {ch: c.name, t: r.t, a: r.sm, b: r.em, g: r.g || '', day: r.nx ? addDays(state.date, 1) : state.date}}))});
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em);
-  const step = W > 150 ? 30 : W > 70 ? 10 : 5;
+  const step = PHONE() ? (W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
   const ticks = []; for (let m = Math.ceil(w0 / step) * step; m <= w1; m += step) ticks.push(m);
   const cls = x => {
     const cut = (x.a < w0 ? ' cutl' : '') + (x.b > w1 ? ' cutr' : '');
@@ -926,9 +1015,9 @@ function renderZoom() {
   {
     const pct = m => ((Math.min(Math.max(m, w0), w1) - w0) / W * 100).toFixed(3) + '%';
     const bar = x => { const nar = (Math.min(x.b, w1) - Math.max(x.a, w0)) / W < 0.07 ? ' nar' : '';
-      return `<div class="${cls(x)}${nar}" style="left:${pct(x.a)};width:calc(${pct(x.b)} - ${pct(x.a)})${x.ch ? `;--c:var(--ch-${x.ch})` : ''}" title="${tipT(x)}"${progAttr(x)}>${txt(x)}</div>`; };
+      return `<div class="${cls(x)}${nar}" style="left:${pct(x.a)};width:calc(${pct(x.b)} - ${pct(x.a)})${x.ch ? `;--c:var(--ch-${x.ch})` : ''}" title="${tipT(x)}"${progAttr(x)}${x.hs ? ` data-hs="${x.hs}"` : ''}>${txt(x)}</div>`; };
     // NS홈쇼핑 TV is the reference on every tab
-    const nsLane = {label: `${chDot(SETS.tv.own)}${esc(CHMAP[SETS.tv.own].name)}`, items: hsMap(state.tvItems, SETS.tv.own).filter(x => x.b > w0 && x.a < w1)};
+    const nsLane = {label: `${chDot(SETS.tv.own)}${esc(sn(CHMAP[SETS.tv.own].name))}`, items: hsMap(state.tvItems, SETS.tv.own).filter(x => x.b > w0 && x.a < w1)};
     let rows = nsLane ? `<div class="zr own zref"><div class="zl">${nsLane.label}<span class="zbadge">기준</span></div><div class="ztrack">${nsLane.items.map(bar).join('')}</div></div>` : '', g = '';
     for (const l of lanes) {
       if (l.own && !(byNum && tab === 'zap')) continue; if (l.grp !== g) { g = l.grp; if (g) rows += `<div class="zg-h">${esc(g)}</div>`; } rows += `<div class="zr ${l.own ? 'own' : ''}"><div class="zl">${l.label}</div><div class="ztrack">${l.items.map(bar).join('')}</div></div>`; }
@@ -938,7 +1027,7 @@ function renderZoom() {
       <div class="zbody"><div class="zlines">${lines}</div>${rows}</div></div></div>`;
   }
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
-      <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>
+      <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>${pvPager()}
     <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>
     ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.${tab === 'zap' ? ' TV 프로그램 막대를 누르면 회차 정보가 작게 떠요.' : ''}</p>`}
     ${body}`;
@@ -957,10 +1046,11 @@ function progCard(p) {
 }
 // mini popup for the programme that was clicked, always in the same corner of the window
 function showProg(p) { const pop = $('#zpop'); pop.innerHTML = progCard(p); pop.hidden = false; }
-function hideProg() { $('#zpop').hidden = true; zoomProg = null; document.querySelectorAll('#zpanel [data-zp][aria-current]').forEach(x => x.removeAttribute('aria-current')); }
+function hideProg() { $('#zpop').hidden = true; zoomProg = null; document.querySelectorAll('#zpanel [data-zp][aria-current],#zpanel [data-hs][aria-current]').forEach(x => x.removeAttribute('aria-current')); }
 function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
-  if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return closeZoom();
+  const pg = e.target.closest('[data-pv]'); if (pg && !pg.disabled) { hideProg(); pvGo(+pg.dataset.pv, true); return; }
+  if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
   const t = e.target.closest('[data-zt]'); if (t) { hideProg(); zoomTab = t.dataset.zt; renderZoom(); return; }
   if (e.target.id === 'zpClose') { hideProg(); return; }
   if (e.target.closest('#zpop')) return;
@@ -969,11 +1059,20 @@ $('#zoom').addEventListener('click', e => {
     hideProg(); zoomProg = zoomProgs[+zp.dataset.zp]; zp.setAttribute('aria-current', 'true');
     showProg(zoomProg); return;
   }
+  const hb = e.target.closest('[data-hs]');
+  if (hb && !e.target.closest('.zr.zref')) { hideProg(); hb.setAttribute('aria-current', 'true'); showHs(hb.dataset.hs); return; }
   if (!$('#zpop').hidden) hideProg();
   // 상품 상세: other broadcasts listed there open in the same popup
   const b = e.target.closest('.zdetail [data-idx]'); if (b && zoomSrc) zoomItem(zoomSrc.pool.find(i => i.idx === +b.dataset.idx), zoomSrc.pool, 'detail');
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeZoom(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (PHONE()) hideProg(); else closeZoom(); } });
+// phone page: swipe sideways for the previous / next NS broadcast
+(() => { let x0 = null, y0 = 0;
+  $('#zoom').addEventListener('touchstart', e => { if (!PHONE() || e.target.closest('#zpop')) return; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, {passive: true});
+  $('#zoom').addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (Math.abs(dx) > 60 && Math.abs(dy) < 50) { hideProg(); pvGo(pv.i + (dx < 0 ? 1 : -1), true); } }, {passive: true});
+})();
+phoneMQ.addEventListener('change', () => { if (state.tvItems.length) { if (PHONE()) pvShow(); else { document.body.classList.remove('pv-on'); closeZoom(); render(); } } });
 $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet' || e.target.id === 'closeSheet') return closeDetail();  const b = e.target.closest('[data-idx]'); if (b) openDetail(+b.dataset.idx, detailPool); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDetail(); });
 
@@ -989,6 +1088,7 @@ $('#goNow').addEventListener('click', () => {
     const sc = state.view === 'timeline' ? $('#tlScroll') : state.view === 'epg' ? $('#epgScroll') : null;
     if (sc) sc.scrollTo({top: Y(nowMin() - 60) * 2, behavior: 'smooth'}); else scrollLineup();
   };
+  if (PHONE()) { if (state.date !== today && state.dates.includes(today)) { pv.i = -1; goDate(today); } else { pv.i = -1; pv.date = null; hideProg(); pvShow(); } return; }
   if (state.date !== today && state.dates.includes(today)) goDate(today); else toNow();
 });
 $('#dPick').addEventListener('change', e => { const v = e.target.value; if (state.dates.includes(v)) goDate(v); else { e.target.value = state.date; } });
@@ -1111,5 +1211,15 @@ boot();
 })();
 </script>
 
+<script>
+// keep --barh equal to the sticky menu bar's height; re-align the opening jump to "now" if the bar grows after it
+(() => { const bar = document.querySelector('.bar'); if (!bar) return; const set = () => {
+    document.documentElement.style.setProperty('--barh', bar.offsetHeight + 'px');
+    const t = window.__luTarget; if (t && t.isConnected && t.offsetParent) t.scrollIntoView({block: 'start'});
+  };
+  new ResizeObserver(set).observe(bar); set();
+  for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, () => { window.__luTarget = null; }, {passive: true});
+})();
+</script>
 </body>
 </html>
