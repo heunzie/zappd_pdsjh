@@ -565,7 +565,9 @@ const CHMAP = Object.fromEntries([...SETS.tv.ch, ...SETS.tc.ch].map(c => [c.id, 
 let CH = SETS.tv.ch, CHORD = {}, OWN = 'nsmall';
 function useSet(k) {
   state.set = SETS[k] ? k : 'tv'; const S = SETS[state.set];
-  CH = S.ch; OWN = S.own; CHORD = Object.fromEntries(CH.map((c, i) => [c.id, i]));
+  // the reference is always NS홈쇼핑 TV; '데이터홈쇼핑' only changes who it is compared with (NS Shop+ included)
+  CH = state.set === 'tv' ? S.ch : [CHMAP[SETS.tv.own], ...S.ch.map(c => ({...c, own: false}))];
+  OWN = SETS.tv.own; CHORD = Object.fromEntries(CH.map((c, i) => [c.id, i]));
   state.chOn = new Set(CH.map(c => c.id));
   document.querySelectorAll('#setSeg [data-set]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.set === state.set)));
   try { localStorage.setItem('zap.set', state.set); } catch (e) {}
@@ -707,7 +709,8 @@ function render() {
   const withNext = (doc, nd) => [...((doc && doc.items) || []), ...((nd && nd.items) || []).filter(i => toMin(i.s) < DAY_END - 1440).map(i => ({...i, nx: 1}))];
   state.tvItems = prep(withNext(tvDoc, state.docs.tvNext), SETS.tv.own);
   state.tcAll = prep(withNext(state.docs.tc, state.docs.tcNext), SETS.tc.own);
-  state.items = state.set === 'tv' ? state.tvItems : state.tcAll;
+  // 데이터홈쇼핑: NS TV broadcasts (ids shifted so they don't clash with the data channels') + the data channels
+  state.items = state.set === 'tv' ? state.tvItems : [...state.tcAll, ...state.tvItems.filter(i => i.ch === SETS.tv.own).map(i => ({...i, idx: i.idx + 100000}))];
   state.day = setDoc || tvDoc;
   const items = state.items;
   $('#emptyState').hidden = true; $('#app').hidden = false;
@@ -727,7 +730,7 @@ function renderLineup(items) {
   const own = items.filter(i => i.ch === OWN && i.em > DAY_START).sort((a, b) => a.sm - b.sm);
   const rivals = CH.filter(c => !c.own);
   const nm = nowMin(); const live = nm !== null;
-  $('#lineupNote').textContent = `${CHMAP[OWN].name} 방송 ${own.length}건마다 같은 시간에 방송한 경쟁 ${rivals.length}개 채널을 나란히 보여줍니다.`;
+  $('#lineupNote').textContent = `${CHMAP[OWN].name} TV 방송 ${own.length}건마다 같은 시간에 방송한 ${state.set === 'tv' ? '경쟁' : '데이터홈쇼핑'} ${rivals.length}개 채널을 나란히 보여줍니다.`;
   if (!own.length) { $('#lineup').innerHTML = `<p class="quiet">이 날짜에는 ${esc(CHMAP[OWN].name)} 편성이 수집되지 않았습니다.</p>`; return; }
   $('#lineup').innerHTML = own.map(it => {
     const isNow = live && it.sm <= nm && nm < it.em; const past = live && it.em <= nm;
