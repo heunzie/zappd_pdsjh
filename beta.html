@@ -488,6 +488,17 @@ tbody tr:hover td{background:var(--surface-2)}
 .pv-on .zg-h{padding:3px 8px;font-size:10.5px}
 .pv-on .zb[data-hs]{cursor:pointer}
 .pv-on .zb[data-hs][aria-current="true"]{box-shadow:0 0 0 2px var(--ink);z-index:3}
+.pv-on .zaxis .zl{flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:2px}
+.zctl{display:flex;gap:2px}
+.zctl button{width:24px;height:20px;border:1px solid var(--line);border-radius:5px;background:var(--surface);font-size:14px;line-height:1;padding:0;color:var(--ink)}
+.zctl button:disabled{opacity:.35}
+.zlv{font-size:9.5px;color:var(--muted);line-height:1}
+.pvz .zb .zt{display:block;font-size:10px}
+/* channel names stay above the bars when the grid slides sideways */
+.zl{z-index:4}.zr.zref{z-index:5}.zaxis{z-index:6}
+.znow{position:absolute;top:0;bottom:0;border-left:2px solid var(--now);z-index:3}
+.pvz .zr,.pvz .ztrack{min-height:46px}
+.pv-on .zscroll{overscroll-behavior-x:contain}
 .pager{display:flex;align-items:center;gap:6px;margin-top:6px}
 .pager button{border:1px solid var(--line);border-radius:999px;padding:4px 9px;font-size:11.5px;color:var(--ink);background:var(--surface);white-space:nowrap;max-width:38%;overflow:hidden;text-overflow:ellipsis}
 .pager button:disabled{color:var(--muted);opacity:.5}
@@ -944,12 +955,44 @@ const PHONE = () => phoneMQ.matches;
 const SHORT = {'NS홈쇼핑': 'NS', '현대홈쇼핑': '현대', '롯데홈쇼핑': '롯데', '홈앤쇼핑': '홈앤', '공영쇼핑': '공영', 'CJ온스타일': 'CJ', 'CJ온스타일+': 'CJ+', '현대홈쇼핑+샵': '현대+샵', '롯데OneTV': '롯데One', 'KT알파쇼핑': 'KT알파', 'KT알파쇼핑+': 'KT알파+', '신세계쇼핑': '신세계', 'NS Shop+': 'NS+', '연합뉴스TV': '연합뉴스'};
 const sn = name => PHONE() && SHORT[name] || name;
 let pv = {date: null, i: -1, list: []};
+let pvZoom = 1; try { const z = localStorage.getItem('zap.pvZoom'); if (z !== null) pvZoom = Math.max(0, Math.min(2, +z)); } catch (e) {}
+const PV_SPAN = [0, 30, 15], PV_LABEL = ['전체', '30분', '15분'];
+let zoomView = null;   // {w0, W, ppm} of the last drawn phone grid
+// keep the same minute in the middle of the screen across a redraw (tab change, zoom)
+function pvKeepX(fn) {
+  const sc = $('#zpanel .zscroll:not(.zdetail)'); const zv = zoomView;
+  const mid = sc && zv && zv.ppm ? zv.w0 + (sc.scrollLeft + (sc.clientWidth - 62) / 2) / zv.ppm : null;
+  fn();
+  if (mid !== null) pvScrollTo(mid, true);
+}
+function pvScrollTo(min, center) {
+  const sc = $('#zpanel .zscroll:not(.zdetail)'); const zv = zoomView; if (!sc || !zv || !zv.ppm) return;
+  const vis = sc.clientWidth - 62;
+  sc.scrollLeft = Math.max(0, (min - zv.w0) * zv.ppm - (center ? vis / 2 : 0));
+  pvPin(sc);
+}
+// a programme that started off-screen keeps its name in view: its text slides to the visible edge
+function pvPin(sc) {
+  const x = sc.scrollLeft;
+  sc.querySelectorAll('.ztrack .zb').forEach(b => {
+    const l = b.offsetLeft, w = b.offsetWidth;
+    b.style.paddingLeft = l < x && x < l + w - 56 ? (x - l + 6) + 'px' : '';
+  });
+}
+(() => { let raf = 0;
+  $('#zpanel').addEventListener('scroll', e => { const sc = e.target; if (!(sc.classList && sc.classList.contains('zscroll')) || !document.body.classList.contains('pvz')) return;
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(() => pvPin(sc)); }, true);
+})();
 function pvList() { return state.tvItems.filter(i => i.ch === SETS.tv.own && !i.nx).sort((a, b) => a.sm - b.sm); }
 function pvGo(i, keepTab) {
   const L = pv.list; if (!L.length) return;
   pv.i = Math.max(0, Math.min(L.length - 1, i));
   const tab = keepTab && zoomTab !== 'detail' ? zoomTab : keepTab ? 'detail' : 'zap';
   zoomItem(L[pv.i], state.tvItems, tab);
+  // zoomed in: open at the current minute when this broadcast is on air, otherwise at its start
+  const it = L[pv.i], nm = nowMin();
+  const live = state.date === boardToday() && nm !== null && it.sm <= nm && nm < it.em;
+  requestAnimationFrame(() => pvScrollTo(live ? nm - 5 : it.sm - 2, false));
 }
 function pvShow() {
   document.body.classList.toggle('pv-on', PHONE());
@@ -993,6 +1036,12 @@ function zoomItem(it, pool, tab) { if (it) openZoom(it.sm, it.em, {ch: chDot(it.
 function renderZoom() {
   const [sm, em, head] = zoomArgs; const src = zoomSrc;
   const w0 = Math.max(DAY_START, Math.floor((sm - 10) / 5) * 5), w1 = Math.min(DAY_END, Math.ceil((em + 10) / 5) * 5), W = w1 - w0;
+  // phone page zoom: a fixed number of minutes per screen, scrolled sideways
+  const span = PHONE() && PV_SPAN[pvZoom] && PV_SPAN[pvZoom] < W ? PV_SPAN[pvZoom] : W;
+  const ppm = PHONE() ? (innerWidth - 62) / span : 0;
+  const gw = PHONE() && span < W ? Math.round(62 + ppm * W) : 0;
+  zoomView = PHONE() ? {w0, W, ppm} : null;
+  document.body.classList.toggle('pvz', !!gw);
   // every channel as a lane of programmes, home shopping first
   const selIdx = src ? src.idx : -1, selPool = src ? src.pool : null;
   const hsMap = (pool, ch) => (pool || []).filter(i => i.ch === ch).map(i => ({a: i.sm, b: i.em, n: i.n, cls: 'hs' + (pool === selPool && i.idx === selIdx ? ' sel' : ''), sub: i.p ? won(best(i)) : '', ch: i.ch, hs: (pool === state.tcAll ? 'tc' : 'tv') + ':' + i.idx}));
@@ -1009,7 +1058,7 @@ function renderZoom() {
        items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp', prog: isOff(r.t) ? null : {ch: c.name, t: r.t, a: r.sm, b: r.em, g: r.g || '', day: r.nx ? addDays(state.date, 1) : state.date}}))});
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em);
-  const step = PHONE() ? (W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
+  const step = PHONE() ? (span <= 15 ? 5 : span <= 30 ? 10 : W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
   const ticks = []; for (let m = Math.ceil(w0 / step) * step; m <= w1; m += step) ticks.push(m);
   const cls = x => {
     const cut = (x.a < w0 ? ' cutl' : '') + (x.b > w1 ? ' cutr' : '');
@@ -1030,9 +1079,10 @@ function renderZoom() {
     let rows = nsLane ? `<div class="zr own zref"><div class="zl">${nsLane.label}<span class="zbadge">기준</span></div><div class="ztrack">${nsLane.items.map(bar).join('')}</div></div>` : '', g = '';
     for (const l of lanes) {
       if (l.own && !(byNum && tab === 'zap')) continue; if (l.grp !== g) { g = l.grp; if (g) rows += `<div class="zg-h">${esc(g)}</div>`; } rows += `<div class="zr ${l.own ? 'own' : ''}"><div class="zl">${l.label}</div><div class="ztrack">${l.items.map(bar).join('')}</div></div>`; }
-    const lines = `<div class="zslot" style="left:${pct(sm)};width:calc(${pct(em)} - ${pct(sm)})"></div>` + sw.map(s => `<div class="zsw ${s.list.length >= 3 ? 'big' : ''}" style="left:${pct(s.min)}"></div>`).join('');
-    body = tab === 'detail' ? `<div class="zscroll zdetail"><div class="zdin">${openDetail(src.idx, src.pool, true) || ''}</div></div>` : `<div class="zscroll"><div class="zgrid">
-      <div class="zr zaxis"><div class="zl"></div><div class="ztrack">${ticks.map(m => `<span style="left:${pct(m)}">${m2hm(m)}</span>`).join('')}${sw.map(s => `<span class="${s.list.length >= 3 ? 'big' : 'sm'}" style="left:${pct(s.min)}">⇄${s.list.length}</span>`).join('')}</div></div>
+    const nmz = state.date === boardToday() ? nowMin() : null;
+    const lines = (nmz !== null && nmz > w0 && nmz < w1 ? `<div class="znow" style="left:${pct(nmz)}"></div>` : '') + `<div class="zslot" style="left:${pct(sm)};width:calc(${pct(em)} - ${pct(sm)})"></div>` + sw.map(s => `<div class="zsw ${s.list.length >= 3 ? 'big' : ''}" style="left:${pct(s.min)}"></div>`).join('');
+    body = tab === 'detail' ? `<div class="zscroll zdetail"><div class="zdin">${openDetail(src.idx, src.pool, true) || ''}</div></div>` : `<div class="zscroll"><div class="zgrid"${gw ? ` style="min-width:${gw}px"` : ''}>
+      <div class="zr zaxis"><div class="zl">${PHONE() ? `<span class="zctl"><button data-zl="-1" ${pvZoom ? '' : 'disabled'} aria-label="축소">−</button><button data-zl="1" ${pvZoom < 2 ? '' : 'disabled'} aria-label="확대">+</button></span><small class="zlv">${PV_LABEL[pvZoom]}</small>` : ''}</div><div class="ztrack">${ticks.map(m => `<span style="left:${pct(m)}">${m2hm(m)}</span>`).join('')}${sw.map(s => `<span class="${s.list.length >= 3 ? 'big' : 'sm'}" style="left:${pct(s.min)}">⇄${s.list.length}</span>`).join('')}</div></div>
       <div class="zbody"><div class="zlines">${lines}</div>${rows}</div></div></div>`;
   }
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
@@ -1060,7 +1110,9 @@ function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
   const pg = e.target.closest('[data-pv]'); if (pg && !pg.disabled) { hideProg(); pvGo(+pg.dataset.pv, true); return; }
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
-  const t = e.target.closest('[data-zt]'); if (t) { hideProg(); zoomTab = t.dataset.zt; renderZoom(); return; }
+  const t = e.target.closest('[data-zt]'); if (t) { hideProg(); zoomTab = t.dataset.zt; if (PHONE()) pvKeepX(renderZoom); else renderZoom(); return; }
+  const zl = e.target.closest('[data-zl]');
+  if (zl && !zl.disabled) { hideProg(); pvZoom = Math.max(0, Math.min(2, pvZoom + +zl.dataset.zl)); try { localStorage.setItem('zap.pvZoom', pvZoom); } catch (er) {} pvKeepX(renderZoom); return; }
   if (e.target.id === 'zpClose') { hideProg(); return; }
   if (e.target.closest('#zpop')) return;
   const zp = e.target.closest('[data-zp]');
@@ -1079,6 +1131,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') { if (PHONE(
 (() => { let x0 = null, y0 = 0;
   $('#zoom').addEventListener('touchstart', e => { if (!PHONE() || e.target.closest('#zpop')) return; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, {passive: true});
   $('#zoom').addEventListener('touchend', e => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0; x0 = null;
+    if (document.body.classList.contains('pvz')) return;
     if (Math.abs(dx) > 60 && Math.abs(dy) < 50) { hideProg(); pvGo(pv.i + (dx < 0 ? 1 : -1), true); } }, {passive: true});
 })();
 phoneMQ.addEventListener('change', () => { if (state.tvItems.length) { if (PHONE()) pvShow(); else { document.body.classList.remove('pv-on'); closeZoom(); render(); } } });
