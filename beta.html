@@ -519,6 +519,13 @@ tbody tr:hover td{background:var(--surface-2)}
   .subrow #epgOrder,.subrow #setSeg{order:3;margin-left:20px}
   .subrow .spacer{order:4}
 }
+.zfilt{display:flex;gap:4px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:6px 2px 2px;flex-shrink:0}
+.zfilt::-webkit-scrollbar{display:none}
+.zfilt > span{font-size:12px;margin-right:2px;white-space:nowrap}
+.zfilt button{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;background:var(--surface);color:var(--muted);white-space:nowrap;flex:none}
+.zfilt button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.zfilt .zf-all{border-style:dashed;color:var(--ink)}
+.pv-on .zfilt{padding:6px 10px 4px}
 </style>
 
 <div class="wrap">
@@ -900,11 +907,13 @@ $('#epg').addEventListener('click', e => {
   if (ep && matchMedia('(hover: hover)').matches) openZoom(+ep.dataset.sm, +ep.dataset.em, {ch: esc(ep.dataset.tc), n: ep.dataset.tn}, null, 'zap', {ch: ep.dataset.tc, t: ep.dataset.tn, a: +ep.dataset.sm, b: +ep.dataset.em, g: ep.dataset.g || '', day: ep.dataset.day});
 });
 // programme changes on the TV channels between two minutes (the moments viewers zap)
-function epgSwitches(from, to) {
+// channels switched off in the popup's 재핑 tab (kept per browser); they drop out of the ⇄ counts there too
+let zapOff = new Set(); try { zapOff = new Set(JSON.parse(localStorage.getItem('zap.off') || '[]')); } catch (e) {}
+function epgSwitches(from, to, skip) {
   const ev = [];
-  for (const c of epgRows()) c.rows.forEach((r, k) => {
+  for (const c of epgRows()) { if (skip && skip.has(c.name)) continue; c.rows.forEach((r, k) => {
     if (r.sm > from && r.sm < to && !isOff(r.t)) ev.push({min: r.sm, s: r.s, c, to: r.t, from: k ? c.rows[k - 1].t : ''});
-  });
+  }); }
   const byMin = new Map();
   for (const e of ev.sort((a, b) => a.min - b.min || a.c.no - b.c.no)) { if (!byMin.has(e.min)) byMin.set(e.min, []); byMin.get(e.min).push(e); }
   return [...byMin.entries()].map(([min, list]) => ({min, s: list[0].s, list}));
@@ -1057,10 +1066,13 @@ function renderZoom() {
     : tab === 'tc' ? hsLanes('tc', state.tcAll, '')
     : epgCols().map(c => c.hs
     ? {grp: c.ns && !byNum ? '' : byNum ? '지니TV 번호순' : '홈쇼핑', own: c.ns, label: `${chDot(c.ch)}${esc(sn(CHMAP[c.ch].name))}${byNum ? ` <span class="quiet mono">${c.no}</span>` : ''}`, items: hsItems(c.pool, c.ch)}
-    : {grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(sn(c.name))} <span class="quiet mono">${c.no ?? ''}</span>`,
+    : {tv: c.name, grp: byNum ? '지니TV 번호순' : (c.grp || 'TV'), label: `${esc(sn(c.name))} <span class="quiet mono">${c.no ?? ''}</span>`,
        items: c.rows.map(r => ({a: r.sm, b: r.em, n: isOff(r.t) ? '정파' : r.t, cls: isOff(r.t) ? 'tvp off' : 'tvp', prog: isOff(r.t) ? null : {ch: c.name, t: r.t, a: r.sm, b: r.em, g: r.g || '', day: r.nx ? addDays(state.date, 1) : state.date}}))});
+  for (let k = lanes.length - 1; k >= 0; k--) if (lanes[k].tv && zapOff.has(lanes[k].tv)) lanes.splice(k, 1);
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
-  const sw = epgSwitches(sm, em);
+  const sw = epgSwitches(sm, em, zapOff);
+  const zfNames = epgCols().filter(c => !c.hs).map(c => c.name);
+  const zfilt = tab === 'zap' ? `<div class="zfilt"><span class="quiet">채널</span>${zfNames.map(n => `<button data-zf="${esc(n)}" aria-pressed="${!zapOff.has(n)}">${esc(sn(n))}</button>`).join('')}${zapOff.size ? `<button data-zf="*" class="zf-all">전체 보기</button>` : ''}</div>` : '';
   const step = PHONE() ? (span <= 15 ? 5 : span <= 30 ? 10 : W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
   const ticks = []; for (let m = Math.ceil(w0 / step) * step; m <= w1; m += step) ticks.push(m);
   const cls = x => {
@@ -1090,7 +1102,7 @@ function renderZoom() {
   }
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
       <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>${pvPager()}
-    <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>
+    <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>${zfilt}
     ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.${tab === 'zap' ? ' TV 프로그램 막대를 누르면 회차 정보가 작게 떠요.' : ''}</p>`}
     ${body}`;
 }
@@ -1113,6 +1125,13 @@ function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
   const pg = e.target.closest('[data-pv]'); if (pg && !pg.disabled) { hideProg(); pvGo(+pg.dataset.pv, true); return; }
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
+  const zf = e.target.closest('[data-zf]');
+  if (zf) {
+    const n = zf.dataset.zf; if (n === '*') zapOff.clear(); else if (zapOff.has(n)) zapOff.delete(n); else zapOff.add(n);
+    try { localStorage.setItem('zap.off', JSON.stringify([...zapOff])); } catch (er) {}
+    hideProg(); const sc = $('#zpanel .zscroll'); const x = sc ? sc.scrollLeft : 0, y = sc ? sc.scrollTop : 0;
+    renderZoom(); const n2 = $('#zpanel .zscroll'); if (n2) { n2.scrollLeft = x; n2.scrollTop = y; } return;
+  }
   const t = e.target.closest('[data-zt]'); if (t) { hideProg(); zoomTab = t.dataset.zt; if (PHONE()) pvKeepX(renderZoom); else renderZoom(); return; }
   const zl = e.target.closest('[data-zl]');
   if (zl && !zl.disabled) { hideProg(); pvZoom = Math.max(0, Math.min(2, pvZoom + +zl.dataset.zl)); try { localStorage.setItem('zap.pvZoom', pvZoom); } catch (er) {} pvKeepX(renderZoom); return; }
