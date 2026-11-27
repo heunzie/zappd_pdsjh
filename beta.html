@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="ko">
 <head>
-<meta name="robots" content="noindex">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
@@ -53,12 +52,17 @@ button{cursor:pointer}
 
 /* on-air bar */
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--bg);padding-block:12px 10px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;border-bottom:1px solid var(--line)}
-/* phone: the menu bar stays on top; lists scroll under it and grids fill the space below it */
-@media (max-width:760px){
-  .tl-scroll{height:calc(100dvh - var(--barh,0px) - 64px)}
-}
-.credit{position:absolute;top:3px;right:4px;font-size:11px;line-height:1;color:var(--muted);opacity:.6;pointer-events:none;white-space:nowrap}
-@media (max-width:760px){.credit{position:static;order:-1;flex-basis:100%;text-align:right;font-size:11px;margin-bottom:-8px}}
+/* phone: the menu bar stays on top; grids fill the space below it */
+@media (max-width:760px){.tl-scroll{height:calc(100dvh - var(--barh,0px) - 64px)}}
+.credit{position:absolute;top:3px;right:4px;font-size:11px;line-height:1;color:var(--muted);opacity:.6;pointer-events:none;white-space:nowrap;display:flex;gap:0}
+.credit > *:not([hidden]) ~ *:not([hidden])::before{content:"·";margin:0 6px}
+.credit a{pointer-events:auto;color:inherit;text-decoration:none}
+.credit a:hover{text-decoration:underline}
+.subrow{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;min-width:0}
+.gonow{color:var(--ink);font-weight:600;padding:6px 12px}
+.footnote{font-size:12px;color:var(--muted);margin:10px 2px 0}
+#epgLegend:empty{display:none}
+@media (max-width:760px){.credit{position:static;order:-1;flex-basis:100%;justify-content:flex-end;font-size:11px;margin-bottom:-8px}.subrow .spacer{display:none}.subrow .datepick{flex:1 1 100%;order:3}.subrow .gonow{order:2;margin-left:auto}.bar .lg{display:none}.credit a{display:none}}
 /* phones: a shorter header so the schedule starts higher on screen */
 @media (max-width:760px){
   .bar{gap:8px 10px;padding-block:10px 8px}
@@ -70,13 +74,6 @@ button{cursor:pointer}
   .bar .setseg button{padding:4px 10px}
   #view-timeline > .tl-legend, #view-lineup > .tl-legend{display:none}
   .nowline span{font-size:9px;padding:0 3px;top:-8px}
-  /* fixed menu: shorter labels so the set toggle and the three views share one row */
-  .bar .lg{display:none}
-  .bar{gap:6px 8px;padding-block:6px 6px}
-  .bar .setseg button{padding:4px 9px;font-size:12.5px}
-  .bar .tab{padding:4px 10px}
-  .bar .dnav{height:30px}
-  .bar .meta{font-size:11px}
 }
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
 .onair{font-family:var(--f-mono);font-weight:600;font-size:11px;letter-spacing:.12em;padding:3px 7px;border-radius:3px;background:var(--now);color:#fff}
@@ -468,21 +465,24 @@ tbody tr:hover td{background:var(--surface-2)}
 
 <div class="wrap">
   <header class="bar">
-    <span class="betatag" title="가독성 테스트용 페이지 · 실제 보드는 index.html">TEST</span>
-    <span class="credit">2026 TV식품컨텐츠팀 막내 피디 둘</span>
+    <span class="betatag" title="디자인 테스트용 페이지 · 실제 보드는 index.html">TEST</span>
+    <span class="credit"><span id="collected"></span><a id="runNow" hidden href="https://github.com/heunzie/zappd_pdsjh/actions/workflows/collect.yml" target="_blank" rel="noopener" title="GitHub에 로그인한 관리자만 실행할 수 있어요. 열린 화면에서 Run workflow를 누르면 3~4분 뒤 반영돼요.">지금 수집 ↗</a><span>2026 TV식품컨텐츠팀 막내 피디 둘</span></span>
     <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1></div>
     <span class="clock" id="clock">--:--</span>
-    <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV<span class="lg">홈쇼핑</span></button><button data-set="tc" aria-pressed="false">데이터<span class="lg">홈쇼핑</span></button></div>
     <div class="tabs" role="tablist">
-      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑<span class="lg"> 타임라인</span></button>
-      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사<span class="lg"> 홈쇼핑</span> 편성표</button>
-      <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS<span class="lg"> 기준</span> 비교</button>
+      <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
+      <button class="tab" role="tab" id="tab-timeline" aria-selected="false" data-view="timeline">경쟁사 홈쇼핑 편성표</button>
+      <button class="tab" role="tab" id="tab-lineup" aria-selected="false" data-view="lineup">NS 기준 비교</button>
     </div>
     <span class="spacer"></span>
-    <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><label class="dnav dcal" title="지난 날짜 찾기"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6.5h13M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.4"/></svg><input type="date" id="dPick" aria-label="날짜 직접 고르기"></label><select id="dateSel" hidden></select></div>
-    <span class="meta" id="collected"></span>
     <button class="minibtn hot" id="newData" hidden title="새 수집 결과를 불러와요">새 데이터 반영</button>
-    <a class="minibtn" id="runNow" hidden href="https://github.com/heunzie/zappd_pdsjh/actions/workflows/collect.yml" target="_blank" rel="noopener" title="GitHub에 로그인한 관리자만 실행할 수 있어요. 열린 화면에서 Run workflow를 누르면 3~4분 뒤 반영돼요.">지금 수집 ↗</a>
+    <div class="subrow">
+    <div class="seg" id="epgOrder" role="group" aria-label="채널 순서" hidden><button data-o="grp" aria-pressed="true">지상파<span class="lg">·종편·케이블</span> 순</button><button data-o="num" aria-pressed="false">지니<span class="lg">TV</span> 채널번호 순<span class="lg"> (0~24)</span></button></div>
+    <div class="seg setseg" id="setSeg" role="group" aria-label="편성 구분"><button data-set="tv" aria-pressed="true">TV홈쇼핑</button><button data-set="tc" aria-pressed="false">데이터홈쇼핑</button></div>
+    <span class="spacer"></span>
+    <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><label class="dnav dcal" title="지난 날짜 찾기"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6.5h13M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.4"/></svg><input type="date" id="dPick" aria-label="날짜 직접 고르기"></label><select id="dateSel" hidden></select></div>
+    <button class="minibtn gonow" id="goNow" title="오늘 지금 시각으로 이동">지금</button>
+    </div>
   </header>
 
   <div id="emptyState" class="empty">
@@ -493,19 +493,19 @@ tbody tr:hover td{background:var(--surface-2)}
   <div id="app" hidden>
     <p class="setnote" id="setNote" hidden></p>
     <section id="view-lineup" data-view-panel="lineup" hidden style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
-      <div class="tl-legend"><span id="lineupNote"></span><span>가격은 방송 판매가(쿠폰·카드할인 제외). 방송을 누르면 가격·구성 상세가 열립니다.</span></div>
+      <div class="tl-legend"><span id="lineupNote"></span></div>
       <div class="lineup" id="lineup"></div>
     </section>
 
     <section id="view-timeline" data-view-panel="timeline" style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
-      <div class="tl-legend"><span>가격은 방송 판매가(쿠폰·카드할인 제외). 방송을 누르면 상세가 열립니다.</span></div>
       <div class="tl-scroll" id="tlScroll"><div class="tl" id="tl"></div></div>
     </section>
 
     <section id="view-epg" data-view-panel="epg" hidden style="display:flex;flex-direction:column;gap:8px;margin-top:6px">
-      <div class="tl-legend"><div class="seg" id="epgOrder" role="group" aria-label="채널 순서"><button data-o="grp" aria-pressed="true">지상파·종편·케이블 순</button><button data-o="num" aria-pressed="false">지니TV 채널번호 순 (0~24)</button></div><span id="epgLegend" style="display:contents"></span></div>
+      <div class="tl-legend" id="epgLegend"></div>
       <div class="tl-scroll" id="epgScroll"><div class="tl" id="epg"></div></div>
     </section>
+    <p class="footnote">가격은 방송 판매가(쿠폰·카드할인 제외) · 방송 칸을 누르면 겹치는 방송과 상세를 크게 볼 수 있어요</p>
   </div>
 </div>
 
@@ -619,8 +619,14 @@ function prep(items, OWN) {
 }
 
 // ---------- shell ----------
+// options under the view tabs: channel order only matters to 재핑, TV/데이터 only to the shopping views
+function syncViewOpts() {
+  const zap = state.view === 'epg';
+  $('#epgOrder').hidden = !zap; $('#setSeg').hidden = zap;
+  $('#setNote').hidden = zap || !state.setMissing;
+}
 function setView(v) {
-  state.view = v;
+  state.view = v; syncViewOpts();
   document.querySelectorAll('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.view === v)));
   document.querySelectorAll('[data-view-panel]').forEach(p => p.hidden = p.dataset.viewPanel !== v);
   try { history.replaceState(null, '', '#' + v); } catch (e) {}
@@ -667,11 +673,13 @@ function render() {
   state.day = setDoc || tvDoc;
   const items = state.items;
   $('#emptyState').hidden = true; $('#app').hidden = false;
-  const note = $('#setNote');
-  note.hidden = !!setDoc;
-  if (!setDoc) note.textContent = `${SETS[state.set].label} 편성이 이 날짜에는 아직 수집되지 않았습니다. 다음 자동 수집 후 표시됩니다.`;
-  const ca = setDoc && setDoc.collectedAt;
-  $('#collected').textContent = ca ? '수집 ' + new Date(ca).toLocaleString('ko-KR', {timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit'}) : '';
+  state.setMissing = !setDoc;
+  if (!setDoc) $('#setNote').textContent = `${SETS[state.set].label} 편성이 이 날짜에는 아직 수집되지 않았습니다. 다음 자동 수집 후 표시됩니다.`;
+  syncViewOpts();
+  // one "last collected" time for the whole board (the collect run that wrote the newest data)
+  const ca = state.lastAt || [tvDoc, state.docs.tc].map(d => d && d.collectedAt).filter(Boolean).sort().pop();
+  const k = ca ? new Date(new Date(ca).getTime() + 9 * 3600e3).toISOString() : '';
+  $('#collected').innerHTML = ca ? `<span class="lg">마지막 </span>수집 ${+k.slice(5, 7)}/${+k.slice(8, 10)} ${k.slice(11, 16)}` : '';
   renderLineup(items); renderTimeline(items); renderEpg(state.tvItems); tick();
 }
 
@@ -839,9 +847,6 @@ function epgSwitches(from, to) {
   for (const e of ev.sort((a, b) => a.min - b.min || a.c.no - b.c.no)) { if (!byMin.has(e.min)) byMin.set(e.min, []); byMin.get(e.min).push(e); }
   return [...byMin.entries()].map(([min, list]) => ({min, s: list[0].s, list}));
 }
-function epgAt(min) {
-  return epgRows().map(c => { const r = c.rows.find(x => x.sm <= min && min < x.em); return r && !isOff(r.t) ? {c, r} : null; }).filter(Boolean);
-}
 
 // ---------- detail ----------
 let detailPool = null, detailIdx = null;
@@ -874,8 +879,6 @@ function openDetail(idx, pool, asHtml) {
     </dl>
     ${it.u ? `<a class="btn" href="${esc(it.u)}" target="_blank" rel="noopener">상품 페이지 열기 ↗</a>` : ''}
     ${opsHtml}
-    ${(() => { const sw = epgSwitches(it.sm, it.em); return sw.length ? `<div class="section-h"><h2>방송 중 다른 채널 전환</h2><p>${esc(it.s)}~${esc(it.e)} 사이에 프로그램이 바뀌는 시점이에요. 시청자가 채널을 돌리는 순간입니다.</p></div><div class="zaplist">${sw.map(g => `<div class="zg ${g.list.length >= 3 ? 'big' : ''}"><span class="zt mono">${esc(g.s)}</span><span class="zn">${g.list.length}곳</span><ul>${g.list.map(e => `<li><b>${esc(e.c.name)}</b> <span class="quiet">${esc(e.from || '')}</span> → ${esc(e.to)}</li>`).join('')}</ul></div>`).join('')}</div>` : ''; })()}
-    ${(() => { const at = epgAt(it.sm); return at.length ? `<details class="calm"><summary>방송 시작할 때(${esc(it.s)}) 다른 채널</summary><div class="epgnow" style="margin-top:8px">${at.map(({c, r}) => `<div><b>${esc(c.name)} <span class="quiet mono">${c.no}</span></b><span class="mono quiet">${esc(r.s)}</span><span>${esc(r.t)}</span></div>`).join('')}</div></details>` : ''; })()}
     <div class="section-h"><h2>같은 시간대 다른 홈쇼핑</h2></div>
     <div class="same">${overlap.map(o => `<button class="rv" data-idx="${o.idx}"><span class="who"><b>${chDot(o.ch)}${esc(CHMAP[o.ch].name)}</b><span class="mono">${esc(o.s)}–${esc(o.e)}</span></span><span><span class="nm">${esc(o.n)}</span><br><span class="sub">${esc(comp(o.n).chips.join(' '))}</span></span><span class="px">${o.p ? won(best(o)) : '—'}</span></button>`).join('') || '<p class="quiet">겹치는 방송이 없습니다.</p>'}</div>`;
   if (asHtml) return html;
@@ -982,6 +985,15 @@ $('#setSeg').addEventListener('click', e => { const b = e.target.closest('[data-
 $('#dStrip').addEventListener('click', e => { const b = e.target.closest('[data-d]'); if (b) goDate(b.dataset.d); });
 $('#dPrev').addEventListener('click', () => { const a = [...state.dates].sort(); goDate(a[a.indexOf(state.date) - 1]); });
 $('#dNext').addEventListener('click', () => { const a = [...state.dates].sort(); goDate(a[a.indexOf(state.date) + 1]); });
+$('#goNow').addEventListener('click', () => {
+  const today = boardToday();
+  const toNow = () => {
+    state.luScrolled = false;
+    const sc = state.view === 'timeline' ? $('#tlScroll') : state.view === 'epg' ? $('#epgScroll') : null;
+    if (sc) sc.scrollTo({top: Y(nowMin() - 60) * 2, behavior: 'smooth'}); else scrollLineup();
+  };
+  if (state.date !== today && state.dates.includes(today)) goDate(today); else toNow();
+});
 $('#dPick').addEventListener('change', e => { const v = e.target.value; if (state.dates.includes(v)) goDate(v); else { e.target.value = state.date; } });
 
 // ---------- data from db ----------
@@ -1010,7 +1022,7 @@ async function bootStatic() {
   let idx;
   try { idx = await get('data/index.json'); } catch (e) { return false; }
   let tset = new Set(idx.tdates || []);
-  const applyIndex = i => { idx = i; tset = new Set(i.tdates || []); state.dates = [...new Set([...(i.dates || []), ...tset])].sort().reverse(); };
+  const applyIndex = i => { idx = i; tset = new Set(i.tdates || []); state.dates = [...new Set([...(i.dates || []), ...tset])].sort().reverse(); state.lastAt = i.updatedAt || null; };
   applyIndex(idx);
   if (!state.dates.length) { showEmpty('아직 수집된 편성이 없습니다', '자동 수집이 끝나면 이곳에 표시됩니다.'); return true; }
   const load = async d => {
@@ -1103,14 +1115,12 @@ boot();
 </script>
 
 <script>
-// keep --barh equal to the sticky menu bar's height (it wraps differently per screen)
+// keep --barh equal to the sticky menu bar's height; re-align the opening jump to "now" if the bar grows after it
 (() => { const bar = document.querySelector('.bar'); if (!bar) return; const set = () => {
     document.documentElement.style.setProperty('--barh', bar.offsetHeight + 'px');
-    // the bar can grow after the opening jump to "now" (collect line fills in); keep that row just below it
     const t = window.__luTarget; if (t && t.isConnected && t.offsetParent) t.scrollIntoView({block: 'start'});
   };
   new ResizeObserver(set).observe(bar); set();
-  // once the user scrolls by hand, stop re-aligning
   for (const ev of ['wheel', 'touchstart', 'keydown']) addEventListener(ev, () => { window.__luTarget = null; }, {passive: true});
 })();
 </script>
