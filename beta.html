@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 </head>
 <body>
-<title>NS 재핑 보드</title>
+<title>[테스트] NS 재핑 보드</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
@@ -460,6 +460,12 @@ tbody tr:hover td{background:var(--surface-2)}
 .empty h2{margin:0;font-size:16px}
 .empty p{margin:0;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* test page markers: striped strip on top, badge next to the title, red tag bottom-left, [테스트] in the tab title */
+.betabar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:6px 16px;font-size:12px;color:#5a3a00;background:repeating-linear-gradient(135deg,#ffe08a 0 14px,#ffd25e 14px 28px);border-bottom:1px solid #e0b240}
+.betabar b{font-weight:800;letter-spacing:.02em}
+.betabar a{margin-left:auto;color:#5a3a00;font-weight:700;text-decoration:underline}
+@media (max-width:760px){.betabar span{display:none}}
+.betabadge{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.1em;color:#5a3a00;background:#ffd25e;border:1px solid #e0b240;border-radius:3px;padding:1px 5px}
 .betatag{position:fixed;left:8px;bottom:8px;z-index:90;font-size:10px;font-weight:700;letter-spacing:.08em;color:#fff;background:#d63b2f;border-radius:4px;padding:2px 6px;opacity:.85;pointer-events:none}
 /* phone page (pv-on): the popup becomes the page under the menu bar */
 .pv-on #app,.pv-on .tabs,.pv-on #epgOrder,.pv-on #setSeg,.pv-on .zsub,.pv-on .zbtns,.pv-on .footnote{display:none!important}
@@ -524,7 +530,13 @@ tbody tr:hover td{background:var(--surface-2)}
 .zfilt > span{font-size:12px;margin-right:2px;white-space:nowrap}
 .zfilt button{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;background:var(--surface);color:var(--muted);white-space:nowrap;flex:none}
 .zfilt button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.zfilt .zf-all{border-style:dashed;color:var(--ink)}
+/* 모두 켜기 / 모두 끄기 stay at the left edge while the chips slide sideways */
+.zf-fix{position:sticky;left:0;z-index:2;display:flex;align-items:center;gap:4px;padding-right:8px;margin-right:2px;background:var(--surface);border-right:1px solid var(--line)}
+.pv-on .zf-fix{background:var(--bg);padding-left:10px}
+.zfilt{padding-left:0!important}.zf-fix{padding-left:2px}
+.zf-fix > span{font-size:12px;white-space:nowrap}
+.zfilt .zf-all{border-style:dashed;color:var(--ink);background:var(--surface)}
+.zfilt .zf-all:disabled{opacity:.4;cursor:default}
 .pv-on .zfilt{padding:6px 10px 4px}
 .expm{position:relative}
 .expm > summary{list-style:none;cursor:pointer}
@@ -545,11 +557,12 @@ tbody tr:hover td{background:var(--surface-2)}
 @media (max-width:760px){.expm{display:none!important}}
 </style>
 
+<div class="betabar" role="note"><b>테스트 페이지</b><span>새 기능·디자인을 미리 써보는 곳이에요. 동료에게 공유할 땐 실제 보드 주소로.</span><a href="./">실제 보드로 가기 →</a></div>
 <div class="wrap">
   <header class="bar">
     <span class="betatag" title="디자인 테스트용 페이지 · 실제 보드는 index.html">TEST</span>
     <span class="credit"><span id="collected"></span><a id="runNow" hidden href="https://github.com/heunzie/zappd_pdsjh/actions/workflows/collect.yml" target="_blank" rel="noopener" title="GitHub에 로그인한 관리자만 실행할 수 있어요. 열린 화면에서 Run workflow를 누르면 3~4분 뒤 반영돼요.">지금 수집 ↗</a><span>2026 TV식품컨텐츠팀 막내 피디 둘</span></span>
-    <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1></div>
+    <div class="brand"><span class="onair off" id="onair">OFF AIR</span><h1>NS 재핑 보드</h1><span class="betabadge">TEST</span></div>
     <span class="clock" id="clock">--:--</span>
     <div class="tabs" role="tablist">
       <button class="tab" role="tab" id="tab-epg" aria-selected="true" data-view="epg">재핑 타임라인</button>
@@ -1241,7 +1254,8 @@ function renderZoom() {
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em, zapOff);
   const zfNames = epgCols().filter(c => !c.hs).map(c => c.name);
-  const zfilt = tab === 'zap' ? `<div class="zfilt"><span class="quiet">채널</span>${zfNames.map(n => `<button data-zf="${esc(n)}" aria-pressed="${!zapOff.has(n)}">${esc(sn(n))}</button>`).join('')}${zapOff.size ? `<button data-zf="*" class="zf-all">전체 보기</button>` : ''}</div>` : '';
+  const offN = zfNames.filter(n => zapOff.has(n)).length;
+  const zfilt = tab === 'zap' ? `<div class="zfilt"><span class="zf-fix"><span class="quiet">채널</span><button data-zf="+" class="zf-all" ${offN ? '' : 'disabled'}>모두 켜기</button><button data-zf="-" class="zf-all" ${offN === zfNames.length ? 'disabled' : ''}>모두 끄기</button></span>${zfNames.map(n => `<button data-zf="${esc(n)}" aria-pressed="${!zapOff.has(n)}">${esc(sn(n))}</button>`).join('')}</div>` : '';
   const step = PHONE() ? (span <= 15 ? 5 : span <= 30 ? 10 : W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
   const ticks = []; for (let m = Math.ceil(w0 / step) * step; m <= w1; m += step) ticks.push(m);
   const cls = x => {
@@ -1300,7 +1314,8 @@ $('#zoom').addEventListener('click', e => {
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
   const zf = e.target.closest('[data-zf]');
   if (zf) {
-    const n = zf.dataset.zf; if (n === '*') zapOff.clear(); else if (zapOff.has(n)) zapOff.delete(n); else zapOff.add(n);
+    if (zf.disabled) return;
+    const n = zf.dataset.zf; if (n === '+') zapOff.clear(); else if (n === '-') epgRows().forEach(c => zapOff.add(c.name)); else if (zapOff.has(n)) zapOff.delete(n); else zapOff.add(n);
     try { localStorage.setItem('zap.off', JSON.stringify([...zapOff])); } catch (er) {}
     hideProg(); const sc = $('#zpanel .zscroll'); const x = sc ? sc.scrollLeft : 0, y = sc ? sc.scrollTop : 0;
     renderZoom(); const n2 = $('#zpanel .zscroll'); if (n2) { n2.scrollLeft = x; n2.scrollTop = y; } return;

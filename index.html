@@ -505,7 +505,13 @@ tbody tr:hover td{background:var(--surface-2)}
 .zfilt > span{font-size:12px;margin-right:2px;white-space:nowrap}
 .zfilt button{border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:12px;background:var(--surface);color:var(--muted);white-space:nowrap;flex:none}
 .zfilt button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.zfilt .zf-all{border-style:dashed;color:var(--ink)}
+/* 모두 켜기 / 모두 끄기 stay at the left edge while the chips slide sideways */
+.zf-fix{position:sticky;left:0;z-index:2;display:flex;align-items:center;gap:4px;padding-right:8px;margin-right:2px;background:var(--surface);border-right:1px solid var(--line)}
+.pv-on .zf-fix{background:var(--bg);padding-left:10px}
+.zfilt{padding-left:0!important}.zf-fix{padding-left:2px}
+.zf-fix > span{font-size:12px;white-space:nowrap}
+.zfilt .zf-all{border-style:dashed;color:var(--ink);background:var(--surface)}
+.zfilt .zf-all:disabled{opacity:.4;cursor:default}
 .pv-on .zfilt{padding:6px 10px 4px}
 .expm{position:relative}
 .expm > summary{list-style:none;cursor:pointer}
@@ -1183,7 +1189,8 @@ function renderZoom() {
   lanes.forEach(l => { l.items = l.items.filter(x => x.b > w0 && x.a < w1); });
   const sw = epgSwitches(sm, em, zapOff);
   const zfNames = epgCols().filter(c => !c.hs).map(c => c.name);
-  const zfilt = tab === 'zap' ? `<div class="zfilt"><span class="quiet">채널</span>${zfNames.map(n => `<button data-zf="${esc(n)}" aria-pressed="${!zapOff.has(n)}">${esc(sn(n))}</button>`).join('')}${zapOff.size ? `<button data-zf="*" class="zf-all">전체 보기</button>` : ''}</div>` : '';
+  const offN = zfNames.filter(n => zapOff.has(n)).length;
+  const zfilt = tab === 'zap' ? `<div class="zfilt"><span class="zf-fix"><span class="quiet">채널</span><button data-zf="+" class="zf-all" ${offN ? '' : 'disabled'}>모두 켜기</button><button data-zf="-" class="zf-all" ${offN === zfNames.length ? 'disabled' : ''}>모두 끄기</button></span>${zfNames.map(n => `<button data-zf="${esc(n)}" aria-pressed="${!zapOff.has(n)}">${esc(sn(n))}</button>`).join('')}</div>` : '';
   const step = PHONE() ? (W > 150 ? 60 : W > 70 ? 15 : 10) : W > 150 ? 30 : W > 70 ? 10 : 5;
   const ticks = []; for (let m = Math.ceil(w0 / step) * step; m <= w1; m += step) ticks.push(m);
   const cls = x => {
@@ -1241,7 +1248,8 @@ $('#zoom').addEventListener('click', e => {
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
   const zf = e.target.closest('[data-zf]');
   if (zf) {
-    const n = zf.dataset.zf; if (n === '*') zapOff.clear(); else if (zapOff.has(n)) zapOff.delete(n); else zapOff.add(n);
+    if (zf.disabled) return;
+    const n = zf.dataset.zf; if (n === '+') zapOff.clear(); else if (n === '-') epgRows().forEach(c => zapOff.add(c.name)); else if (zapOff.has(n)) zapOff.delete(n); else zapOff.add(n);
     try { localStorage.setItem('zap.off', JSON.stringify([...zapOff])); } catch (er) {}
     hideProg(); const sc = $('#zpanel .zscroll'); const x = sc ? sc.scrollLeft : 0, y = sc ? sc.scrollTop : 0;
     renderZoom(); const n2 = $('#zpanel .zscroll'); if (n2) { n2.scrollLeft = x; n2.scrollTop = y; } return;
