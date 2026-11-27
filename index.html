@@ -924,72 +924,78 @@ let zapTick = 10; try { if (localStorage.getItem('zap.tick') === '5') zapTick = 
 function syncTick() { document.querySelectorAll('[data-tick]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.tick === zapTick))); }
 document.addEventListener('click', e => { const t = e.target.closest('[data-tick]'); if (!t) return; e.preventDefault(); zapTick = +t.dataset.tick; try { localStorage.setItem('zap.tick', zapTick); } catch (er) {} syncTick(); });
 document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.expm')) syncTick(); }, true);
-const SHEET_CSS = `.zs{font-family:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:#15202a;background:#fff;width:1100px;padding:14px 16px;box-sizing:border-box}
+const SHEET_CSS = `.zs{font-family:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:#15202a;background:#fff;width:1100px;padding:18px 20px;box-sizing:border-box}
 .zs *{box-sizing:border-box}
-.zs-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:8px}
-.zs-t1{font-size:13px;color:#0a7564;font-weight:700}.zs-t2{font-size:17px;font-weight:700;margin-top:2px}.zs-t3{font-size:11px;color:#5b6976;text-align:right;white-space:nowrap}
-.zs-g{position:relative;border:1px solid #c9d2d8;border-radius:6px;overflow:hidden}
-.zs-r{display:grid;grid-template-columns:92px 1fr;border-bottom:1px solid #e1e6ea;min-height:34px}
-.zs-r:last-child{border-bottom:0}
-.zs-l{display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:700;background:#f4f6f8;border-right:1px solid #e1e6ea;white-space:nowrap;overflow:hidden}
-.zs-l small{color:#7a8894;font-weight:500;margin-left:4px}
+.zs-h{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:12px}
+.zs-t1{font-size:13px;color:#5b6976}
+.zs-t1 b{color:#0a7564}
+.zs-t2{font-size:22px;font-weight:700;line-height:1.3;margin-top:3px}
+.zs-px{font-size:22px;font-weight:700;color:#0a7564;white-space:nowrap}
+.zs-g{position:relative;border-top:2px solid #15202a}
+.zs-r{display:grid;grid-template-columns:78px 1fr;min-height:36px;border-bottom:1px solid #edf0f2}
+.zs-r.gs{border-top:6px solid #fff}
+.zs-l{display:flex;align-items:center;padding:0 8px 0 2px;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden}
 .zs-k{position:relative}
-.zs-ax{min-height:38px;background:#fff}.zs-ax .zs-l{background:#fff}
-.zs-tk{position:absolute;top:0;bottom:0;border-left:1px solid #c9d2d8}
-.zs-tk.mj{border-left-color:#8796a2}
-.zs-tk span{position:absolute;top:3px;left:3px;font-family:"IBM Plex Mono",Consolas,monospace;font-size:10.5px;color:#33414d;white-space:nowrap}
-.zs-sw{position:absolute;bottom:2px;transform:translateX(-50%);font-family:"IBM Plex Mono",Consolas,monospace;font-size:9.5px;font-weight:700;color:#c2410c}
-.zs-ns{background:#e7f3f0}.zs-ns .zs-l{color:#0a7564;background:#dcefea}
-.zs-b{position:absolute;z-index:2;top:3px;bottom:3px;border:1px solid #c9d2d8;border-radius:4px;background:rgba(255,255,255,.88);padding:2px 5px;overflow:hidden;font-size:11px;line-height:1.2}
-.zs-b i{display:block;font-style:normal;font-family:"IBM Plex Mono",Consolas,monospace;font-size:9px;color:#7a8894}
-.zs-b.off{color:#9aa6b0;background:repeating-linear-gradient(135deg,#f4f6f8 0 5px,#fff 5px 10px)}
-.zs-b.cut{border-left-style:dashed}
-.zs-ns .zs-b{background:#fff;border-color:#0a7564;color:#0a7564}
-.zs-ns .zs-b.me{background:#0a7564;color:#fff;font-weight:700}.zs-ns .zs-b.me i{color:#d8efe9}
-.zs-gh{padding:3px 8px;font-size:10px;font-weight:700;color:#5b6976;background:#eef1f3;border-bottom:1px solid #e1e6ea}
-.zs-ov{position:absolute;z-index:1;top:38px;bottom:0;left:92px;right:0;pointer-events:none}
-.zs-slot{position:absolute;top:0;bottom:0;background:rgba(10,117,100,.07);border-left:2px solid #0a7564;border-right:2px solid #0a7564}
-.zs-ln{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(194,65,12,.55)}
-.zs-ln.big{border-left:2px dashed #c2410c}
-.zs-f{display:flex;justify-content:space-between;font-size:10px;color:#7a8894;margin-top:6px}
-.zs-pt{margin-top:10px;break-inside:auto}
-.zs-ph{font-size:12px;font-weight:700;margin-bottom:4px}
-.zs-pt table{width:100%;border-collapse:collapse;font-size:11px}
-.zs-pt th{text-align:left;font-weight:600;color:#5b6976;border-bottom:1px solid #8796a2;padding:3px 6px;white-space:nowrap}
-.zs-pt td{border-bottom:1px solid #e1e6ea;padding:4px 6px;vertical-align:top}
-.zs-pt td.m{font-family:"IBM Plex Mono",Consolas,monospace;white-space:nowrap;width:1%}
-.zs-pt tr.big td{background:#fff3ea}.zs-pt tr.big td.m{color:#c2410c;font-weight:700}
-.zs-pt .pc{display:inline-block;margin-right:12px}.zs-pt .pc b{margin-right:3px}`;
+.zs-ax{min-height:46px;border-bottom:1px solid #c9d2d8}
+.zs-tk{position:absolute;bottom:0;height:6px;border-left:1px solid #c9d2d8}
+.zs-tk.lb{height:46px;border-left-color:#e1e6ea}
+.zs-tk span{position:absolute;top:3px;left:4px;font-family:"IBM Plex Mono",Consolas,monospace;font-size:12px;color:#5b6976;white-space:nowrap}
+.zs-ns{min-height:44px;border-bottom:1px solid #c9d2d8}
+.zs-ns .zs-l{color:#0a7564}
+.zs-b{position:absolute;z-index:2;top:4px;bottom:4px;border-radius:4px;background:rgba(236,240,243,.78);padding:0 7px;overflow:hidden;font-size:12.5px;line-height:1.2;display:flex;align-items:center;white-space:nowrap}
+.zs-b.cut{border-top-left-radius:0;border-bottom-left-radius:0}
+.zs-b.off{color:#9aa6b0;background:#fafbfc}
+.zs-ns .zs-b{background:#fff;border:1px solid #b9c4cb;color:#7a8894;font-size:11.5px}
+.zs-ns .zs-b.me{background:#0a7564;border-color:#0a7564;color:#fff;font-size:14px;font-weight:700}
+.zs-ov{position:absolute;z-index:1;top:46px;bottom:0;left:78px;right:0;pointer-events:none}
+.zs-slot{position:absolute;top:0;bottom:0;border-left:2px solid #0a7564;border-right:2px solid #0a7564}
+.zs-ln{position:absolute;top:44px;bottom:0;border-left:1.5px dashed #e3a27c}
+.zs-ln.big{border-left:2.5px solid #c2410c}
+.zs-sw{position:absolute;z-index:4;top:-19px;transform:translateX(-50%);font-family:"IBM Plex Mono",Consolas,monospace;font-size:11px;font-weight:700;color:#c2410c;background:#fff;padding:0 2px;line-height:14px}
+.zs-sw.big{color:#fff;background:#c2410c;border-radius:3px;padding:0 4px}
+.zs-pt{margin-top:16px}
+.zs-ph{font-size:14px;font-weight:700;margin-bottom:6px}
+.zs-ph span{font-weight:400;color:#5b6976;font-size:12.5px;margin-left:6px}
+.zs-pts{columns:2;column-gap:28px;column-rule:1px solid #edf0f2;border-top:2px solid #15202a;font-size:12.5px}
+.zs-pi{display:grid;grid-template-columns:52px 34px 1fr;gap:0 6px;padding:5px 4px;border-bottom:1px solid #e1e6ea;break-inside:avoid;page-break-inside:avoid}
+.zs-pi .tm{font-family:"IBM Plex Mono",Consolas,monospace;font-weight:700;font-size:13.5px;line-height:1.3}
+.zs-pi .tm small{display:block;font-weight:400;font-size:10.5px;color:#7a8894}
+.zs-pi .n{font-family:"IBM Plex Mono",Consolas,monospace;font-weight:700;color:#c2410c;line-height:1.55}
+.zs-pi.big{background:#fff4ec}
+.zs-pt .pc{display:block;line-height:1.55}
+.zs-pt .pc b{display:inline-block;min-width:50px}
+.zs-pt .pc s{text-decoration:none;color:#7a8894}
+.zs-f{text-align:right;font-size:10px;color:#9aa6b0;margin-top:10px}`;
 function zapSheetHTML(o) {
   const sm = o.sm, em = o.em, w0 = Math.max(DAY_START, Math.floor((sm - 10) / 5) * 5), w1 = Math.min(DAY_END, Math.ceil((em + 10) / 5) * 5), W = w1 - w0;
   const pct = m => ((Math.min(Math.max(m, w0), w1) - w0) / W * 100).toFixed(3) + '%';
-  const bar = (a, b, html, cls) => `<div class="zs-b ${cls || ''}${a < w0 ? ' cut' : ''}" style="left:${pct(a)};width:calc(${pct(b)} - ${pct(a)} - 2px)">${html}</div>`;
-  const tick = zapTick, ticks = []; for (let m = Math.ceil(w0 / tick) * tick; m < w1; m += tick) ticks.push(m);
+  const bar = (a, b, txt, cls) => `<div class="zs-b ${cls || ''}${a < w0 ? ' cut' : ''}" style="left:${pct(a)};width:calc(${pct(b)} - ${pct(a)} - 3px)">${txt}</div>`;
+  // labels every 10 minutes (5-minute choice adds short marks between)
+  const ticks = []; for (let m = Math.ceil(w0 / zapTick) * zapTick; m < w1; m += zapTick) ticks.push(m);
   const sw = epgSwitches(sm, em, zapOff);
   const ns = state.tvItems.filter(i => i.ch === SETS.tv.own && i.em > w0 && i.sm < w1);
   const me = ns.find(i => i.sm === sm && i.em === em) || (o.src && o.src.pool === state.tvItems ? state.tvItems.find(i => i.idx === o.src.idx) : null);
   const cols = epgCols().filter(c => !c.hs && !zapOff.has(c.name));
-  let rows = `<div class="zs-r zs-ax"><div class="zs-l"></div><div class="zs-k">${ticks.map(m => `<div class="zs-tk ${m % 30 === 0 ? 'mj' : ''}" style="left:${pct(m)}"><span>${m2hm(m)}</span></div>`).join('')}${sw.map(g => `<span class="zs-sw" style="left:${pct(g.min)}">⇄${g.list.length}</span>`).join('')}</div></div>`;
-  rows += `<div class="zs-r zs-ns"><div class="zs-l">NS홈쇼핑</div><div class="zs-k">${ns.map(i => bar(i.sm, i.em, `<i>${esc(i.s)}–${esc(i.e)}${i.p ? ' · ' + won(best(i)) : ''}</i>${esc(i.n)}`, i === me ? 'me' : '')).join('')}</div></div>`;
+  let rows = `<div class="zs-r zs-ax"><div class="zs-l"></div><div class="zs-k">${ticks.map(m => `<div class="zs-tk ${m % 10 === 0 ? 'lb' : ''}" style="left:${pct(m)}">${m % 10 === 0 ? `<span>${m2hm(m)}</span>` : ''}</div>`).join('')}</div></div>`;
+  rows += `<div class="zs-r zs-ns"><div class="zs-l">NS</div><div class="zs-k">${ns.map(i => bar(i.sm, i.em, i === me ? `${esc(i.s)}–${esc(i.e)}&nbsp;&nbsp;이 방송` : esc(i.n), i === me ? 'me' : '')).join('')}${sw.map(g => `<span class="zs-sw ${g.list.length >= 3 ? 'big' : ''}" style="left:${pct(g.min)}">⇄${g.list.length}</span>`).join('')}</div></div>`;
   let g = '';
   for (const c of cols) {
-    const grp = epgOrder === 'num' ? '' : (c.grp || ''); if (grp && grp !== g) { g = grp; rows += `<div class="zs-gh">${esc(g)}</div>`; }
+    const grp = epgOrder === 'num' ? '' : (c.grp || ''); const gs = grp && g && grp !== g; g = grp || g;
     const its = c.rows.filter(r => r.em > w0 && r.sm < w1);
-    rows += `<div class="zs-r"><div class="zs-l">${esc(c.name)}<small>${c.no ?? ''}</small></div><div class="zs-k">${its.map(r => bar(r.sm, r.em, `<i>${m2hm(r.sm)}–${m2hm(r.em)}</i>${esc(isOff(r.t) ? '정파' : r.t)}`, isOff(r.t) ? 'off' : '')).join('')}</div></div>`;
+    rows += `<div class="zs-r${gs ? ' gs' : ''}"><div class="zs-l">${esc(sn(c.name))}</div><div class="zs-k">${its.map(r => bar(r.sm, r.em, esc(isOff(r.t) ? '정파' : r.t), isOff(r.t) ? 'off' : '')).join('')}</div></div>`;
   }
   const ov = `<div class="zs-ov"><div class="zs-slot" style="left:${pct(sm)};width:calc(${pct(em)} - ${pct(sm)})"></div>${sw.map(s => `<div class="zs-ln ${s.list.length >= 3 ? 'big' : ''}" style="left:${pct(s.min)}"></div>`).join('')}</div>`;
   const d = state.date, wd = '일월화수목금토'[new Date(d + 'T12:00:00Z').getUTCDay()];
-  const hidden = epgRows().length - cols.length;
-  return `<section class="zs"><div class="zs-h"><div><div class="zs-t1">NS홈쇼핑 · ${d.replace(/-/g, '.')} (${wd}) ${m2hm(sm)}–${m2hm(em)} · ${em - sm}분</div><div class="zs-t2">${esc(o.n || '')}${me && me.p ? ` · ${won(best(me))}` : ''}</div></div>
-    <div class="zs-t3">${epgOrder === 'num' ? '지니TV 채널번호 순' : '지상파·종편·케이블 순'} · TV ${cols.length}개 채널${hidden ? ` (${hidden}개 숨김)` : ''} · ${tick}분 눈금<br>초록 = 이 방송 시간 · 주황 점선 = 채널 전환(⇄ 채널 수)</div></div>
-    <div class="zs-g">${rows}${ov}</div>${zapPoints(sw, sm)}<div class="zs-f"><span>NS 재핑 보드</span><span>2026 TV식품컨텐츠팀</span></div></section>`;
+  const off = me && offPct(me);
+  return `<section class="zs"><div class="zs-h"><div><div class="zs-t1"><b>NS홈쇼핑</b> · ${+d.slice(5, 7)}월 ${+d.slice(8)}일 (${wd}) ${m2hm(sm)}–${m2hm(em)} · ${em - sm}분</div><div class="zs-t2">${esc(o.n || '')}</div></div>
+    ${me && me.p ? `<div class="zs-px">${won(best(me))}${off ? ` <small style="font-size:14px;color:#c2410c">-${off}%</small>` : ''}</div>` : ''}</div>
+    <div class="zs-g">${rows}${ov}</div>${zapPoints(sw, sm)}<div class="zs-f">2026 TV식품컨텐츠팀</div></section>`;
 }
 // table under the chart: each moment a TV channel changes programme during this broadcast
 function zapPoints(sw, sm) {
-  if (!sw.length) return '<div class="zs-pt"><div class="zs-ph">재핑 포인트 · 이 방송 중에는 켜둔 채널의 프로그램 전환이 없어요</div></div>';
-  const big = sw.filter(g => g.list.length >= 3).length;
-  return `<div class="zs-pt"><div class="zs-ph">재핑 포인트 · 방송 중 채널 전환 ${sw.length}번${big ? ` (3개 채널 이상 동시 ${big}번)` : ''}</div>
-    <table><thead><tr><th>시각</th><th>방송 시작 후</th><th>전환</th><th>채널 · 이전 → 다음 프로그램</th></tr></thead><tbody>${sw.map(g => `<tr class="${g.list.length >= 3 ? 'big' : ''}"><td class="m">${esc(g.s)}</td><td class="m">+${g.min - sm}분</td><td class="m">⇄${g.list.length}</td><td>${g.list.map(e => `<span class="pc"><b>${esc(e.c.name)}</b> ${esc(e.from || '')} → ${esc(e.to)}</span>`).join('')}</td></tr>`).join('')}</tbody></table></div>`;
+  if (!sw.length) return '<div class="zs-pt"><div class="zs-ph">재핑 포인트<span>이 방송 중에는 채널 전환이 없어요</span></div></div>';
+  return `<div class="zs-pt"><div class="zs-ph">재핑 포인트<span>방송 중 다른 채널이 프로그램을 바꾸는 시점 · ${sw.length}번</span></div>
+    <div class="zs-pts">${sw.map(g => `<div class="zs-pi ${g.list.length >= 3 ? 'big' : ''}"><div class="tm">${esc(g.s)}<small>+${g.min - sm}분</small></div><div class="n">⇄${g.list.length}</div><div>${g.list.map(e => `<span class="pc"><b>${esc(sn(e.c.name))}</b><s>${esc(e.from || '')} → </s>${esc(e.to)}</span>`).join('')}</div></div>`).join('')}</div></div>`;
 }
 async function zapSheetExport(kind, list) {
   if (!list.length) return;
@@ -1008,7 +1014,7 @@ async function zapSheetExport(kind, list) {
     } else {
       const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(f);
       f.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>세부 재핑 ${state.date}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
-        <style>@page{size:A4 landscape;margin:7mm}html,body{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}${SHEET_CSS}.zs{width:100%;padding:0;break-after:page;page-break-after:always}.zs:last-child{break-after:auto;page-break-after:auto}.zs-g{break-inside:avoid}.zs-pt tr{break-inside:avoid}.zs-r{min-height:30px}.zs-ax{min-height:32px}.zs-ov{top:32px}.zs-b{top:3px;bottom:3px;font-size:10.5px;display:flex;align-items:center;white-space:nowrap}.zs-b i{display:inline;margin-right:5px}.zs-pt{margin-top:6px}.zs-pt td{padding:2px 6px}.zs-h{margin-bottom:4px}</style></head><body>${html}</body></html>`);
+        <style>@page{size:A4 landscape;margin:7mm}html,body{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}${SHEET_CSS}.zs{width:100%;padding:0;break-after:page;page-break-after:always}.zs:last-child{break-after:auto;page-break-after:auto}.zs-g{break-inside:avoid}.zs-pi{break-inside:avoid}.zs-r{min-height:32px}.zs-ax{min-height:46px}.zs-ns{min-height:40px}.zs-h{margin-bottom:8px}.zs-pt{margin-top:10px}.zs-f{margin-top:4px}</style></head><body>${html}</body></html>`);
       f.contentDocument.close();
       try { await Promise.race([f.contentDocument.fonts.ready, new Promise(ok => setTimeout(ok, 2500))]); } catch (er) {}
       f.contentWindow.focus(); f.contentWindow.print(); setTimeout(() => f.remove(), 60000);
