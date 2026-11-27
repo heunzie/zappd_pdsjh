@@ -533,6 +533,14 @@ tbody tr:hover td{background:var(--surface-2)}
 .expm-pop b{font-size:11px;color:var(--muted);font-weight:600;padding:6px 8px 2px}
 .expm-pop button{border:0;background:none;text-align:left;padding:7px 8px;border-radius:6px;font-size:13px;color:var(--ink)}
 .expm-pop button:hover{background:var(--surface-2)}
+.expm-pop.right{left:auto;right:0}
+.expm-tick{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);padding:6px 8px 2px}
+.expm-tick button{border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;background:var(--surface);color:var(--ink)}
+.expm-tick button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.expm-note{font-size:11px;color:var(--muted);padding:2px 8px 4px}
+.zexp > summary{list-style:none}
+.zexp > summary::-webkit-details-marker{display:none}
+.zbtns{display:flex;gap:6px;align-items:flex-start}
 .expm-busy{position:fixed;inset:0;z-index:95;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--ink) 30%,transparent);color:#fff;font-weight:700}
 @media (max-width:760px){.expm{display:none!important}}
 </style>
@@ -556,6 +564,9 @@ tbody tr:hover td{background:var(--surface-2)}
     <details class="expm" id="expMenu" hidden><summary class="minibtn">저장·인쇄</summary><div class="expm-pop">
       <b>지금 보이는 시간대</b><button data-exp="png-view">이미지(PNG)로 저장</button><button data-exp="print-view">인쇄 (A4 가로)</button>
       <b>하루 전체 01:00~다음날 02:00</b><button data-exp="png-day">이미지(PNG)로 저장</button><button data-exp="print-day">인쇄 (A4 가로 여러 장)</button>
+      <b>NS 방송별 세부 재핑 (한 장에 한 방송)</b><button data-exp="sheets">하루 전체 인쇄 · PDF 저장</button>
+      <span class="expm-tick">시간 눈금 <button data-tick="10">10분</button><button data-tick="5">5분</button></span>
+      <span class="expm-note">세부 재핑은 크게 보기에서 고른 채널만 나와요</span>
     </div></details>
     <span class="spacer"></span>
     <div class="datepick"><button class="dnav" id="dPrev" aria-label="이전 날짜">‹</button><div class="dstrip" id="dStrip" role="group" aria-label="방송일"></div><button class="dnav" id="dNext" aria-label="다음 날짜">›</button><label class="dnav dcal" title="지난 날짜 찾기"><svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><rect x="1.5" y="2.5" width="13" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M1.5 6.5h13M5 1v3M11 1v3" stroke="currentColor" stroke-width="1.4"/></svg><input type="date" id="dPick" aria-label="날짜 직접 고르기"></label><select id="dateSel" hidden></select></div>
@@ -971,8 +982,91 @@ async function zapExport(kind) {
   } catch (e) { alertBox('이미지를 만들지 못했어요. 잠시 후 다시 해 주세요.'); console.error(e); }
   finally { busy.remove(); }
 }
+let zapTick = 10; try { if (localStorage.getItem('zap.tick') === '5') zapTick = 5; } catch (e) {}
+function syncTick() { document.querySelectorAll('[data-tick]').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.tick === zapTick))); }
+document.addEventListener('click', e => { const t = e.target.closest('[data-tick]'); if (!t) return; e.preventDefault(); zapTick = +t.dataset.tick; try { localStorage.setItem('zap.tick', zapTick); } catch (er) {} syncTick(); });
+document.addEventListener('toggle', e => { if (e.target.matches && e.target.matches('details.expm')) syncTick(); }, true);
+const SHEET_CSS = `.zs{font-family:"IBM Plex Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;color:#15202a;background:#fff;width:1100px;padding:14px 16px;box-sizing:border-box}
+.zs *{box-sizing:border-box}
+.zs-h{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;margin-bottom:8px}
+.zs-t1{font-size:13px;color:#0a7564;font-weight:700}.zs-t2{font-size:17px;font-weight:700;margin-top:2px}.zs-t3{font-size:11px;color:#5b6976;text-align:right;white-space:nowrap}
+.zs-g{position:relative;border:1px solid #c9d2d8;border-radius:6px;overflow:hidden}
+.zs-r{display:grid;grid-template-columns:92px 1fr;border-bottom:1px solid #e1e6ea;min-height:34px}
+.zs-r:last-child{border-bottom:0}
+.zs-l{display:flex;align-items:center;padding:0 8px;font-size:12px;font-weight:700;background:#f4f6f8;border-right:1px solid #e1e6ea;white-space:nowrap;overflow:hidden}
+.zs-l small{color:#7a8894;font-weight:500;margin-left:4px}
+.zs-k{position:relative}
+.zs-ax{min-height:38px;background:#fff}.zs-ax .zs-l{background:#fff}
+.zs-tk{position:absolute;top:0;bottom:0;border-left:1px solid #c9d2d8}
+.zs-tk.mj{border-left-color:#8796a2}
+.zs-tk span{position:absolute;top:3px;left:3px;font-family:"IBM Plex Mono",Consolas,monospace;font-size:10.5px;color:#33414d;white-space:nowrap}
+.zs-sw{position:absolute;bottom:2px;transform:translateX(-50%);font-family:"IBM Plex Mono",Consolas,monospace;font-size:9.5px;font-weight:700;color:#c2410c}
+.zs-ns{background:#e7f3f0}.zs-ns .zs-l{color:#0a7564;background:#dcefea}
+.zs-b{position:absolute;z-index:2;top:3px;bottom:3px;border:1px solid #c9d2d8;border-radius:4px;background:rgba(255,255,255,.88);padding:2px 5px;overflow:hidden;font-size:11px;line-height:1.2}
+.zs-b i{display:block;font-style:normal;font-family:"IBM Plex Mono",Consolas,monospace;font-size:9px;color:#7a8894}
+.zs-b.off{color:#9aa6b0;background:repeating-linear-gradient(135deg,#f4f6f8 0 5px,#fff 5px 10px)}
+.zs-b.cut{border-left-style:dashed}
+.zs-ns .zs-b{background:#fff;border-color:#0a7564;color:#0a7564}
+.zs-ns .zs-b.me{background:#0a7564;color:#fff;font-weight:700}.zs-ns .zs-b.me i{color:#d8efe9}
+.zs-gh{padding:3px 8px;font-size:10px;font-weight:700;color:#5b6976;background:#eef1f3;border-bottom:1px solid #e1e6ea}
+.zs-ov{position:absolute;z-index:1;top:38px;bottom:0;left:92px;right:0;pointer-events:none}
+.zs-slot{position:absolute;top:0;bottom:0;background:rgba(10,117,100,.07);border-left:2px solid #0a7564;border-right:2px solid #0a7564}
+.zs-ln{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(194,65,12,.55)}
+.zs-ln.big{border-left:2px dashed #c2410c}
+.zs-f{display:flex;justify-content:space-between;font-size:10px;color:#7a8894;margin-top:6px}`;
+function zapSheetHTML(o) {
+  const sm = o.sm, em = o.em, w0 = Math.max(DAY_START, Math.floor((sm - 10) / 5) * 5), w1 = Math.min(DAY_END, Math.ceil((em + 10) / 5) * 5), W = w1 - w0;
+  const pct = m => ((Math.min(Math.max(m, w0), w1) - w0) / W * 100).toFixed(3) + '%';
+  const bar = (a, b, html, cls) => `<div class="zs-b ${cls || ''}${a < w0 ? ' cut' : ''}" style="left:${pct(a)};width:calc(${pct(b)} - ${pct(a)} - 2px)">${html}</div>`;
+  const tick = zapTick, ticks = []; for (let m = Math.ceil(w0 / tick) * tick; m < w1; m += tick) ticks.push(m);
+  const sw = epgSwitches(sm, em, zapOff);
+  const ns = state.tvItems.filter(i => i.ch === SETS.tv.own && i.em > w0 && i.sm < w1);
+  const me = ns.find(i => i.sm === sm && i.em === em) || (o.src && o.src.pool === state.tvItems ? state.tvItems.find(i => i.idx === o.src.idx) : null);
+  const cols = epgCols().filter(c => !c.hs && !zapOff.has(c.name));
+  let rows = `<div class="zs-r zs-ax"><div class="zs-l"></div><div class="zs-k">${ticks.map(m => `<div class="zs-tk ${m % 30 === 0 ? 'mj' : ''}" style="left:${pct(m)}"><span>${m2hm(m)}</span></div>`).join('')}${sw.map(g => `<span class="zs-sw" style="left:${pct(g.min)}">⇄${g.list.length}</span>`).join('')}</div></div>`;
+  rows += `<div class="zs-r zs-ns"><div class="zs-l">NS홈쇼핑</div><div class="zs-k">${ns.map(i => bar(i.sm, i.em, `<i>${esc(i.s)}–${esc(i.e)}${i.p ? ' · ' + won(best(i)) : ''}</i>${esc(i.n)}`, i === me ? 'me' : '')).join('')}</div></div>`;
+  let g = '';
+  for (const c of cols) {
+    const grp = epgOrder === 'num' ? '' : (c.grp || ''); if (grp && grp !== g) { g = grp; rows += `<div class="zs-gh">${esc(g)}</div>`; }
+    const its = c.rows.filter(r => r.em > w0 && r.sm < w1);
+    rows += `<div class="zs-r"><div class="zs-l">${esc(c.name)}<small>${c.no ?? ''}</small></div><div class="zs-k">${its.map(r => bar(r.sm, r.em, `<i>${m2hm(r.sm)}–${m2hm(r.em)}</i>${esc(isOff(r.t) ? '정파' : r.t)}`, isOff(r.t) ? 'off' : '')).join('')}</div></div>`;
+  }
+  const ov = `<div class="zs-ov"><div class="zs-slot" style="left:${pct(sm)};width:calc(${pct(em)} - ${pct(sm)})"></div>${sw.map(s => `<div class="zs-ln ${s.list.length >= 3 ? 'big' : ''}" style="left:${pct(s.min)}"></div>`).join('')}</div>`;
+  const d = state.date, wd = '일월화수목금토'[new Date(d + 'T12:00:00Z').getUTCDay()];
+  const hidden = epgRows().length - cols.length;
+  return `<section class="zs"><div class="zs-h"><div><div class="zs-t1">NS홈쇼핑 · ${d.replace(/-/g, '.')} (${wd}) ${m2hm(sm)}–${m2hm(em)} · ${em - sm}분</div><div class="zs-t2">${esc(o.n || '')}${me && me.p ? ` · ${won(best(me))}` : ''}</div></div>
+    <div class="zs-t3">${epgOrder === 'num' ? '지니TV 채널번호 순' : '지상파·종편·케이블 순'} · TV ${cols.length}개 채널${hidden ? ` (${hidden}개 숨김)` : ''} · ${tick}분 눈금<br>초록 = 이 방송 시간 · 주황 점선 = 채널 전환(⇄ 채널 수)</div></div>
+    <div class="zs-g">${rows}${ov}</div><div class="zs-f"><span>NS 재핑 보드</span><span>2026 TV식품컨텐츠팀</span></div></section>`;
+}
+async function zapSheetExport(kind, list) {
+  if (!list.length) return;
+  const busy = document.createElement('div'); busy.className = 'expm-busy'; busy.textContent = kind === 'png' ? '이미지 만드는 중…' : '인쇄 준비 중…'; document.body.appendChild(busy);
+  try {
+    const html = list.map(zapSheetHTML).join('');
+    if (kind === 'png') {
+      await loadScript('https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js');
+      const box = document.createElement('div'); box.style.cssText = 'position:fixed;left:-20000px;top:0;z-index:-1';
+      box.innerHTML = `<style>${SHEET_CSS}</style>${html}`; document.body.appendChild(box);
+      const node = box.querySelector('.zs');
+      const url = await htmlToImage.toPng(node, {pixelRatio: 2, skipFonts: true, backgroundColor: '#ffffff'}); box.remove();
+      const blob = await (await fetch(url)).blob(), a = document.createElement('a');
+      a.download = `세부재핑_${state.date}_${m2hm(list[0].sm).replace(':', '')}.png`; a.href = URL.createObjectURL(blob); document.body.appendChild(a); a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 5000);
+    } else {
+      const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;width:0;height:0;border:0;right:0;bottom:0'; document.body.appendChild(f);
+      f.contentDocument.write(`<!doctype html><html><head><meta charset="utf-8"><title>세부 재핑 ${state.date}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+        <style>@page{size:A4 landscape;margin:7mm}html,body{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}${SHEET_CSS}.zs{width:100%;padding:0 0 10mm;break-inside:avoid;page-break-inside:avoid}</style></head><body>${html}</body></html>`);
+      f.contentDocument.close();
+      try { await Promise.race([f.contentDocument.fonts.ready, new Promise(ok => setTimeout(ok, 2500))]); } catch (er) {}
+      f.contentWindow.focus(); f.contentWindow.print(); setTimeout(() => f.remove(), 60000);
+    }
+  } catch (e) { alertBox('만들지 못했어요. 잠시 후 다시 해 주세요.'); console.error(e); }
+  finally { busy.remove(); }
+}
 function alertBox(msg) { const d = document.createElement('div'); d.className = 'expm-busy'; d.textContent = msg; d.onclick = () => d.remove(); document.body.appendChild(d); setTimeout(() => d.remove(), 3000); }
-$('#expMenu').addEventListener('click', e => { const b = e.target.closest('[data-exp]'); if (!b) return; $('#expMenu').open = false; zapExport(b.dataset.exp); });
+$('#expMenu').addEventListener('click', e => { const b = e.target.closest('[data-exp]'); if (!b) return; $('#expMenu').open = false;
+  if (b.dataset.exp === 'sheets') return zapSheetExport('print', state.tvItems.filter(i => i.ch === SETS.tv.own && !i.nx).sort((x, y) => x.sm - y.sm).map(i => ({sm: i.sm, em: i.em, n: i.n, src: {idx: i.idx, pool: state.tvItems}})));
+  zapExport(b.dataset.exp); });
 document.addEventListener('click', e => { const m = $('#expMenu'); if (m.open && !m.contains(e.target)) m.open = false; });
 $('#epgOrder').addEventListener('click', e => { const b = e.target.closest('[data-o]'); if (!b || b.dataset.o === epgOrder) return; epgOrder = b.dataset.o; try { localStorage.setItem('zap.epgOrder', epgOrder); } catch (er) {} renderEpg(state.tvItems, true); });
 $('#epg').addEventListener('click', e => {
@@ -1176,7 +1270,9 @@ function renderZoom() {
       <div class="zbody"><div class="zlines">${lines}</div>${rows}</div></div></div>`;
   }
   $('#zpanel').innerHTML = `<div class="zhead"><div><div class="chname">${head.ch} · <span class="mono">${m2hm(sm)}–${m2hm(em)}</span> <span class="quiet">${em - sm}분</span></div><h3>${esc(head.n)}</h3></div>
-      <div class="zbtns"><button class="x" id="closeZoom">닫기</button></div></div>${pvPager()}
+      <div class="zbtns">${tab === 'detail' ? '' : `<details class="expm zexp"><summary class="x">저장·인쇄</summary><div class="expm-pop right">
+        <b>이 방송 세부 재핑</b><button data-zexp="png">이미지(PNG)로 저장</button><button data-zexp="print">인쇄 (A4 가로)</button>
+        <span class="expm-tick">시간 눈금 <button data-tick="10">10분</button><button data-tick="5">5분</button></span></div></details>`}<button class="x" id="closeZoom">닫기</button></div></div>${pvPager()}
     <nav class="ztabs" role="tablist">${ZTABS.filter(([k]) => k !== 'detail' || src).map(([k, l, sh]) => `<button role="tab" data-zt="${k}" aria-selected="${k === tab}"><span class="full">${l}</span><span class="short">${sh}</span></button>`).join('')}</nav>${zfilt}
     ${tab === 'detail' ? '' : `<p class="quiet zsub">${tab === 'zap' ? `재핑 타임라인과 같은 채널 순서(${byNum ? '지니TV 번호순' : '지상파·종편·케이블 순'})예요.` : tab === 'tv' ? '같은 시간 경쟁 TV홈쇼핑 방송이에요.' : '같은 시간 데이터홈쇼핑 방송이에요. 기준은 NS홈쇼핑 TV 방송이에요.'} 맨 위 NS 줄이 기준이고, 초록 구간이 이 방송 시간이에요. 주황 점선은 TV 채널이 프로그램을 바꾸는 시점(⇄ 채널 수)이에요.${tab === 'zap' ? ' TV 프로그램 막대를 누르면 회차 정보가 작게 떠요.' : ''}</p>`}
     ${body}`;
@@ -1199,6 +1295,8 @@ function hideProg() { $('#zpop').hidden = true; zoomProg = null; document.queryS
 function closeZoom() { $('#zoom').hidden = true; $('#zpop').hidden = true; }
 $('#zoom').addEventListener('click', e => {
   const pg = e.target.closest('[data-pv]'); if (pg && !pg.disabled) { hideProg(); pvGo(+pg.dataset.pv, true); return; }
+  const ze = e.target.closest('[data-zexp]'); if (ze) { ze.closest('details').open = false; zapSheetExport(ze.dataset.zexp, [{sm: zoomArgs[0], em: zoomArgs[1], n: zoomArgs[2].n, src: zoomSrc}]); return; }
+  if (e.target.closest('.zexp') && !e.target.closest('[data-tick]')) return;
   if (e.target.id === 'zoom' || e.target.id === 'closeZoom') return PHONE() ? undefined : closeZoom();
   const zf = e.target.closest('[data-zf]');
   if (zf) {
