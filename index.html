@@ -774,7 +774,10 @@ $('#lineup').addEventListener('click', e => {
 function renderTimeline(items) {
   const H = DAY_END;
   const w = colW(); const tlEl = $('#tl'); tlEl.style.setProperty('--railw', w.rail + 'px');
-  tlEl.style.gridTemplateColumns = `${w.rail}px ` + CH.map(c => c.own ? `minmax(${w.ns}px,${w.narrow ? 0 : 1.6}fr)` : `minmax(${w.col}px,1fr)`).join(' '); tlEl.style.minWidth = `${w.rail + w.ns + (CH.length - 1) * w.col}px`;
+  // column sizes come from the TV set (NS + 6 channels filling the screen), so 데이터홈쇼핑 keeps the same widths and scrolls sideways
+  const avail = ($('#app').clientWidth || innerWidth - 48) - 2, unit = Math.max(0, avail - w.rail) / (1.6 + SETS.tv.ch.length - 1);
+  const nsW = w.narrow ? w.ns : Math.max(w.ns, Math.floor(unit * 1.6)), cW = w.narrow ? w.col : Math.max(w.col, Math.floor(unit));
+  tlEl.style.gridTemplateColumns = `${w.rail}px ` + CH.map(c => c.own ? `${nsW}px` : `${cW}px`).join(' '); tlEl.style.minWidth = `${w.rail + nsW + (CH.length - 1) * cW}px`;
   let html = `<div class="tl-head corner">KST</div>` + CH.map(c => `<div class="tl-head ${c.own ? 'own' : ''}">${chDot(c.id)}${esc(c.name)}</div>`).join('');
   let rail = `<div class="rail" style="height:calc(${H - DAY_START} * var(--ppm))">`;
   for (let hr = DAY_START / 60; hr <= H / 60; hr++) rail += `<span class="h ${hr >= 24 ? 'nx' : ''} ${hr * 60 === DAY_START ? 'first' : ''}" style="top:calc(${Y(hr * 60)} * var(--ppm))">${hh(hr)}</span>`;
@@ -801,6 +804,11 @@ function renderTimeline(items) {
   const target = Y(viewMin() - 60);
   requestAnimationFrame(() => { sc.scrollTop = target * 2; });
 }
+// fixed column widths follow the window size
+(() => { let t = 0; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(() => {
+  if (!state.items.length || $('#app').hidden) return; const sc = $('#tlScroll'), y = sc.scrollTop, x = sc.scrollLeft;
+  renderTimeline(state.items); requestAnimationFrame(() => requestAnimationFrame(() => { sc.scrollTop = y; sc.scrollLeft = x; tick(); }));
+}, 200); }); })();
 $('#tl').addEventListener('click', e => { const b = e.target.closest('.blk'); if (b) zoomItem(state.items.find(i => i.idx === +b.dataset.idx), state.items, state.set); });
 
 
